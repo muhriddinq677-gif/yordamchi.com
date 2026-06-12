@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Onet puzzle</title>
+    <style>
+        :root { --primary: #00d2ff; --bg: #0f172a; --accent: #f43f5e; --coin-color: #facc15; --shop: #8b5cf6; --shuffle: #f97316; }
+        body { background: var(--bg); color: white; display: flex; flex-direction: column; align-items: center; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 10px; }
+        .screen { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 95vh; width: 100%; }
+        .active { display: flex; }
+        .menu-title { font-size: 45px; color: var(--primary); text-shadow: 0 0 20px var(--primary); margin-bottom: 15px; font-weight: 900; }
+        .wallet-info { background: #1e293b; padding: 12px 25px; border-radius: 50px; border: 2px solid var(--coin-color); font-size: 20px; margin-bottom: 15px; color: var(--coin-color); font-weight: bold; display: flex; gap: 20px; }
+        .category-grid { display: grid; grid-template-columns: repeat(2, 190px); gap: 10px; margin-bottom: 15px; }
+        .btn { padding: 12px; background: var(--accent); border: none; border-radius: 10px; color: white; cursor: pointer; transition: 0.2s; border-bottom: 5px solid #be123c; font-weight: bold; font-size: 15px; }
+        .btn:hover { transform: scale(1.03); }
+        .shop-btn { background: var(--shop); border-bottom-color: #6d28d9; width: 390px; }
+        .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 450px; }
+        .shop-card { background: #1e293b; padding: 15px; border-radius: 12px; border: 2px solid var(--shop); text-align: center; }
+        .price { font-size: 20px; color: var(--coin-color); margin: 8px 0; }
+        .promo-tag { background: #10b981; font-size: 11px; padding: 2px 6px; border-radius: 4px; }
+        .game-header { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; justify-content: center; }
+        .stat-box { background: #1e293b; padding: 8px 15px; border-radius: 50px; border: 2px solid var(--primary); font-size: 16px; font-weight: bold; }
+        #game-container { position: relative; padding: 35px; background: #1e293b; border-radius: 10px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        #grid { display: grid; gap: 2px; z-index: 2; position: relative; }
+        .tile { width: 46px; height: 46px; background: #fff; color: #1e293b; display: flex; align-items: center; justify-content: center; font-size: 25px; cursor: pointer; border-radius: 5px; border-bottom: 3px solid #cbd5e1; user-select: none; }
+        .tile.empty { visibility: hidden; }
+        .tile.selected { background: #fbbf24 !important; border-bottom-color: #d97706; transform: scale(1.1); z-index: 5; }
+        .tile.hint-highlight { animation: pulse 0.5s infinite alternate; background: #10b981 !important; color: white; }
+        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.1); } }
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
+        .timer-bar { width: 300px; height: 10px; background: #1e293b; border-radius: 10px; margin-top: 15px; border: 1px solid #475569; overflow: hidden; }
+        #timer-fill { width: 100%; height: 100%; background: linear-gradient(90deg, var(--primary), #3b82f6); }
+    </style>
+</head>
+<body>
+
+    <div id="screen-menu" class="screen active">
+        <div class="menu-title">ONET MASTER PRO</div>
+        <div class="wallet-info">💰 <span class="coin-val">0</span> | 💡 <span class="hint-val">0</span> | 🔄 <span class="shuf-val">0</span></div>
+        <div class="category-grid">
+            <button class="btn" onclick="startGame('animals')">🦁 Hayvonlar</button>
+            <button class="btn" onclick="startGame('fruits')">🍓 Mevalar</button>
+            <button class="btn" onclick="startGame('cars')">🏎️ Mashinalar</button>
+            <button class="btn" onclick="startGame('school')">🎒 Maktab</button>
+            <button class="btn" onclick="startGame('tech')">📺 Texnika</button>
+            <button class="btn" onclick="startGame('colors')">🎨 Ranglar</button>
+            <button class="btn" onclick="startGame('houses')">🏠 Uylar</button>
+            <button class="btn" onclick="startGame('tools')">🛠️ Jihozlar</button>
+        </div>
+        <button class="btn shop-btn" onclick="showScreen('screen-shop')">🛒 DO'KON (Sotib Olish)</button>
+    </div>
+
+    <div id="screen-shop" class="screen">
+        <div class="menu-title" style="color: var(--shop);">SAVDO BO'LIMI</div>
+        <div class="wallet-info">Pulingiz: 💰 <span class="coin-val">0</span></div>
+        <div class="shop-grid">
+            <div class="shop-card"><h4>1 ta HINT</h4><div class="price">25 💰</div><button class="btn" style="background:#10b981;" onclick="buyItem('hints', 1, 25)">OLISH</button></div>
+            <div class="shop-card"><h4>1 ta ARALASH</h4><div class="price">20 💰</div><button class="btn" style="background:var(--shuffle);" onclick="buyItem('shuffles', 1, 20)">OLISH</button></div>
+            <div class="shop-card" style="border-color:#fbbf24;"><h4>3 ta HINT <span class="promo-tag">AKSIYA</span></h4><div class="price">70 💰</div><button class="btn" style="background:#f59e0b;" onclick="buyItem('hints', 3, 70)">OLISH</button></div>
+            <div class="shop-card" style="border-color:#fbbf24;"><h4>3 ta ARALASH <span class="promo-tag">AKSIYA</span></h4><div class="price">50 💰</div><button class="btn" style="background:#ea580c;" onclick="buyItem('shuffles', 3, 50)">OLISH</button></div>
+        </div>
+        <button class="btn" style="margin-top:20px; background:#475569; width:200px;" onclick="showScreen('screen-menu')">ORQAGA</button>
+    </div>
+
+    <div id="screen-game" class="screen">
+        <div class="game-header">
+            <div class="stat-box">LEVEL: <span id="level-num">1</span></div>
+            <div class="stat-box" style="color:var(--coin-color)">💰 <span class="coin-val">0</span></div>
+            <button class="btn" style="background:#10b981;" onclick="useHint()">💡 HINT (<span class="hint-val">0</span>)</button>
+            <button class="btn" style="background:var(--shuffle);" onclick="useShuffle()">🔄 SHUFFLE (<span class="shuf-val">0</span>)</button>
+        </div>
+        <div id="game-container"><div id="grid"></div><canvas id="lineCanvas"></canvas></div>
+        <div class="timer-bar"><div id="timer-fill"></div></div>
+        <button class="btn" style="margin-top:15px; background:#475569;" onclick="showScreen('screen-menu')">🏠 MENYU</button>
+    </div>
+
+<script>
+const itemsData = {
+    animals:['🦁','🐘','🦒','🐸','🐼','🦀','🦊','🐢','🐵','🦄','🐝','🐙','🦖','🐥','🦋','🦓','🐊','🐆'],
+    fruits:['🍎','🍐','🍋','🍌','🍉','🍇','🍓','🍌','🍒','🍑','🍍','🥝','🥑','🌽','🥕','🥭','🍏','🍊'],
+    cars:['🚗','🚕','🚙','🚌','🏎️','🚓','🚑','🚒','🚐','🚚','🚜','🚲','🛵','🚀','🚁','🚄','🛥️','✈️'],
+    school:['🎒','📚','📐','📏','✏️','🖋️','🖍️','✂️','🖇️','📒','🏫','🎓','🎨','🧪','🔬','📖','🖊️','🖌️'],
+    tech:['📺','💻','📱','⌨️','🖱️','🎧','📷','🕹️','🔌','🔋','⌚','📻','🎙️','🧊','🧺','📠','📀','🔦'],
+    colors:['🔴','🟠','🟡','🟢','🔵','🟣','🟤','⚫','⚪','🟥','🟧','🟨','🟩','🟦','🟪','💖','💎','🖤'],
+    houses:['🏠','🏡','🏢','🏣','🏤','🏥','🏦','🏨','🏪','🏫','🏩','💒','🏛️','⛪','🕌','🗼','🕋','🕋'],
+    tools:['🔨','🧱','🔧','🧯','⛏️','🛠️','⚒️','⚙️','⚖️','⛓️','🧲','🧪','🔦','💻','📱','📸','📡','🔋']
+};
+
+let ROWS=4, COLS=6, level=1, coins=0, hints=0, shuffles=0, timeLeft=100, board=[], selected=null, timerInterval, currentCategory=[];
+
+function showScreen(id) { 
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    updateUI();
+}
+
+function updateUI() {
+    document.querySelectorAll('.coin-val').forEach(el => el.innerText = coins);
+    document.querySelectorAll('.hint-val').forEach(el => el.innerText = hints);
+    document.querySelectorAll('.shuf-val').forEach(el => el.innerText = shuffles);
+    document.getElementById('level-num').innerText = level; // Mana shu qator levelni yangilaydi
+}
+
+function buyItem(type, amount, cost) {
+    if(coins >= cost) { coins -= cost; if(type==='hints') hints+=amount; else shuffles+=amount; updateUI(); }
+    else alert("Coin yetarli emas!");
+}
+
+function startGame(cat) { currentCategory=itemsData[cat]; showScreen('screen-game'); initLevel(); }
+
+function initLevel() {
+    clearInterval(timerInterval); timeLeft=100;
+    if(level>1 && level%2===0){ if(COLS<12) COLS+=2; if(ROWS<10) ROWS+=2; }
+    let items=[]; for(let i=0; i<(ROWS*COLS)/2; i++) { let it=currentCategory[i%currentCategory.length]; items.push(it,it); }
+    items.sort(()=>Math.random()-0.5); board=[]; let idx=0;
+    for(let r=0; r<ROWS; r++){ board[r]=[]; for(let c=0; c<COLS; c++){ board[r][c]=items[idx++]; } }
+    setupUI(); startTimer(); updateUI(); // Har bosqich boshida UI yangilanadi
+}
+
+function setupUI(){
+    const grid=document.getElementById('grid'); grid.style.gridTemplateColumns=`repeat(${COLS}, 46px)`;
+    const canvas=document.getElementById('lineCanvas'); canvas.width=(COLS*48)+70; canvas.height=(ROWS*48)+70;
+    draw();
+}
+
+function draw(){
+    const grid=document.getElementById('grid'); grid.innerHTML='';
+    board.forEach((row,r)=>{ row.forEach((cell,c)=>{
+        const div=document.createElement('div'); div.className='tile'+(cell?'':' empty'); div.innerText=cell||'';
+        div.onclick=()=>clickTile(r,c); grid.appendChild(div);
+    });});
+}
+
+function clickTile(r, c){
+    if(!board[r][c]) return;
+    const tiles=document.querySelectorAll('.tile');
+    document.querySelectorAll('.tile').forEach(t=>t.classList.remove('hint-highlight'));
+    if(!selected){ selected={r,c}; tiles[r*COLS+c].classList.add('selected'); }
+    else{
+        if(selected.r===r && selected.c===c){ tiles[r*COLS+c].classList.remove('selected'); selected=null; return; }
+        const path=findPath(selected.r, selected.c, r, c);
+        if(board[selected.r][selected.c]===board[r][c] && path){
+            drawPath(path); board[selected.r][selected.c]=null; board[r][c]=null;
+            coins+=1; updateUI(); selected=null;
+            setTimeout(()=>{ clearCanvas(); draw(); checkWin(); }, 250);
+        } else {
+            document.querySelectorAll('.tile').forEach(t=>t.classList.remove('selected'));
+            selected={r,c}; tiles[r*COLS+c].classList.add('selected');
+        }
+    }
+}
+
+function useHint() {
+    if(hints <= 0) return;
+    for(let r1=0; r1<ROWS; r1++) {
+        for(let c1=0; c1<COLS; c1++) {
+            if(!board[r1][c1]) continue;
+            for(let r2=0; r2<ROWS; r2++) {
+                for(let c2=0; c2<COLS; c2++) {
+                    if((r1===r2 && c1===c2) || !board[r2][c2] || board[r1][c1]!==board[r2][c2]) continue;
+                    if(findPath(r1, c1, r2, c2)) {
+                        hints--; const tiles=document.querySelectorAll('.tile');
+                        tiles[r1*COLS+c1].classList.add('hint-highlight');
+                        tiles[r2*COLS+c2].classList.add('hint-highlight');
+                        updateUI(); return;
+                    }
+                }
+            }
+        }
+    }
+}
+
+function useShuffle() {
+    if(shuffles <= 0) return;
+    let items = board.flat().filter(i => i !== null).sort(() => Math.random() - 0.5);
+    shuffles--; let idx=0;
+    for(let r=0; r<ROWS; r++) { for(let c=0; c<COLS; c++) { if(board[r][c]) board[r][c]=items[idx++]; } }
+    draw(); updateUI();
+}
+
+function findPath(r1, c1, r2, c2) {
+    let queue = [{ r: r1, c: c1, dir: -1, turns: 0, path: [{ r: r1, c: c1 }] }];
+    let visited = new Map();
+    while (queue.length > 0) {
+        let curr = queue.shift();
+        if (curr.turns > 3) continue;
+        if (curr.r === r2 && curr.c === c2) return curr.path;
+        const dr = [0, 0, 1, -1], dc = [1, -1, 0, 0];
+        for (let i = 0; i < 4; i++) {
+            let nr = curr.r + dr[i], nc = curr.c + dc[i];
+            if (nr >= -1 && nr <= ROWS && nc >= -1 && nc <= COLS) {
+                let isTarget = (nr === r2 && nc === c2);
+                let isEmpty = (nr === -1 || nr === ROWS || nc === -1 || nc === COLS || (board[nr] && !board[nr][nc]));
+                if (isEmpty || isTarget) {
+                    let nTurns = curr.dir === -1 ? 1 : (curr.dir === i ? curr.turns : curr.turns + 1);
+                    if (nTurns <= 3) {
+                        let key = `${nr},${nc},${i}`;
+                        if (!visited.has(key) || visited.get(key) > nTurns) {
+                            visited.set(key, nTurns);
+                            queue.push({ r: nr, c: nc, dir: i, turns: nTurns, path: [...curr.path, { r: nr, c: nc }] });
+                        }
+                    }
+                }
+            }
+        }
+    } return null;
+}
+
+function drawPath(path) {
+    const ctx = document.getElementById('lineCanvas').getContext('2d');
+    ctx.strokeStyle = '#00d2ff'; ctx.lineWidth = 4; ctx.beginPath();
+    path.forEach((p, i) => {
+        const x = (p.c * 48) + 23 + 35; const y = (p.r * 48) + 23 + 35;
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }); ctx.stroke();
+}
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        timeLeft -= (0.15 + (level * 0.05));
+        document.getElementById('timer-fill').style.width = timeLeft + "%";
+        if (timeLeft <= 0) { clearInterval(timerInterval); alert("Vaqt tugadi!"); showScreen('screen-menu'); }
+    }, 1000);
+}
+
+function checkWin() {
+    if (!board.flat().some(c => c !== null)) { clearInterval(timerInterval); level++; alert("G'alaba!"); initLevel(); }
+}
+
+function clearCanvas() { const c=document.getElementById('lineCanvas'); c.getContext('2d').clearRect(0,0,c.width,c.height); }
+</script>
+</body>
+</html>

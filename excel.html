@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Web Excel</title>
+    <style>
+        :root { --excel-green: #107c41; --border-color: #ccc; --header-bg: #f3f3f3; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        /* Ribbon Menu */
+        .ribbon { background: #f3f3f3; padding: 8px; border-bottom: 1px solid #bbb; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .group { display: flex; gap: 4px; border-right: 2px solid #ddd; padding-right: 10px; }
+        button { cursor: pointer; padding: 4px 12px; border: 1px solid #999; background: white; border-radius: 2px; font-size: 13px; }
+        button:hover { background: #e2e2e2; }
+        input[type="color"] { width: 30px; height: 25px; border: none; cursor: pointer; padding: 0; }
+
+        /* Formula Bar */
+        .formula-bar { display: flex; align-items: center; padding: 4px 10px; background: #fff; border-bottom: 1px solid #bbb; gap: 10px; }
+        .cell-address { font-weight: bold; min-width: 40px; color: var(--excel-green); text-align: center; }
+        .formula-bar input { flex: 1; border: 1px solid #ddd; padding: 4px 8px; outline-color: var(--excel-green); }
+
+        /* Spreadsheet Grid */
+        .spreadsheet-container { flex: 1; overflow: auto; background: #e1e1e1; position: relative; }
+        table { border-collapse: collapse; background: white; table-layout: fixed; }
+        
+        /* Headers (Sticky) */
+        th { background: var(--header-bg); border: 1px solid var(--border-color); font-size: 12px; height: 25px; position: sticky; top: 0; z-index: 10; }
+        th.row-num { position: sticky; left: 0; z-index: 20; width: 40px; background: var(--header-bg); }
+        th.corner { z-index: 30; top: 0; left: 0; background: #ddd; }
+
+        /* Cells */
+        td { border: 1px solid var(--border-color); width: 100px; height: 25px; padding: 0; }
+        td input { width: 100%; height: 100%; border: none; padding: 0 4px; box-sizing: border-box; outline: none; font-size: 13px; }
+        td input:focus { border: 2px solid var(--excel-green); z-index: 5; background: #f0fdf4; }
+
+        /* Responsive */
+        @media (max-width: 600px) { .ribbon { gap: 4px; } button { padding: 4px 6px; font-size: 11px; } }
+    </style>
+</head>
+<body>
+
+<div class="ribbon">
+    <div class="group">
+        <button onclick="applyStyle('fontWeight', 'bold')"><b>B</b></button>
+        <button onclick="applyStyle('fontStyle', 'italic')"><i>I</i></button>
+        <button onclick="applyStyle('textDecoration', 'underline')"><u>U</u></button>
+    </div>
+    <div class="group">
+        <input type="color" id="textColor" onchange="applyStyle('color', this.value)" title="Matn rangi">
+        <input type="color" id="bgColor" onchange="applyStyle('backgroundColor', this.value)" title="Fon rangi">
+    </div>
+    <div class="group">
+        <button onclick="addRow()">+ Qator</button>
+        <button onclick="addCol()">+ Ustun</button>
+    </div>
+    <div class="group">
+        <button onclick="calculateSum()" style="background: var(--excel-green); color: white;">Σ SUM</button>
+        <button onclick="exportCSV()">CSV Yuklash</button>
+    </div>
+</div>
+
+<div class="formula-bar">
+    <div id="activeCellAddr" class="cell-address">A1</div>
+    <input type="text" id="formulaInput" placeholder="Katakka ma'lumot kiriting...">
+</div>
+
+<div class="spreadsheet-container">
+    <table id="excelTable">
+        <thead id="tableHead">
+            <tr id="headerRow">
+                <th class="corner"></th>
+                <!-- Ustun harflari shu yerga keladi -->
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <!-- Qatorlar shu yerga keladi -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    let rowCount = 30;
+    let colCount = 15;
+    let selectedInput = null;
+
+    // Ustun harfini hisoblash (A, B, C... Z, AA, AB...)
+    function getColName(n) {
+        let name = "";
+        while (n >= 0) {
+            name = String.fromCharCode((n % 26) + 65) + name;
+            n = Math.floor(n / 26) - 1;
+        }
+        return name;
+    }
+
+    function initTable() {
+        const headerRow = document.getElementById('headerRow');
+        const tableBody = document.getElementById('tableBody');
+        
+        // Sarlavhalarni tozalash va qayta qurish
+        headerRow.innerHTML = '<th class="corner"></th>';
+        for (let j = 0; j < colCount; j++) {
+            const th = document.createElement('th');
+            th.innerText = getColName(j);
+            headerRow.appendChild(th);
+        }
+
+        // Qatorlarni yaratish
+        tableBody.innerHTML = "";
+        for (let i = 1; i <= rowCount; i++) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<th class="row-num">${i}</th>`;
+            for (let j = 0; j < colCount; j++) {
+                const td = document.createElement('td');
+                const input = document.createElement('input');
+                input.dataset.row = i;
+                input.dataset.col = j;
+                
+                input.onfocus = (e) => {
+                    selectedInput = e.target;
+                    document.getElementById('activeCellAddr').innerText = getColName(j) + i;
+                    document.getElementById('formulaInput').value = e.target.value;
+                };
+
+                input.oninput = (e) => {
+                    document.getElementById('formulaInput').value = e.target.value;
+                };
+
+                td.appendChild(input);
+                tr.appendChild(td);
+            }
+            tableBody.appendChild(tr);
+        }
+    }
+
+    function addRow() { rowCount++; initTable(); }
+    function addCol() { colCount++; initTable(); }
+
+    function applyStyle(prop, value) {
+        if (!selectedInput) return;
+        if (['fontWeight', 'fontStyle', 'textDecoration'].includes(prop)) {
+            selectedInput.style[prop] = selectedInput.style[prop] === value ? '' : value;
+        } else {
+            selectedInput.style[prop] = value;
+        }
+    }
+
+    function calculateSum() {
+        if (!selectedInput) return;
+        const col = selectedInput.dataset.col;
+        let sum = 0;
+        document.querySelectorAll(`input[data-col="${col}"]`).forEach(input => {
+            let val = parseFloat(input.value);
+            if (!isNaN(val)) sum += val;
+        });
+        selectedInput.value = sum;
+    }
+
+    function exportCSV() {
+        let csv = "";
+        const table = document.getElementById('excelTable');
+        for (let row of table.rows) {
+            let rowData = [];
+            for (let cell of row.cells) {
+                let input = cell.querySelector('input');
+                rowData.push(input ? input.value : cell.innerText);
+            }
+            csv += rowData.join(",") + "\n";
+        }
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'excel_fayl.csv';
+        a.click();
+    }
+
+    // Formula bar orqali yozish
+    document.getElementById('formulaInput').oninput = (e) => {
+        if (selectedInput) selectedInput.value = e.target.value;
+    };
+
+    initTable();
+</script>
+</body>
+</html>

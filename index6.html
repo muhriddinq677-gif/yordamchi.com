@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xotirani yaxhsilash O'yini</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background: #f0f4f8;
+  }
+
+  h1 {
+    margin: 20px 0 10px 0;
+    text-align: center;
+  }
+
+  #scoreboard {
+    display: flex;
+    gap: 20px;
+    font-size: 1.2em;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  #game-board {
+    display: grid;
+    gap: 10px;
+    max-width: 600px;
+    width: 90%;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.2s, background 0.2s;
+  }
+
+  .card.flipped {
+    background: #4caf50;
+    color: #fff;
+    transform: scale(1.1);
+  }
+
+  .card.matched {
+    background: #2196f3;
+    color: #fff;
+    cursor: default;
+    transform: scale(1.1);
+  }
+
+  #controls {
+    margin: 15px 0;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  #controls button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: #ff9800;
+    color: #fff;
+    font-size: 1em;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    transition: background 0.2s;
+  }
+
+  #controls button:hover {
+    background: #e68900;
+  }
+
+  @media (min-width: 320px) {
+    #game-board { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (min-width: 480px) {
+    #game-board { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (min-width: 768px) {
+    #game-board { grid-template-columns: repeat(4, 1fr); }
+  }
+  @media (min-width: 1024px) {
+    #game-board { grid-template-columns: repeat(5, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<h1>Memory Click - Level O'yini</h1>
+
+<div id="scoreboard">
+  <div>Ball: <span id="score">0</span></div>
+  <div>Juftlar topildi: <span id="matches">0</span></div>
+  <div>Vaqt: <span id="timer">60</span>s</div>
+  <div>Level: <span id="level">1</span></div>
+</div>
+
+<div id="controls">
+  <button id="startBtn">Boshlash</button>
+  <button id="resetBtn">Qayta boshlash</button>
+</div>
+
+<div id="game-board"></div>
+
+<script>
+const board = document.getElementById('game-board');
+const scoreEl = document.getElementById('score');
+const matchesEl = document.getElementById('matches');
+const timerEl = document.getElementById('timer');
+const levelEl = document.getElementById('level');
+const startBtn = document.getElementById('startBtn');
+const resetBtn = document.getElementById('resetBtn');
+
+let firstCard = null;
+let secondCard = null;
+let lockBoard = false;
+let score = 0;
+let matches = 0;
+let timer = 60;
+let intervalId = null;
+let level = 1;
+let cardsArray = ['A','B','C','D','E','F','G','H'];
+let gameArray = [];
+
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+function createBoard() {
+  board.innerHTML = '';
+  gameArray = [...cardsArray, ...cardsArray];
+  const shuffled = shuffle(gameArray);
+  shuffled.forEach((item) => {
+    const card = document.createElement('div');
+    card.classList.add('card');
+    card.dataset.value = item;
+    card.innerText = '';
+    card.addEventListener('click', flipCard);
+    board.appendChild(card);
+  });
+}
+
+function flipCard(e) {
+  if(lockBoard) return;
+  const card = e.currentTarget;
+  if(card === firstCard) return;
+
+  card.classList.add('flipped');
+  card.innerText = card.dataset.value;
+
+  if(!firstCard) {
+    firstCard = card;
+    return;
+  }
+
+  secondCard = card;
+  lockBoard = true;
+
+  if(firstCard.dataset.value === secondCard.dataset.value) {
+    firstCard.classList.add('matched');
+    secondCard.classList.add('matched');
+    resetTurn();
+    matches++;
+    score += 10;
+    updateScore();
+    if(matches === cardsArray.length) {
+      clearInterval(intervalId);
+      alert(`Level ${level} yakunlandi!`);
+      level++;
+      nextLevel();
+    }
+  } else {
+    setTimeout(() => {
+      firstCard.classList.remove('flipped');
+      secondCard.classList.remove('flipped');
+      firstCard.innerText = '';
+      secondCard.innerText = '';
+      resetTurn();
+      score = Math.max(0, score - 2);
+      updateScore();
+    }, 1000);
+  }
+}
+
+function resetTurn() {
+  [firstCard, secondCard] = [null, null];
+  lockBoard = false;
+}
+
+function updateScore() {
+  scoreEl.innerText = score;
+  matchesEl.innerText = matches;
+  levelEl.innerText = level;
+}
+
+function startGame() {
+  setLevelParameters();
+  createBoard();
+  score = 0;
+  matches = 0;
+  updateScore();
+  timerEl.innerText = timer;
+  clearInterval(intervalId);
+  intervalId = setInterval(() => {
+    timer--;
+    timerEl.innerText = timer;
+    if(timer <= 0) {
+      clearInterval(intervalId);
+      alert('Vaqt tugadi! O‘yin tugadi.');
+      lockBoard = true;
+    }
+  }, 1000);
+}
+
+function resetGame() {
+  clearInterval(intervalId);
+  level = 1;
+  startGame();
+}
+
+function setLevelParameters() {
+  // Level ga qarab qiyinchilik
+  if(level === 1){
+    cardsArray = ['A','B','C','D'];
+    timer = 60;
+  } else if(level === 2){
+    cardsArray = ['A','B','C','D','E','F'];
+    timer = 50;
+  } else if(level === 3){
+    cardsArray = ['A','B','C','D','E','F','G','H'];
+    timer = 40;
+  } else if(level === 4){
+    cardsArray = ['A','B','C','D','E','F','G','H','I','J'];
+    timer = 35;
+  } else if(level >= 5){
+    cardsArray = ['A','B','C','D','E','F','G','H','I','J','K','L'];
+    timer = 30;
+  }
+}
+
+function nextLevel() {
+  setLevelParameters();
+  matches = 0;
+  score += 20; // bonus
+  updateScore();
+  createBoard();
+  timerEl.innerText = timer;
+  clearInterval(intervalId);
+  lockBoard = false;
+  intervalId = setInterval(() => {
+    timer--;
+    timerEl.innerText = timer;
+    if(timer <= 0) {
+      clearInterval(intervalId);
+      alert('Vaqt tugadi! O‘yin tugadi.');
+      lockBoard = true;
+    }
+  }, 1000);
+}
+
+startBtn.addEventListener('click', startGame);
+resetBtn.addEventListener('click', resetGame);
+</script>
+
+</body>
+</html>

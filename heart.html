@@ -1,0 +1,300 @@
+
+<!DOCTYPE html><html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loyihalar PRO</title><style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0f172a;
+    color: white;
+}
+
+.container {
+    padding: 20px;
+}
+
+.projects {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: #1e293b;
+    border-radius: 14px;
+    padding: 15px;
+}
+
+.preview {
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+/* HEART */
+.heart-box {
+    position: relative;
+    height: 250px;
+    background: black;
+}
+
+.heart-box canvas {
+    width: 100%;
+    height: 100%;
+}
+
+.welcome-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    color: white;
+}
+
+/* CODE */
+.code-box {
+    background: #020617;
+    border-radius: 10px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.code-header {
+    display: flex;
+    justify-content: space-between;
+    background: #020617;
+    padding: 8px 10px;
+    font-size: 13px;
+    color: #38bdf8;
+}
+
+.copy-btn {
+    background: #38bdf8;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+pre {
+    margin: 0;
+    padding: 10px;
+    font-size: 12px;
+    overflow-x: auto;
+}
+
+/* rangli */
+.html { color: #f87171; }
+.css { color: #60a5fa; }
+.js { color: #facc15; }
+</style></head><body>
+  <div class="card">
+
+<div class="preview heart-box">
+    <canvas class="heartCanvas"></canvas>
+    <div class="welcome-text">Hello World</div>
+</div>
+
+<!-- HTML -->
+<div class="code-box">
+    <div class="code-header">
+        HTML
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+<pre class="html">
+&lt;div class="heart-box"&gt;
+    &lt;canvas class="heartCanvas"&gt;&lt;/canvas&gt;
+    &lt;div class="welcome-text"&gt;Welcome to our website&lt;/div&gt;
+&lt;/div&gt;
+</pre>
+</div>
+
+<!-- CSS -->
+<div class="code-box">
+    <div class="code-header">
+        CSS
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+<pre class="css">
+.heart-box {
+    position: relative;
+    height: 250px;
+    background: black;
+    overflow: hidden;
+}
+
+.heart-box canvas {
+    width: 100%;
+    height: 100%;
+}
+
+.welcome-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    opacity: 0;
+}
+</pre>
+</div>
+
+<!-- JS -->
+<div class="code-box">
+    <div class="code-header">
+        JS
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+    </div>
+<pre class="js">
+function heartX(k){return 15*Math.pow(Math.sin(k),3);}
+function heartY(k){return -(13*Math.cos(k)-5*Math.cos(2*k)-2*Math.cos(3*k)-Math.cos(4*k));}
+
+document.querySelectorAll(".heartCanvas").forEach(canvas => {
+    const ctx = canvas.getContext("2d");
+    const box = canvas.parentElement;
+    const text = box.querySelector(".welcome-text");
+
+    canvas.width = box.clientWidth;
+    canvas.height = box.clientHeight;
+
+    let t=0,particles=[],done=false,start=null;
+
+    class P{
+        constructor(){
+            this.x=canvas.width/2;
+            this.y=canvas.height/2;
+            let a=Math.random()*6.28,s=Math.random()*3;
+            this.sx=Math.cos(a)*s;
+            this.sy=Math.sin(a)*s;
+            this.a=1;
+        }
+        u(){this.x+=this.sx;this.y+=this.sy;this.a-=0.02;}
+        d(){
+            ctx.globalAlpha=this.a;
+            ctx.fillStyle="#f73487";
+            ctx.beginPath();
+            ctx.arc(this.x,this.y,2,0,6.28);
+            ctx.fill();
+            ctx.globalAlpha=1;
+        }
+    }
+
+    function anim(time){
+        ctx.fillStyle="rgba(0,0,0,0.2)";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+
+        if(t<6.28){
+            ctx.strokeStyle="#f73487";
+            ctx.beginPath();
+            for(let j=0;j<=t;j+=0.1){
+                let x=canvas.width/2+heartX(j)*5;
+                let y=canvas.height/2+heartY(j)*5;
+                j?ctx.lineTo(x,y):ctx.moveTo(x,y);
+            }
+            ctx.stroke();
+            t+=0.05;
+            if(t>=6.28){done=true;start=time;}
+        }
+
+        if(done){
+            if(time-start<2000) particles.push(new P());
+            else text.style.opacity=1;
+        }
+
+        particles.forEach((p,i)=>{
+            p.u();p.d();
+            if(p.a<=0) particles.splice(i,1);
+        });
+
+        requestAnimationFrame(anim);
+    }
+
+    anim();
+});
+</pre>
+</div>
+
+</div>
+  <script>
+function copyCode(btn){
+    const code = btn.parentElement.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code);
+    btn.innerText = "Copied!";
+    setTimeout(()=>btn.innerText="Copy",1000);
+}
+
+/* ❤️ HEART */
+document.querySelectorAll(".heartCanvas").forEach(canvas => {
+    const ctx = canvas.getContext("2d");
+    const box = canvas.parentElement;
+    const text = box.querySelector(".welcome-text");
+
+    function resize(){
+        canvas.width = box.clientWidth;
+        canvas.height = box.clientHeight;
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    let t=0,particles=[],done=false,start=null;
+
+    function heartX(k){return 15*Math.pow(Math.sin(k),3);}
+    function heartY(k){return -(13*Math.cos(k)-5*Math.cos(2*k)-2*Math.cos(3*k)-Math.cos(4*k));}
+
+    class P{
+        constructor(){
+            this.x=canvas.width/2;
+            this.y=canvas.height/2;
+            let a=Math.random()*6.28,s=Math.random()*3;
+            this.sx=Math.cos(a)*s;
+            this.sy=Math.sin(a)*s;
+            this.a=1;
+        }
+        u(){this.x+=this.sx;this.y+=this.sy;this.a-=0.02;}
+        d(){
+            ctx.globalAlpha=this.a;
+            ctx.fillStyle="#f73487";
+            ctx.beginPath();
+            ctx.arc(this.x,this.y,2,0,6.28);
+            ctx.fill();
+            ctx.globalAlpha=1;
+        }
+    }
+
+    function anim(time){
+        ctx.fillStyle="rgba(0,0,0,0.2)";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+
+        if(t<6.28){
+            ctx.strokeStyle="#f73487";
+            ctx.beginPath();
+            for(let j=0;j<=t;j+=0.1){
+                let x=canvas.width/2+heartX(j)*5;
+                let y=canvas.height/2+heartY(j)*5;
+                j?ctx.lineTo(x,y):ctx.moveTo(x,y);
+            }
+            ctx.stroke();
+            t+=0.05;
+            if(t>=6.28){done=true;start=time;}
+        }
+
+        if(done){
+            if(time-start<2000) particles.push(new P());
+            else text.style.opacity=1;
+        }
+
+        particles.forEach((p,i)=>{
+            p.u();p.d();
+            if(p.a<=0) particles.splice(i,1);
+        });
+
+        requestAnimationFrame(anim);
+    }
+
+    anim();
+});
+</script></body>
+</html>

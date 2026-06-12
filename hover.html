@@ -1,0 +1,359 @@
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Hover Div Gallery</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#111827;
+    padding:20px;
+    color:white;
+}
+
+/* PREVIEW */
+
+.preview-box{
+    width:100%;
+    min-height:350px;
+    background:black;
+    border-radius:25px;
+    padding:25px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+    gap:20px;
+    place-items:center;
+}
+
+/* HOVER DIVS */
+
+.hover-box{
+    width:100%;
+    height:120px;
+    border-radius:20px;
+    cursor:pointer;
+    transition:0.5s;
+    position:relative;
+    overflow:hidden;
+}
+
+/* 1 */
+
+.box1{
+    background:#38bdf8;
+}
+
+.box1:hover{
+    transform:translateY(-10px);
+}
+
+/* 2 */
+
+.box2{
+    background:#f43f5e;
+}
+
+.box2:hover{
+    transform:rotate(8deg);
+}
+
+/* 3 */
+
+.box3{
+    background:#22c55e;
+}
+
+.box3:hover{
+    transform:scale(1.1);
+}
+
+/* 4 */
+
+.box4{
+    background:#facc15;
+}
+
+.box4:hover{
+    border-radius:50%;
+}
+
+/* 5 */
+
+.box5{
+    background:#8b5cf6;
+}
+
+.box5::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:rgba(255,255,255,0.3);
+    transform:translateX(-100%);
+    transition:0.5s;
+}
+
+.box5:hover::before{
+    transform:translateX(100%);
+}
+
+/* 6 */
+
+.box6{
+    background:#fb923c;
+}
+
+.box6:hover{
+    box-shadow:0 0 30px #fb923c;
+}
+
+/* 7 */
+
+.box7{
+    background:#14b8a6;
+}
+
+.box7:hover{
+    transform:skew(-10deg);
+}
+
+/* 8 */
+
+.box8{
+    background:#ec4899;
+}
+
+.box8::after{
+    content:"";
+    position:absolute;
+    width:0;
+    height:0;
+    background:rgba(255,255,255,0.4);
+    border-radius:50%;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    transition:0.5s;
+}
+
+.box8:hover::after{
+    width:250px;
+    height:250px;
+}
+
+/* 9 */
+
+.box9{
+    background:#6366f1;
+}
+
+.box9:hover{
+    transform:rotateY(180deg);
+}
+
+/* 10 */
+
+.box10{
+    background:#ef4444;
+}
+
+.box10:hover{
+    transform:scale(0.9) rotate(-5deg);
+    box-shadow:0 15px 30px rgba(0,0,0,0.5);
+}
+
+/* CODE BOX */
+
+.code-section{
+    margin-top:25px;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+.code-box{
+    background:#020617;
+    border-radius:20px;
+    padding:20px;
+    position:relative;
+    overflow:auto;
+}
+
+.code-title{
+    color:#38bdf8;
+    font-size:30px;
+    margin-bottom:20px;
+}
+
+.copy-btn{
+    position:absolute;
+    top:20px;
+    right:20px;
+    border:none;
+    background:#38bdf8;
+    color:black;
+    padding:10px 20px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+pre{
+    white-space:pre-wrap;
+    color:#f87171;
+    font-size:15px;
+    line-height:1.7;
+}
+
+@media(max-width:600px){
+
+    .preview-box{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .hover-box{
+        height:100px;
+    }
+
+}
+
+</style>
+</head>
+<body>
+
+<!-- PREVIEW -->
+
+<div class="preview-box">
+
+    <div class="hover-box box1"></div>
+    <div class="hover-box box2"></div>
+    <div class="hover-box box3"></div>
+    <div class="hover-box box4"></div>
+    <div class="hover-box box5"></div>
+    <div class="hover-box box6"></div>
+    <div class="hover-box box7"></div>
+    <div class="hover-box box8"></div>
+    <div class="hover-box box9"></div>
+    <div class="hover-box box10"></div>
+
+</div>
+
+<!-- HTML CODE -->
+
+<div class="code-section">
+
+<div class="code-box">
+
+<div class="code-title">HTML</div>
+
+<button class="copy-btn" onclick="copyCode('htmlCode')">
+Copy
+</button>
+
+<pre id="htmlCode">
+
+&lt;div class="hover-box box1"&gt;&lt;/div&gt;
+&lt;div class="hover-box box2"&gt;&lt;/div&gt;
+&lt;div class="hover-box box3"&gt;&lt;/div&gt;
+&lt;div class="hover-box box4"&gt;&lt;/div&gt;
+&lt;div class="hover-box box5"&gt;&lt;/div&gt;
+&lt;div class="hover-box box6"&gt;&lt;/div&gt;
+&lt;div class="hover-box box7"&gt;&lt;/div&gt;
+&lt;div class="hover-box box8"&gt;&lt;/div&gt;
+&lt;div class="hover-box box9"&gt;&lt;/div&gt;
+&lt;div class="hover-box box10"&gt;&lt;/div&gt;
+
+</pre>
+
+</div>
+
+<!-- CSS CODE -->
+
+<div class="code-box">
+
+<div class="code-title">CSS</div>
+
+<button class="copy-btn" onclick="copyCode('cssCode')">
+Copy
+</button>
+
+<pre id="cssCode">
+
+.hover-box{
+    width:100%;
+    height:120px;
+    border-radius:20px;
+    transition:0.5s;
+}
+
+.box1:hover{
+    transform:translateY(-10px);
+}
+
+.box2:hover{
+    transform:rotate(8deg);
+}
+
+.box3:hover{
+    transform:scale(1.1);
+}
+
+.box4:hover{
+    border-radius:50%;
+}
+
+.box5:hover::before{
+    transform:translateX(100%);
+}
+
+.box6:hover{
+    box-shadow:0 0 30px orange;
+}
+
+.box7:hover{
+    transform:skew(-10deg);
+}
+
+.box8:hover::after{
+    width:250px;
+    height:250px;
+}
+
+.box9:hover{
+    transform:rotateY(180deg);
+}
+
+.box10:hover{
+    transform:scale(0.9);
+}
+
+</pre>
+
+</div>
+
+</div>
+
+<script>
+
+function copyCode(id){
+
+    let text=document.getElementById(id).innerText;
+
+    navigator.clipboard.writeText(text);
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Football Quiz</title>
+<style>
+*{box-sizing:border-box;}
+body{margin:0;font-family:Arial;background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);color:white;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:10px;}
+.container{width:100%;max-width:600px;background:rgba(0,0,0,0.9);padding:20px;border-radius:20px;text-align:center;}
+button{width:100%;padding:10px;margin:5px 0;border:none;border-radius:10px;cursor:pointer;font-size:15px;transition:0.3s;}
+button:hover{background:gold;color:black;}
+.hidden{display:none;}
+.topbar{display:flex;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px;font-size:14px;}
+@media(max-width:500px){.topbar{flex-direction:column;align-items:center;gap:5px;} button{font-size:14px;}}
+select{margin-bottom:10px;padding:5px;border-radius:5px;border:none;}
+.controls{display:flex;justify-content:space-around;margin-top:15px;}
+.control-btn{width:30%;padding:10px;border-radius:10px;}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h2 id="title">⚽ Football Quiz </h2>
+
+<!-- Bosh sahifa -->
+<div id="home">
+<label id="langLabel">Tilni tanlang:</label>
+<select id="language">
+<option value="uz">🇺🇿 Uzbek</option>
+<option value="ru">🇷🇺 Russian</option>
+<option value="en">🇬🇧 English</option>
+</select>
+<br>
+<button id="startBtn">🎮 Boshlash</button>
+<button id="shopBtnHome">💎 Do'kon</button>
+</div>
+
+<!-- O'yin qismi -->
+<div id="game" class="hidden">
+<div class="topbar">
+<span id="levelLabel">Level: <span id="levelNum"></span></span>
+<span id="pointLabel">⭐ <span id="point"></span></span>
+<span id="coinLabel">🪙 <span id="coin"></span></span>
+<span id="hintLabel">💡 <span id="hintCount"></span></span>
+<span id="timerLabel">⏱ <span id="timer"></span></span>
+</div>
+
+<h3 id="emoji"></h3>
+<h3 id="question"></h3>
+<div id="answers"></div>
+
+<div class="controls">
+<button id="hintBtn" class="control-btn">💡 Hint</button>
+<button id="checkBtn" class="control-btn">✅ Tekshirish</button>
+<button id="nextBtn" class="control-btn hidden">➡ Keyingi</button>
+<button id="backToHome" class="control-btn">⬅ Orqaga</button>
+</div>
+<h3 id="result"></h3>
+</div>
+
+<!-- Do'kon -->
+<div id="shop" class="hidden">
+<h3 id="shopTitle">💎 Do'kon</h3>
+<button class="buyBtn" data-amount="10">10 Coin (100 point)</button>
+<button class="buyBtn" data-amount="50">50 Coin (500 point)</button>
+<button class="buyBtn" data-amount="100">100 Coin (1000 point)</button>
+<button id="backBtn">⬅ Orqaga</button>
+</div>
+
+</div>
+
+<script>
+// ===== SAVOLLAR =====
+const questions=[
+{question:{uz:"Uzbekistondagi taniqliroq fudbolchi kim?",ru:"Кто самый известный футболист в Узбекистане?",en:"Who is the most famous football player in Uzbekistan?"},
+answers:[
+{uz:"Eldor Shomurodov",ru:"Эльдор Шомуродов",en:"Eldor Shomurodov"},
+{uz:"Javokhir Sidikov",ru:"Джавохир Сидиков",en:"Javokhir Sidikov"},
+{uz:"Farruh Sayfiyev",ru:"Фаррух Сайфиев",en:"Farruh Sayfiyev"},
+{uz:"Shahrom Samiev",ru:"Шахром Самиев",en:"Shahrom Samiev"}],correct:0},
+{question:{uz:"O'zbekiston klubi?",ru:"Узбекистан клуб?",en:"Uzbekistan club?"},
+answers:[
+{uz:"Pakhtakor",ru:"Пахтакор",en:"Pakhtakor"},
+{uz:"Kayrat",ru:"Кайрат",en:"Khayrat FC"},
+{uz:"Arsenal",ru:"Арсенал",en:"Arsenal"},
+{uz:"Napoli",ru:"Наполи",en:"Napoli"}],correct:0},
+{question:{uz:"Qaysi klub UCLni yutgan?",ru:"Какой клуб выиграл ЛЧ", en:"Which club has won the UCL"},
+answers:[
+{uz:"Pakhtakor",ru:"Пахтакор",en:"Pakhtakor"},
+{uz:"Real Madrid",ru:"Реал Мадрит",en:"Real Madrid FC"},
+{uz:"Arsenal",ru:"Арсенал",en:"Arsenal"},
+{uz:"Napoli",ru:"Наполи",en:"Napoli"}],correct:1},
+{ question:{uz:"Eng ko'p jahon chempioni qaysi davlat?", ru:"Какая страна имеет наибольшее количество чемпионов мира?", en:"Which country has the most world champions?"},
+answers:[
+{uz:"Braziliya",ru:"Бразилия", en:"Brazil"},
+{uz:"Fransiya",ru:"Франсия", en:"France"},
+{uz:"Germaniya",ru:"Германия", en:"Germany"},
+{uz:"Italiya",ru:"Италия", en:"Italy"},],correct:0},
+{ question:{uz:"Uzbekistonning qaysi fudbolchisida fudbol academiyasi bor?", ru:"У какого узбекского футболиста есть футбольная академия?", en:"Which Uzbek football player has a football academy?"},
+answers:[
+{uz:"Eldor Shomurodov",ru:"Эльдор Шомуродов", en:"Eldor Shomurodov"},
+{uz:"Abbosbek Fayzullayev",ru:"Аббасбек Файзуллаев", en:"Abbosbek Fayzullayev"},
+{uz:"Abduqodir Husanov",ru:"Абдукадир Хусанов", en:"Abdukhodir KHusanov"},
+{uz:"O'tkir Yusupov",ru:"Откир Юсупов", en:"Utkir Yusupov"},],correct:0},
+{ question:{uz:"Bu fudbolchini belgilardan toping?  🐐⚽CR7", ru:"Найти этого футболиста среди символов? 🐐⚽CR7", en:"Nighty etogo football player sredi simbolov? 🐐⚽CR7"},
+answers:[
+{uz:"Cristiano Ronaldo ",ru:"Криштиано Роналдо", en:"Cristiano Ronaldo"},
+{uz:"Klyan Mbappe", ru:"Клян Мбаппе", en:"Klyan Mbappe"},
+{uz:"Karim Benzema",ru:"Карим Бензема", en:"Karim Benzema"},],correct:0},
+{question:{uz:"Futbol bo'yicha birinchi jahon chempionati qayerda o'tkazilgan?",ru:"Где прошел первый чемпионат мира по футболу?",en:"Where was the first FIFA World Cup held?"},
+answers:[
+{uz:"Braziliya",ru:"Бразилия",en:"Brazil"},
+{uz:"Urugvay",ru:"Уругвай",en:"Uruguay"},
+{uz:"Italiya",ru:"Италия",en:"Italy"},
+{uz:"Fransiya",ru:"Франция",en:"France"}],correct:1},
+{question:{uz:"Qaysi futbolchi eng ko'p Oltin to'p (Ballon d'Or) sohibi?",ru:"Кто выиграл больше всего Золотых мячей?",en:"Who has won the most Ballon d'Or awards?"},
+answers:[
+{uz:"C. Ronaldo",ru:"К. Роналду",en:"C. Ronaldo"},
+{uz:"Zidane",ru:"Зидан",en:"Zidane"},
+{uz:"L. Messi",ru:"Л. Месси",en:"L. Messi"},
+{uz:"Pele",ru:"Пеле",en:"Pele"}],correct:2},
+{question:{uz:"Futbol o'yini necha daqiqa davom etadi (qo'shib berilgan vaqtsiz)?",ru:"Сколько минут длится футбольный матч?",en:"How many minutes does a football match last?"},
+answers:[
+{uz:"80 daqiqa",ru:"80 минут",en:"80 minutes"},
+{uz:"90 daqiqa",ru:"90 минут",en:"90 minutes"},
+{uz:"100 daqiqa",ru:"100 минут",en:"100 minutes"},
+{uz:"45 daqiqa",ru:"45 минут",en:"45 minutes"}],correct:1},
+{question:{uz:"Jahon chempionatlarida eng ko'p g'olib chiqqan davlat qaysi?",ru:"Какая страна чаще всего выигрывала ЧМ?",en:"Which country has won the most World Cups?"},
+answers:[
+{uz:"Germaniya",ru:"Германия",en:"Germany"},
+{uz:"Fransiya",ru:"Франция",en:"France"},
+{uz:"Italiya",ru:"Италия",en:"Italy"},
+{uz:"Braziliya",ru:"Бразилия",en:"Brazil"}],correct:3},
+{question:{uz:"Qaysi klub 'Qirollik klubi' laqabi bilan mashhur?",ru:"Какой клуб известен как 'Королевский клуб'?",en:"Which club is known as the 'Royal Club'?"},
+answers:[
+{uz:"Barcelona",ru:"Барселона",en:"Barcelona"},
+{uz:"Real Madrid",ru:"Реал Мадрид",en:"Real Madrid"},
+{uz:"Juventus",ru:"Ювентус",en:"Juventus"},
+{uz:"Bayern",ru:"Бавария",en:"Bayern"}],correct:1},
+{question:{uz:"Futbol darvozasining eni necha metr?",ru:"Какова ширина футбольных ворот?",en:"What is the width of a football goal?"},
+answers:[
+{uz:"7.32 metr",ru:"7.32 метра",en:"7.32 meters"},
+{uz:"8.00 metr",ru:"8.00 метров",en:"8.00 meters"},
+{uz:"6.50 metr",ru:"6.50 метров",en:"6.50 meters"},
+{uz:"7.00 metr",ru:"7.00 метров",en:"7.00 meters"}],correct:0},
+{question:{uz:"Qaysi darvozabon 'Qora pantera' laqabini olgan?",ru:"Какой вратарь получил прозвище 'Черная пантера'?",en:"Which goalkeeper was nicknamed the 'Black Panther'?"},
+answers:[
+{uz:"Buffon",ru:"Буффон",en:"Buffon"},
+{uz:"Neuer",ru:"Нойер",en:"Neuer"},
+{uz:"Lev Yashin",ru:"Лев Яшин",en:"Lev Yashin"},
+{uz:"Casillas",ru:"Касильяс",en:"Casillas"}],correct:2},
+{question:{uz:"Bitta o'yinda 5 ta gol urish nima deb ataladi?",ru:"Как называется 5 голов в одном матче?",en:"What is it called when a player scores 5 goals in a match?"},
+answers:[
+{uz:"Xet-trik",ru:"Хет-трик",en:"Hat-trick"},
+{uz:"Poker",ru:"Покер",en:"Poker"},
+{uz:"Penta-trik",ru:"Пента-трик",en:"Penta-trick"},
+{uz:"Dubl",ru:"Дубль",en:"Double"}],correct:2},
+{question:{uz:"O'zbekiston milliy terma jamoasi 1994-yilda qaysi musobaqada g'olib bo'lgan?",ru:"Какой турнир выиграла сборная Узбекистана в 1994 году?",en:"Which tournament did Uzbekistan win in 1994?"},
+answers:[
+{uz:"Osiyo kubogi",ru:"Кубок Азии",en:"Asian Cup"},
+{uz:"Osiyo o'yinlari",ru:"Азиатские игры",en:"Asian Games"},
+{uz:"Jahon chempionati",ru:"ЧМ",en:"World Cup"},
+{uz:"Olimpiada",ru:"Олимпиада",en:"Olympics"}],correct:1},
+{question:{uz:"Qaysi stadion dunyodagi eng katta stadion hisoblanadi?",ru:"Какой стадион считается самым большим в мире?",en:"Which stadium is considered the largest in the world?"},
+answers:[
+{uz:"Camp Nou",ru:"Камп Ноу",en:"Camp Nou"},
+{uz:"Wembley",ru:"Уэмбли",en:"Wembley"},
+{uz:"Rungrado",ru:"Первого мая",en:"Rungrado"},
+{uz:"Marakana",ru:"Маракана",en:"Maracana"}],correct:2},
+{question:{uz:"Sariq va qizil kartochkalar qachon joriy qilingan?",ru:"Когда ввели желтые и красные карточки?",en:"When were yellow and red cards introduced?"},
+answers:[
+{uz:"1970-yil",ru:"1970 год",en:"1970"},
+{uz:"1950-yil",ru:"1950 год",en:"1950"},
+{uz:"1982-yil",ru:"1982 год",en:"1982"},
+{uz:"1960-yil",ru:"1960 год",en:"1960"}],correct:0},
+{question:{uz:"Qaysi futbolchi 'Futbol qiroli' deb ataladi?",ru:"Кого называют 'Королем футбола'?",en:"Who is called the 'King of Football'?"},
+answers:[
+{uz:"Cristiano Ronaldo",ru:"Криштиано Раналдо",en:"Cristiano Ronaldo"},
+{uz:"Pele",ru:"Пеле",en:"Pele"},
+{uz:"Cruyff",ru:"Кройф",en:"Cruyff"},
+{uz:"Eusebio",ru:"Эйсебио",en:"Eusebio"}],correct:0},
+{question:{uz:"Yevropa Chempionlar Ligasida eng ko'p g'olib chiqqan klub?",ru:"Какой клуб чаще всего выигрывал Лигу чемпионов?",en:"Which club has won the UEFA Champions League the most?"},
+answers:[
+{uz:"Milan",ru:"Милан",en:"Milan"},
+{uz:"Liverpool",ru:"Ливерпуль",en:"Liverpool"},
+{uz:"Real Madrid",ru:"Реал Мадрид",en:"Real Madrid"},
+{uz:"Bayern",ru:"Бавария",en:"Bayern"}],correct:2},
+{question:{uz:"Penalti nuqtasi darvozadan necha metr uzoqlikda?",ru:"На каком расстоянии находится точка пенальти?",en:"How many meters is the penalty spot from the goal?"},
+answers:[
+{uz:"9 metr",ru:"9 метров",en:"9 meters"},
+{uz:"11 metr",ru:"11 метров",en:"11 meters"},
+{uz:"12 metr",ru:"12 метров",en:"12 meters"},
+{uz:"10 metr",ru:"10 метров",en:"10 meters"}],correct:1},
+{question:{uz:"APLda bir mavsumda eng ko'p gol urgan futbolchi?",ru:"Кто забил больше всех голов за сезон в АПЛ?",en:"Who scored the most goals in a single EPL season?"},
+answers:[
+{uz:"Salah",ru:"Салах",en:"Salah"},
+{uz:"Haaland",ru:"Холанд",en:"Haaland"},
+{uz:"Shearer",ru:"Ширер",en:"Shearer"},
+{uz:"Suarez",ru:"Суарес",en:"Suarez"}],correct:1},
+{question:{uz:"Futbol to'pining og'irligi qancha bo'lishi kerak?",ru:"Сколько должен весить футбольный мяч?",en:"How much should a football weigh?"},
+answers:[
+{uz:"410-450 gramm",ru:"410-450 грамм",en:"410-450 grams"},
+{uz:"300-350 gramm",ru:"300-350 грамм",en:"300-350 grams"},
+{uz:"500-550 gramm",ru:"500-550 грамм",en:"500-550 grams"},
+{uz:"350-400 gramm",ru:"350-400 грамм",en:"350-400 grams"}],correct:0},
+{question:{uz:"Qaysi davlat 'Samba ustalari' deb ataladi?",ru:"Какую сборную называют 'Мастерами самбы'?",en:"Which team is called the 'Samba Masters'?"},
+answers:[
+{uz:"Ispaniya",ru:"Испания",en:"Spain"},
+{uz:"Portugaliya",ru:"Португалия",en:"Portugal"},
+{uz:"Argentina",ru:"Аргентина",en:"Argentina"},
+{uz:"Braziliya",ru:"Бразилия",en:"Brazil"}],correct:3},
+{question:{uz:"2010-yilgi Jahon chempionatida qaysi davlat g'olib bo'lgan?",ru:"Кто выиграл ЧМ в 2010 году?",en:"Which country won the 2010 World Cup?"},
+answers:[
+{uz:"Ispaniya",ru:"Испания",en:"Spain"},
+{uz:"Gollandiya",ru:"Голландия",en:"Netherlands"},
+{uz:"Germaniya",ru:"Германия",en:"Germany"},
+{uz:"Urugvay",ru:"Уругвай",en:"Uruguay"}],correct:0},
+{question:{uz:"Zinedine Zidane qaysi davlat terma jamoasida o'ynagan?",ru:"За какую сборную играл Зинедин Зидан?",en:"Which national team did Zinedine Zidane play for?"},
+answers:[
+{uz:"Jazoir",ru:"Алжир",en:"Algeria"},
+{uz:"Fransiya",ru:"Франция",en:"France"},
+{uz:"Italiya",ru:"Италия",en:"Italy"},
+{uz:"Ispaniya",ru:"Испания",en:"Spain"}],correct:1},
+{question:{uz:"Qaysi klub 'Manchester derbisi'da ishtirok etadi?",ru:"Какие клубы участвуют в манчестерском дерби?",en:"Which clubs participate in the Manchester derby?"},
+answers:[
+{uz:"MU va MC",ru:"МЮ и МС",en:"MU and MC"},
+{uz:"MU va Liverpool",ru:"МЮ и Ливерпуль",en:"MU and Liverpool"},
+{uz:"MC va Chelsea",ru:"МС и Челси",en:"MC and Chelsea"},
+{uz:"MU va Arsenal",ru:"МЮ и Арсенал",en:"MU and Arsenal"}],correct:0},
+{question:{uz:"Darvozabon o'z jarima maydonchasida to'pni qo'li bilan necha soniya ushlab turishi mumkin?",ru:"Сколько секунд вратарь может держать мяч в руках?",en:"How many seconds can a goalkeeper hold the ball?"},
+answers:[
+{uz:"10 soniya",ru:"10 секунд",en:"10 seconds"},
+{uz:"5 soniya",ru:"5 секунд",en:"5 seconds"},
+{uz:"6 soniya",ru:"6 секунд",en:"6 seconds"},
+{uz:"8 soniya",ru:"8 секунд",en:"8 seconds"}],correct:2},
+{question:{uz:"Qaysi futbolchi 'Fenomen' laqabini olgan?",ru:"Какой футболист получил прозвище 'Феномен'?",en:"Which football player was nicknamed 'The Phenomenon'?"},
+answers:[
+{uz:"C. Ronaldo",ru:"К. Роналду",en:"C. Ronaldo"},
+{uz:"Ronaldo (R9)",ru:"Роналдо",en:"Ronaldo (R9)"},
+{uz:"Ronaldinho",ru:"Роналдиньо",en:"Ronaldinho"},
+{uz:"Kaka",ru:"Кака",en:"Kaka"}],correct:1},
+{question:{uz:"Jahon chempionati kubogi necha yilda bir marta o'ynaladi?",ru:"Как часто проводится чемпионат мира?",en:"How often is the World Cup held?"},
+answers:[
+{uz:"2 yil",ru:"2 года",en:"2 years"},
+{uz:"4 yil",ru:"4 года",en:"4 years"},
+{uz:"5 yil",ru:"5 лет",en:"5 years"},
+{uz:"3 yil",ru:"3 года",en:"3 years"}],correct:1},
+{question:{uz:"O'zbekistonlik qaysi hakam 2 ta Jahon chempionatida ishlagan?",ru:"Какой судья из Узбекистана работал на двух ЧМ?",en:"Which Uzbek referee worked at two World Cups?"},
+answers:[
+{uz:"Ravshan Ermatov",ru:"Равшан Ирматов",en:"Ravshan Irmatov"},
+{uz:"Valentin Kovalenko",ru:"В. Коваленко",en:"V. Kovalenko"},
+{uz:"Ilgiiz Tantashev",ru:"И. Танташев",en:"Ilgiz Tantashev"},
+{uz:"Sherzod Qosimov",ru:"Ш. Касимов",en:"Sherzod Kasimov"}],correct:0}
+
+];
+
+// ===== O‘YIN =====
+let currentLevel=1,point=0,coin=parseInt(localStorage.getItem("coin"))||50,hintCount=0,currentQuestion=0,selectedAnswer=null,timer,timeLeft=60,lang="uz";
+
+// DOM
+const home=document.getElementById("home"),game=document.getElementById("game"),shop=document.getElementById("shop");
+const startBtn=document.getElementById("startBtn"),languageSelect=document.getElementById("language");
+const checkBtn=document.getElementById("checkBtn"),hintBtn=document.getElementById("hintBtn"),nextBtn=document.getElementById("nextBtn");
+const shopBtnHome=document.getElementById("shopBtnHome"),backBtn=document.getElementById("backBtn"),backToHome=document.getElementById("backToHome");
+const emojiEl=document.getElementById("emoji"),questionEl=document.getElementById("question"),answersEl=document.getElementById("answers");
+const pointEl=document.getElementById("point"),coinEl=document.getElementById("coin"),hintEl=document.getElementById("hintCount"),levelEl=document.getElementById("levelNum"),timerEl=document.getElementById("timer"),resultEl=document.getElementById("result");
+const titleEl=document.getElementById("title"),langLabel=document.getElementById("langLabel"),startBtnEl=document.getElementById("startBtn"),shopBtnEl=document.getElementById("shopBtnHome"),shopTitle=document.getElementById("shopTitle");
+
+// ===== TRANSLATE =====
+function translateUI(){
+if(lang==="uz"){
+titleEl.innerText="⚽ Football Quiz PRO";
+langLabel.innerText="Tilni tanlang:";
+startBtnEl.innerText="🎮 Boshlash";
+shopBtnEl.innerText="💎 Do'kon";
+shopTitle.innerText="💎 Do'kon";
+checkBtn.innerText="✅ Tekshirish";
+hintBtn.innerText="💡 Hint";
+nextBtn.innerText="➡ Keyingi";
+backToHome.innerText="⬅ Orqaga";
+backBtn.innerText="⬅ Orqaga";
+}else if(lang==="ru"){
+titleEl.innerText="⚽ Футбольная Викторина PRO";
+langLabel.innerText="Выберите язык:";
+startBtnEl.innerText="🎮 Начать";
+shopBtnEl.innerText="💎 Магазин";
+shopTitle.innerText="💎 Магазин";
+checkBtn.innerText="✅ Проверить";
+hintBtn.innerText="💡 Подсказка";
+nextBtn.innerText="➡ Далее";
+backToHome.innerText="⬅ Назад";
+backBtn.innerText="⬅ Назад";
+}else{
+titleEl.innerText="⚽ Football Quiz PRO";
+langLabel.innerText="Select Language:";
+startBtnEl.innerText="🎮 Start";
+shopBtnEl.innerText="💎 Shop";
+shopTitle.innerText="💎 Shop";
+checkBtn.innerText="✅ Check";
+hintBtn.innerText="💡 Hint";
+nextBtn.innerText="➡ Next";
+backToHome.innerText="⬅ Back";
+backBtn.innerText="⬅ Back";
+}
+}
+
+// ===== UI UPDATE =====
+function updateUI(){
+pointEl.innerText=point;
+coinEl.innerText=coin;
+hintEl.innerText=hintCount;
+translateUI();
+}
+
+// ===== START GAME =====
+startBtn.onclick=function(){
+lang=languageSelect.value;
+updateUI();
+home.classList.add("hidden");
+game.classList.remove("hidden");
+currentLevel=1;
+currentQuestion=0;
+loadQuestion();
+};
+
+// ===== LOAD QUESTION =====
+function loadQuestion(){
+let q=questions[currentQuestion];
+emojiEl.innerText=q.emoji;
+questionEl.innerText=q.question[lang];
+answersEl.innerHTML="";
+selectedAnswer=null;
+nextBtn.classList.add("hidden");
+q.answers.forEach((a,i)=>{
+let btn=document.createElement("button");
+btn.innerText=a[lang];
+btn.onclick=()=>{selectedAnswer=i;highlightSelection(i)};
+answersEl.appendChild(btn);
+});
+resultEl.innerText="";
+hintBtn.disabled=false;
+startTimer();
+levelEl.innerText=currentLevel;
+updateUI();
+}
+
+function highlightSelection(index){
+let buttons=answersEl.children;
+for(let i=0;i<buttons.length;i++){
+buttons[i].style.background=(i===index)?"orange":"";
+}
+}
+
+// ===== TIMER =====
+function startTimer(){
+clearInterval(timer);
+timeLeft=60;
+updateTimer();
+timer=setInterval(()=>{
+timeLeft--;
+updateTimer();
+if(timeLeft<=0){
+clearInterval(timer);
+autoCheck();
+}
+},1000);
+}
+function updateTimer(){timerEl.innerText=timeLeft+"s";}
+
+// ===== CHECK =====
+checkBtn.onclick=function(){
+clearInterval(timer);
+if(selectedAnswer===null){
+alert(lang==="uz"?"Avval javobni tanlang!":lang==="ru"?"Сначала выберите ответ!":"Select an answer first!");
+return;
+}
+checkAnswer();
+};
+function autoCheck(){if(selectedAnswer===null) selectedAnswer=-1;hintBtn.disabled=true;checkAnswer();}
+
+function checkAnswer(){
+let q=questions[currentQuestion];
+hintBtn.disabled=true;
+if(selectedAnswer===q.correct){
+point+=1;
+resultEl.innerText="✅ "+(lang==="uz"?"To'g'ri!":"ru"?"Верно!":"Correct!")+" +1 Point";
+}else{
+resultEl.innerText="❌ "+(lang==="uz"?"Noto'g'ri!":"ru"?"Неверно!":"Wrong!");
+}
+
+// ===== POINT -> COIN -> HINT =====
+if(point>=10){
+let newCoin=Math.floor(point/10);
+if(newCoin>0){coin+=newCoin;point%=10;}
+}
+if(coin>=10){
+let newHint=Math.floor(coin/10);
+if(newHint>0){hintCount+=newHint;coin%=10;}
+}
+
+updateUI();
+localStorage.setItem("coin",coin);
+nextBtn.classList.remove("hidden"); // Keyingi savol tugmasi ko‘rsin
+}
+
+// ===== NEXT LEVEL BUTTON =====
+nextBtn.onclick=function(){
+currentLevel++;
+if(currentLevel>questions.length){
+alert((lang==="uz"?"🎉 O'yin tugadi! Umumiy ball: ":"ru"?"🎉 Игра окончена! Общий балл: ":"🎉 Game over! Total point: ")+point);
+location.reload();
+return;
+}
+currentQuestion=currentLevel-1;
+loadQuestion();
+}
+
+// ===== HINT =====
+hintBtn.onclick=function(){
+if(hintCount>0){
+hintCount--;
+let q=questions[currentQuestion];
+alert((lang==="uz"?"To'g'ri javob: ":"ru"?"Правильный ответ: ":"Correct answer: ")+q.answers[q.correct][lang]);
+updateUI();
+}else{
+alert(lang==="uz"?"Hint yetarli emas!":"ru"?"Нет подсказок!":"No hint available!");
+}
+}
+
+// ===== SHOP =====
+shopBtnHome.onclick=function(){
+game.classList.add("hidden");
+home.classList.add("hidden");
+shop.classList.remove("hidden");
+};
+document.querySelectorAll(".buyBtn").forEach(btn=>{
+btn.onclick=function(){
+let amt=parseInt(btn.dataset.amount);
+let neededPoint=amt*10;
+if(point>=neededPoint){
+point-=neededPoint;
+coin+=amt;
+updateUI();
+localStorage.setItem("coin",coin);
+alert(amt+" "+(lang==="uz"?"coin qo'shildi!":"ru"?"монет добавлено!":"coin added!"));
+}else{
+alert(lang==="uz"?"Yetarli point yo'q!":"ru"?"Недостаточно очков!":"Not enough point!");
+}
+};
+});
+backBtn.onclick=function(){
+shop.classList.add("hidden");
+home.classList.remove("hidden");
+};
+backToHome.onclick=function(){
+game.classList.add("hidden");
+home.classList.remove("hidden");
+updateUI();
+};
+</script>
+</body>
+</html>

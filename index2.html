@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meva terish 🍎🍌</title>
+
+<style>
+body {
+  margin: 0;
+  background: #87ceeb;
+  overflow: hidden;
+  font-family: Arial;
+}
+
+#panel {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+#game {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.item {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: -40px;
+  font-size: 32px;
+  text-align: center;
+  line-height: 40px;
+}
+
+/* TO‘RTBURCHAK SAVAT */
+#basket {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 140px;
+  height: 60px;
+  background: transparent;
+}
+
+/* savat tanasi */
+#basket::before {
+  content: "";
+    position: absolute;
+  bottom: 20px;
+  width: 140px;
+  height: 60px;
+  background: transparent;
+  background: #a97142;
+  border: 4px solid #5a381e;
+  border-top: none;
+  border-radius: 0 0 18px 18px;
+  box-sizing: border-box;
+}
+
+/* savat ichki qismi (chuqurlik) */
+#basket::after {
+  content: "";
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  width: 120px;
+  height: 30px;
+  background: rgba(0,0,0,0.15);
+  border-radius: 0 0 12px 12px;
+}
+
+</style>
+</head>
+<body>
+
+<div id="panel">
+  📦 Sizning mahsulotlaringiz: <span id="score">0</span> ta<br>
+  🏆 Record: <span id="record">0</span><br>
+  ❤️ Jon: <span id="lives">3</span><br>
+  ⏱️ Vaqt: <span id="time">60</span>s
+</div>
+
+<div id="game">
+  <div id="basket"></div>
+</div>
+
+<script>
+const game = document.getElementById("game");
+const basket = document.getElementById("basket");
+
+const scoreEl = document.getElementById("score");
+const recordEl = document.getElementById("record");
+const livesEl = document.getElementById("lives");
+const timeEl = document.getElementById("time");
+
+let score = 0;
+let lives = 3;
+let time = 60;
+
+let record = localStorage.getItem("fruitRecord") || 0;
+recordEl.innerText = record;
+
+let basketX = window.innerWidth / 2 - 70;
+
+const fruits = ["🍎","🍌","🍉","🍊","🍓"];
+const bomb = "💣";
+
+/* SAVAT JOYINI YANGILASH */
+function updateBasket() {
+  const maxX = window.innerWidth - basket.offsetWidth;
+
+  if (basketX < 0) basketX = 0;
+  if (basketX > maxX) basketX = maxX;
+
+  basket.style.left = basketX + "px";
+}
+
+/* 🖱️ SICHQONCHA BILAN BOSHQARISH */
+document.addEventListener("mousemove", e => {
+  basketX = e.clientX - basket.offsetWidth / 2;
+  updateBasket();
+});
+
+
+/* 📱 TELEFON (TOUCH) */
+document.addEventListener("touchmove", e => {
+  basketX = e.touches[0].clientX - 70;
+  updateBasket();
+});
+
+/* BUYUM TUSHISHI */
+function dropItem() {
+  const item = document.createElement("div");
+  item.className = "item";
+
+  const isBomb = Math.random() < 0.2;
+  item.innerText = isBomb ? bomb : fruits[Math.floor(Math.random()*fruits.length)];
+
+  let x = Math.random() * (window.innerWidth - 40);
+  let y = -40;
+  item.style.left = x + "px";
+
+  game.appendChild(item);
+
+  const fall = setInterval(() => {
+    y += 6;
+    item.style.top = y + "px";
+
+    const itemRect = item.getBoundingClientRect();
+    const basketRect = basket.getBoundingClientRect();
+
+    if (
+      itemRect.bottom >= basketRect.top &&
+      itemRect.left < basketRect.right &&
+      itemRect.right > basketRect.left
+    ) {
+      if (isBomb) {
+        lives--;
+        livesEl.innerText = lives;
+        item.remove();
+        clearInterval(fall);
+        if (lives <= 0) endGame();
+      } else {
+        score++;
+        scoreEl.innerText = score;
+        item.remove();
+        clearInterval(fall);
+      }
+    }
+
+    if (y > window.innerHeight) {
+      item.remove();
+      clearInterval(fall);
+    }
+  }, 30);
+}
+
+/* VAQT */
+const timer = setInterval(() => {
+  time--;
+  timeEl.innerText = time;
+  if (time <= 0) endGame();
+}, 1000);
+
+const dropper = setInterval(dropItem, 1200);
+
+/* O‘YIN TUGASHI */
+function endGame() {
+  clearInterval(timer);
+  clearInterval(dropper);
+
+  if (score > record) {
+    localStorage.setItem("fruitRecord", score);
+    record = score;
+  }
+
+  alert(
+    "⏹️ O‘yin tugadi!\n" +
+    "📦 Mahsulotlar: " + score + " ta\n" +
+    "🏆 Record: " + record
+  );
+  location.reload();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,192 @@
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10 Premium Navbars</title>
+    <style>
+        /* ASOSIY FON */
+        body { background: #0d1117; color: #c9d1d9; font-family: 'Segoe UI', sans-serif; padding: 20px; margin: 0; }
+        .wrapper { max-width: 900px; margin: 0 auto; }
+        h1 { text-align: center; color: #58a6ff; }
+
+        /* NAVBARLAR UCHUN ASOSIY KLASLAR */
+        .nav-master { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; box-sizing: border-box; margin-bottom: 20px; }
+        .logo { font-weight: bold; font-size: 1.2rem; }
+        .links { display: flex; gap: 20px; }
+        .links a { text-decoration: none; color: inherit; font-size: 14px; }
+
+        /* 10 TA NAVBAR STILLARI */
+        .n1 { background: #fcee0a; color: #000; clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%); }
+        .n2 { background: rgba(255,255,255,0.05); backdrop-filter: blur(15px); border: 1px solid #ffffff20; border-radius: 50px; }
+        .n3 { background: linear-gradient(90deg, #ff0080, #7928ca); color: #fff; border-radius: 15px; }
+        .n4 { background: #000; color: #39ff14; border: 1px solid #39ff14; box-shadow: 0 0 15px #39ff1455; }
+        .n5 { background: #fff; color: #000; border-radius: 20px 0 20px 0; box-shadow: 8px 8px 0 #58a6ff; }
+        .n6 { background: #161b22; border-bottom: 4px solid #f85149; }
+        .n7 { background: #0d1117; box-shadow: inset 8px 8px 16px #05070a, inset -8px -8px 16px #151a24; border-radius: 12px; color: #58a6ff; }
+        .n8 { background: #4338ca; color: #fff; clip-path: polygon(0% 15%, 100% 0%, 100% 85%, 0% 100%); }
+        .n9 { background: #fff; color: #000; border-left: 10px solid #000; }
+        .n10 { background: #1a1a1a; color: #d4af37; border: 2px solid #d4af37; border-radius: 0 50px 0 50px; }
+
+        /* KOD BLOKLARI */
+        .section-box { margin-top: 50px; }
+        .code-card { background: #010409; border: 1px solid #30363d; border-radius: 12px; margin-bottom: 20px; overflow: hidden; }
+        .header { background: #161b22; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; }
+        .header span { color: #58a6ff; font-weight: bold; font-size: 13px; }
+        .copy-btn { background: #21262d; color: #fff; border: 1px solid #30363d; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; }
+        pre { margin: 0; padding: 20px; overflow-x: auto; color: #d2a8ff; font-size: 13px; line-height: 1.5; }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    
+    <h1>Barcha 10 ta Navbar (Natija)</h1>
+    <nav class="nav-master n1"><div class="logo">Cyber</div><div class="links"><a href="#">Home</a><a href="#">About</a></div></nav>
+    <nav class="nav-master n2"><div class="logo">Apple</div><div class="links"><a href="#">Home</a><a href="#">About</a></div></nav>
+    <nav class="nav-master n3"><div class="logo">Gradient</div><div class="links"><a href="#">Home</a><a href="#">About</a></div></nav>
+    <nav class="nav-master n4"><div class="logo">Neon</div><div class="links"><a href="#">Home</a><a href="#">About</a></div></nav>
+    <nav class="nav-master n5"><div class="logo">Blue-Shadow</div><div class="links"><a href="#">Home</a><a href="#">About</a></div></nav>
+    <nav class="nav-master n6"><div class="logo">Red-Line</div><div class="links"><a href="#">Home</a><a href="#">About</a></div></nav>
+    <nav class="nav-master n7"><div class="logo">Neumorph</div><div class="links"><a href="#">Home</a><a href="#">About</a></div></nav>
+    <nav class="nav-master n8"><div class="logo">ZigZag</div><div class="links"><a href="#">Home</a><a href="#">About</a></div></nav>
+    <nav class="nav-master n9"><div class="logo">Left-Bold</div><div class="links"><a href="#">Home</a><a href="#">About</a></div></nav>
+    <nav class="nav-master n10"><div class="logo">Royal</div><div class="links"><a href="#">Home</a><a href="#">About</a></div></nav>
+
+    <hr style="border: 1px solid #30363d; margin: 60px 0;">
+
+    <h1>Toliq Kodlar</h1>
+
+    <div class="code-card">
+        <div class="header"><span>HTML KODI</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+        <pre>
+&lt;!-- NAV 1 --&gt;
+&lt;nav class="nav-master n1"&gt;
+  &lt;div class="logo"&gt;Cyber&lt;/div&gt;
+  &lt;div class="links"&gt;
+    &lt;a href="#"&gt;Home&lt;/a&gt;
+    &lt;a href="#"&gt;About&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/nav&gt;
+
+&lt;!-- NAV 2 --&gt;
+&lt;nav class="nav-master n2"&gt;
+  &lt;div class="logo"&gt;Apple&lt;/div&gt;
+  &lt;div class="links"&gt;
+    &lt;a href="#"&gt;Home&lt;/a&gt;
+    &lt;a href="#"&gt;About&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/nav&gt;
+
+&lt;!-- NAV 3 --&gt;
+&lt;nav class="nav-master n3"&gt;
+  &lt;div class="logo"&gt;Gradient&lt;/div&gt;
+  &lt;div class="links"&gt;
+    &lt;a href="#"&gt;Home&lt;/a&gt;
+    &lt;a href="#"&gt;About&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/nav&gt;
+
+&lt;!-- NAV 4 --&gt;
+&lt;nav class="nav-master n4"&gt;
+  &lt;div class="logo"&gt;Neon&lt;/div&gt;
+  &lt;div class="links"&gt;
+    &lt;a href="#"&gt;Home&lt;/a&gt;
+    &lt;a href="#"&gt;About&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/nav&gt;
+
+&lt;!-- NAV 5 --&gt;
+&lt;nav class="nav-master n5"&gt;
+  &lt;div class="logo"&gt;Blue-Shadow&lt;/div&gt;
+  &lt;div class="links"&gt;
+    &lt;a href="#"&gt;Home&lt;/a&gt;
+    &lt;a href="#"&gt;About&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/nav&gt;
+
+&lt;!-- NAV 6 --&gt;
+&lt;nav class="nav-master n6"&gt;
+  &lt;div class="logo"&gt;Red-Line&lt;/div&gt;
+  &lt;div class="links"&gt;
+    &lt;a href="#"&gt;Home&lt;/a&gt;
+    &lt;a href="#"&gt;About&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/nav&gt;
+
+&lt;!-- NAV 7 --&gt;
+&lt;nav class="nav-master n7"&gt;
+  &lt;div class="logo"&gt;Neumorph&lt;/div&gt;
+  &lt;div class="links"&gt;
+    &lt;a href="#"&gt;Home&lt;/a&gt;
+    &lt;a href="#"&gt;About&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/nav&gt;
+
+&lt;!-- NAV 8 --&gt;
+&lt;nav class="nav-master n8"&gt;
+  &lt;div class="logo"&gt;ZigZag&lt;/div&gt;
+  &lt;div class="links"&gt;
+    &lt;a href="#"&gt;Home&lt;/a&gt;
+    &lt;a href="#"&gt;About&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/nav&gt;
+
+&lt;!-- NAV 9 --&gt;
+&lt;nav class="nav-master n9"&gt;
+  &lt;div class="logo"&gt;Left-Bold&lt;/div&gt;
+  &lt;div class="links"&gt;
+    &lt;a href="#"&gt;Home&lt;/a&gt;
+    &lt;a href="#"&gt;About&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/nav&gt;
+
+&lt;!-- NAV 10 --&gt;
+&lt;nav class="nav-master n10"&gt;
+  &lt;div class="logo"&gt;Royal&lt;/div&gt;
+  &lt;div class="links"&gt;
+    &lt;a href="#"&gt;Home&lt;/a&gt;
+    &lt;a href="#"&gt;About&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/nav&gt;
+    </pre>
+    </div>
+
+    <div class="code-card">
+        <div class="header"><span>CSS KODI (Barcha 10 tasi)</span><button class="copy-btn" onclick="copy(this)">Copy</button></div>
+        <pre>
+        .nav-master { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; box-sizing: border-box; margin-bottom: 20px; }
+        .logo { font-weight: bold; font-size: 1.2rem; }
+        .links { display: flex; gap: 20px; }
+        .links a { text-decoration: none; color: inherit; font-size: 14px; }
+
+        /* 10 TA NAVBAR STILLARI */
+        .n1 { background: #fcee0a; color: #000; clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%); }
+        .n2 { background: rgba(255,255,255,0.05); backdrop-filter: blur(15px); border: 1px solid #ffffff20; border-radius: 50px; }
+        .n3 { background: linear-gradient(90deg, #ff0080, #7928ca); color: #fff; border-radius: 15px; }
+        .n4 { background: #000; color: #39ff14; border: 1px solid #39ff14; box-shadow: 0 0 15px #39ff1455; }
+        .n5 { background: #fff; color: #000; border-radius: 20px 0 20px 0; box-shadow: 8px 8px 0 #58a6ff; }
+        .n6 { background: #161b22; border-bottom: 4px solid #f85149; }
+        .n7 { background: #0d1117; box-shadow: inset 8px 8px 16px #05070a, inset -8px -8px 16px #151a24; border-radius: 12px; color: #58a6ff; }
+        .n8 { background: #4338ca; color: #fff; clip-path: polygon(0% 15%, 100% 0%, 100% 85%, 0% 100%); }
+        .n9 { background: #fff; color: #000; border-left: 10px solid #000; }
+        .n10 { background: #1a1a1a; color: #d4af37; border: 2px solid #d4af37; border-radius: 0 50px 0 50px; }
+        </pre>
+    </div>
+
+</div>
+
+<script>
+    function copy(btn) {
+        const text = btn.parentElement.nextElementSibling.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            btn.innerText = "Nusxalandi!";
+            setTimeout(() => btn.innerText = "Copy", 2000);
+        });
+    }
+</script>
+
+</body>
+</html>
+                                                           

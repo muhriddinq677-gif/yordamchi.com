@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interaktiv Kalendar</title>
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: linear-gradient(to right, #6a11cb, #2575fc);
+        margin: 0;
+    }
+    .calendar {
+        background-color: #fff;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        width: 400px;
+    }
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .header select {
+        padding: 5px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+    .days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    .dates {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        text-align: center;
+    }
+    .date {
+        padding: 15px 0;
+        margin: 3px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .date:hover {
+        background-color: #f0f0f0;
+    }
+    .today {
+        background-color: #4CAF50;
+        color: #fff;
+    }
+    .selected {
+        background-color: #ff9800;
+        color: #fff;
+    }
+    h2 {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+</style>
+</head>
+<body>
+<div class="calendar">
+    <h2>Interaktiv Kalendar</h2>
+    <div style="width:300px; height:40px; background-color: #3700ff; border-radius: 10px; color:white; list-style: none; display: flex;
+justify-content: center; align-items: center;"  onclick="window.location.href='index.html';">Exit </div>
+    <div class="header">
+        <select id="monthSelect"></select>
+        <select id="yearSelect"></select>
+    </div>
+    <div class="days">
+        <div>Dush</div>
+        <div>Ses</div>
+        <div>Chor</div>
+        <div>Pay</div>
+        <div>Jum</div>
+        <div>Shan</div>
+        <div>Yak</div>
+    </div>
+    <div class="dates" id="dates"></div>
+</div>
+
+<script>
+    const monthSelect = document.getElementById('monthSelect');
+    const yearSelect = document.getElementById('yearSelect');
+    const datesDiv = document.getElementById('dates');
+
+    const today = new Date();
+    let currentMonth = today.getMonth();
+    let currentYear = today.getFullYear();
+
+    const months = ["Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun", 
+                    "Iyul", "Avgust", "Sentabr", "Oktabr", "Noyabr", "Dekabr"];
+
+    const events = {}; // voqealarni saqlash
+
+    // Oylarni qo'shish
+    months.forEach((m, i) => {
+        const option = document.createElement('option');
+        option.value = i;
+        option.text = m;
+        monthSelect.appendChild(option);
+    });
+
+    // Yillarni qo'shish (1900 - hozirgi yil)
+    for(let y = 1900; y <= today.getFullYear(); y++) {
+        const option = document.createElement('option');
+        option.value = y;
+        option.text = y;
+        yearSelect.appendChild(option);
+    }
+
+    monthSelect.value = currentMonth;
+    yearSelect.value = currentYear;
+
+    function renderCalendar(month, year) {
+        datesDiv.innerHTML = '';
+
+        let firstDay = new Date(year, month, 1).getDay();
+        if(firstDay === 0) firstDay = 7;
+
+        let daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        for(let i = 1; i < firstDay; i++) {
+            datesDiv.innerHTML += '<div></div>';
+        }
+
+        for(let i = 1; i <= daysInMonth; i++) {
+            const dateDiv = document.createElement('div');
+            dateDiv.classList.add('date');
+            dateDiv.textContent = i;
+
+            if(i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                dateDiv.classList.add('today');
+            }
+
+            const key = `${year}-${month}-${i}`;
+            if(events[key]) {
+                dateDiv.classList.add('selected');
+                dateDiv.title = events[key];
+            }
+
+            dateDiv.addEventListener('click', () => {
+                let action = 'add';
+                if(events[key]) {
+                    action = prompt("Vaqeani o'zgartirish: 'o' - o'chirish, 't' - tahrirlash");
+                }
+                if(action === 'o') {
+                    delete events[key];
+                    dateDiv.classList.remove('selected');
+                    dateDiv.title = '';
+                } else if(action === 't' || action === 'add') {
+                    const eventText = prompt("Vaqeani kiriting:", events[key] || '');
+                    if(eventText) {
+                        events[key] = eventText;
+                        dateDiv.classList.add('selected');
+                        dateDiv.title = eventText;
+                    }
+                }
+            });
+
+            datesDiv.appendChild(dateDiv);
+        }
+    }
+
+    monthSelect.addEventListener('change', () => {
+        currentMonth = parseInt(monthSelect.value);
+        renderCalendar(currentMonth, currentYear);
+    });
+
+    yearSelect.addEventListener('change', () => {
+        currentYear = parseInt(yearSelect.value);
+        renderCalendar(currentMonth, currentYear);
+    });
+
+    renderCalendar(currentMonth, currentYear);
+</script>
+<script src="script.js"></script>
+</body>
+</html>

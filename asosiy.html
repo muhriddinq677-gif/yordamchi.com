@@ -1,0 +1,472 @@
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yordamchi_sayt</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root { --bg:#f4f7f6; --card:#fff; --text:#333; --primary:#007bff; --sidebar:#2c3e50; }
+.dark-mode { --bg:#1a1a1a; --card:#2d2d2d; --text:#fff; --primary:#3498db; --sidebar:#000; }
+* { box-sizing:border-box; margin:0; padding:0; font-family:sans-serif; transition:0.2s; }
+body { background:var(--bg); color:var(--text); display:flex; flex-direction:column; min-height:100vh; }
+.navbar { 
+  display: flex; justify-content: space-between; align-items: center; 
+  background: var(--primary); padding: 10px 20px; color: white; 
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2); position: fixed; top:0; width:100%; z-index:1002; flex-wrap:wrap;
+}
+
+.nav-left { display: flex; gap:10px; flex-wrap:wrap; }
+.nav-left a { display: flex; align-items: center; gap:5px; color:white; text-decoration:none; font-weight:bold; padding:5px 10px; border-radius:5px; font-size:14px; background: rgb(25, 0, 255); border-radius: 5px;  }
+.nav-left a:hover { background: rgb(229, 255, 0); border-radius: 5px; }
+.nav-left i { font-size:16px; }
+
+.social-icons { display:flex; gap:10px; flex-wrap:wrap; margin-top:5px; }
+.social-icons a { display:flex; align-items:center; gap:5px; color:white; font-weight:bold; font-size:14px; text-decoration:none; background: rgb(0, 4, 255); border-radius: 5px; }
+.social-icons a:hover { display:flex; align-items:center; gap:5px; color:white; font-weight:bold; font-size:14px; text-decoration:none; background: rgb(229, 255, 0); border-radius: 5px; }
+.social-icons a i { font-size:16px; }
+
+.main { flex:1; padding:100px 20px 20px 20px; width:100%; display:flex; flex-direction:column; gap:20px; }
+
+.cards-container {
+  display:flex; gap:20px; flex-wrap:wrap; justify-content:center;
+}
+.card { background: var(--card); padding:20px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); width:300px; display:flex; flex-direction:column; gap:15px; box-shadow: 10px 10px 10px rgb(0, 217, 255); }
+.card:hover{
+background: var(--primary); color:white; transform: translateY(-10px); box-shadow: 10px 10px 10px red;
+}
+button { padding:12px; border-radius:8px; border:none; background: var(--sidebar); color:white; cursor:pointer; font-weight:bold; width:100%; display:flex; align-items:center; justify-content:center; gap:8px; }
+button + button { margin-top:5px; }
+
+.links-container { display:flex; gap:15px; justify-content:center; flex-wrap:wrap; margin-top:10px; }
+.links-container a { display:flex; align-items:center; gap:5px; color:white;text-decoration:none; background:#000000; padding:10px 15px; border-radius:8px; box-shadow: 5px 5px 5px  rgb(0, 238, 255); color:var(--text); font-weight:bold; }
+.links-container a:hover { background: var(--sidebar); color:rgb(255, 255, 255); transform: translateY(-5px); box-shadow: 5px 5px 5px red; }
+
+#settings {
+  display:none;
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2000;
+  width: 90%;
+  max-width: 400px;
+}
+.buy-button {
+  display: inline-block;
+  background: var(--sidebar); 
+  color: white;
+  padding: 12px 25px;
+  text-decoration: none;
+  border-radius: 8px;
+}
+    
+.main-header {
+  background: linear-gradient(90deg, #007bff, #00d4ff);
+  padding: 25px;
+  border-radius: 15px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  gap: 10px 15px;
+  color: white;
+  font-family: sans-serif;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  position: relative;
+  flex-wrap:wrap;
+}
+
+/* Emoji (chapda) */
+.main-header::before {
+  content: var(--emoji, "👋");
+  font-size: 50px;
+  grid-row: 1;
+  grid-column: 1;
+  align-self: center;
+  justify-self: start;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+/* Tugmalar (o‘ngda) */
+.main-header > div {
+  grid-column: 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Pastki yozuv */
+.main-header > p,
+.main-header > span,
+.main-header > h1,
+.main-header > h2 {
+  grid-column: 1 / 3;
+  margin-top: 10px;
+  font-size: 15px;
+  opacity: 1; /* xira emas */
+}
+
+/* Yozish tugmasi */
+.btn-w {
+  background-color: #ffffff;
+  color: #007bff;
+  padding: 10px 25px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  transition: 0.3s;
+  border: none;
+}
+
+/* O‘ynash tugmasi */
+.btn-p {
+  background: transparent;
+  color: #ffffff;
+  padding: 10px 25px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  transition: 0.3s;
+  border: 2px solid #ffffff;
+}
+
+/* Hover effekt */
+.btn-w:hover,
+.btn-p:hover {
+  transform: scale(1.05);
+}
+
+/* RESPONSIV */
+@media (max-width: 600px) {
+  .main-header {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .main-header::before {
+    justify-self: center;
+  }
+
+  .main-header > div {
+    justify-content: center;
+  }
+}
+
+.sarlavha{ background: var(--card); padding:20px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); box-shadow: 10px 10px 10px rgb(0, 217, 255); }
+.sarlavha:hover{
+background: var(--primary); color:white; transform: translateY(-10px); box-shadow: 10px 10px 10px red;
+}
+@media(max-width:1000px){ .cards-container{flex-direction:column;align-items:center;} .card{width:90%;} }
+</style>
+</head>
+<body>
+<div class="navbar">
+  <div class="nav-left">
+   <a href="calendar.html">
+  <i class="fas fa-calendar-alt"></i> 
+  <span data-key="m-calendar">Calendar</span>
+</a>
+<a href="til urganish.html">
+  <i class="fa fa-code"></i> 
+  <span data-key="m-language">Dasturlashni o'rganish</span>
+</a>
+<a onclick="showSettings()">
+  <i class="fas fa-cog"></i> 
+  <span data-key="m-sett">Sozlamalar</span>
+</a>
+  </div>
+  <div class="social-icons">
+    <a href="https://www.youtube.com" target="_blank"><i class="fab fa-youtube"></i> YouTube</a>
+    <a href="https://t.me" target="_blank"><i class="fab fa-telegram"></i> Telegram</a>
+    <a href="https://www.instagram.com" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+    <a href="https://www.whatsapp.com" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+  </div>
+</div>
+
+<div class="main">
+
+  <div id="settings" class="card">
+    <h2><span data-key="s-title">Sozlamalar</span></h2>
+    <button onclick="document.body.classList.remove('dark-mode')" style="background:#ffc107; color:black"><span data-key="btn-light">Kunduzgi rejim</span></button>
+    <button onclick="document.body.classList.add('dark-mode')" style="background:#343a40"><span data-key="btn-dark">Tungi rejim</span></button>
+
+    <p style="margin-top:15px;"><span data-key="s-lang">Tilni tanlang:</span></p>
+    <div style="display:flex; gap:10px; margin-top:10px;">
+      <button onclick="setLang('uz')">UZ</button>
+      <button onclick="setLang('ru')">RU</button>
+      <button onclick="setLang('en')">EN</button>
+    </div>
+    <button onclick="hideSettings()" style="background:#e74c3c; margin-top:10px;">Close</button>
+  </div>
+  
+
+<div class="main">
+<!-- HTML QISMI -->
+<div class="main-header">
+  <div class="header-info">
+    <p data-key-text="h-desc">Yozish tugmasi xuddi Monkeytype kabi yozish joyiga boradi, O'ynash esa mahorat oshirish uchun.</p>
+  </div>
+  <div class="header-actions">
+    <a href="yozish.html" class="btn-w" data-key-text="btn-write">Yozish</a>
+    <a href="uyin2.html" class="btn-p" data-key-text="btn-play">O'ynash</a>
+  </div>
+</div>  
+  <div class="cards-container">
+   <div class="cards-container">
+  <div class="card">
+    <h3><i class="fas fa-palette"></i> <span data-key-text="draw-title">Rasm chizish</span></h3>
+    <p><span data-key-text="draw-text">Bu yerda siz hohlagancha rasm chizasiz</span></p>
+    <button onclick="window.open('rasm-chizish.html')">
+      <i class="fas fa-palette"></i> <span data-key-text="draw-btn">Rasm chizish</span>
+    </button>
+  </div>
+
+  <div class="card">
+    <h3><i class="fas fa-file-powerpoint"></i> <span data-key-text="ppt-title">Power-paint</span></h3>
+    <p><span data-key-text="ppt-text">Bu yerda siz turli xil slaydlar yasaysiz</span></p>
+    <button onclick="window.open('power-paint.html')">
+      <i class="fas fa-file-powerpoint"></i> <span data-key-text="ppt-btn">Slayd tayyorlash</span>
+    </button>
+  </div>
+
+  <div class="card">
+    <h3><i class="fas fa-calculator"></i> <span data-key-text="calc-title">Calculyator</span></h3>
+    <p><span data-key-text="calc-text">Bu yerda misollarni kalkulyator yordamida yeching</span></p>
+    <button onclick="window.open('calculyator.html')">
+      <span data-key-text="calc-btn">Calculyator</span> <i class="fas fa-calculator"></i>
+    </button>
+  </div>
+
+  <div class="card premium-games">
+    <h3><i class="fas fa-gamepad"></i> <span data-key-text="card4-title">O‘yinlar o'ynash</span></h3>
+    <p><span data-key-text="card4-text">Bu yerda faqat men yaratgan o'yinlar bor.</span></p>
+    <a href="uyin.html" class="buy-button" data-key-text="card4-btn">Play</a>
+  </div>
+</div>
+
+<div class="cards-container">
+  <div class="card">
+    <h3><i class="fa fa-code"></i> <span data-key-text="editor-title">Kod yozish Redaktori</span></h3>
+    <p><span data-key-text="editor-text">Bu yer yosh dasturchilar uchun!</span></p>
+    <button onclick="window.open('redaktor.html')">
+      <i class="fa fa-code"></i> <span data-key-text="editor-btn">Redaktor: kod yozish</span>
+    </button>
+  </div>
+
+  <div class="card">
+    <h3><i class="fa-solid fa-file-word"></i> <span data-key-text="word-title">Mini Word</span></h3>
+    <p><span data-key-text="word-text">Bu yerda siz matn yozasiz.</span></p>
+    <button onclick="window.open('word.html')">
+      <i class="fa-solid fa-file-word"></i> <span data-key-text="word-btn">Word: matn yozish</span>
+    </button>
+  </div>
+
+  <div class="card">
+    <h3><i class="fa-solid fa-file-excel"></i> <span data-key-text="excel-title">Excel</span></h3>
+    <p><span data-key-text="excel-text">Bu yerda siz jadval qilasiz matnlar yozasiz.</span></p>
+    <button onclick="window.open('excel.html')">
+      <i class="fa-solid fa-file-excel"></i> <span data-key-text="excel-btn">Excel: jadval qilish</span>
+    </button>
+  </div>
+
+  <div class="card">
+    <h3><i class="fas fa-cloud-sun"></i> <span data-key-text="weather-title">Ob-havo</span></h3>
+    <p><span data-key-text="weather-text">Bu yerda siz ob-havo malumotini topasiz</span></p>
+    <button onclick="window.open('ob-havo.html')">
+      <i class="fas fa-cloud-sun"></i> <span data-key-text="weather-btn">Ob-havoni bilish</span>
+    </button>
+  </div>
+  <div class="links-container">
+    <a href="https://www.google.com" target="_blank"><i class="fab fa-chrome"></i> Google Go</a>
+    <a href="https://www.daryo.uz" target="_blank"><i class="fas fa-newspaper"></i> Daryo.uz</a>
+    <a href="https://www.yandex.com" target="_blank"><i class="fas fa-search"></i> Yandex </a>
+    <a href="https://www.yandex.ru/games" target="_blank"><i class="fas fa-gamepad"></i> Yandex o'yinlar</a>
+    <a href="https://uzum.uz" target="_blank"><i class="fas fa-apple-whole"></i> Uzum</a>
+    <a href="https://www.youtube.com" target="_blank"><i class="fab fa-youtube"></i> YouTube</a>
+    <a href="https://www.google.com/chrome/" target="_blank"><i class="fab fa-chrome"></i> Chrome</a>
+    <a href="https://login.emaktab.uz" target="_blank" >
+    <i class="fas fa-graduation-cap"></i> e-maktab</a>
+  </div>
+</div>
+
+<script>
+const langDict = {
+    uz: { 
+        "s-title":"Sozlamalar", 
+        "btn-light":"Kunduzgi rejim", 
+        "btn-dark":"Tungi rejim",
+        "s-lang":"Tilni tanlang",
+
+        "draw-title":"Rasm chizish",
+        "draw-text":"Bu yerda siz hohlagancha rasm chizasiz",
+        "draw-btn":"Rasm chizish",
+
+        "ppt-title":"Power-paint",
+        "ppt-text":"Bu yerda siz turli xil slaydlar yasaysiz",
+        "ppt-btn":"Slayd tayyorlash",
+
+        "calc-title":"Calculyator",
+        "calc-text":"Bu yerda misollarni kalkulyator yordamida yeching",
+        "calc-btn":"Calculyator",
+
+        "card4-title":"O‘yinlar o'ynash",
+        "card4-text":"Bu yerda faqat men yaratgan o'yinlar bor.",
+        "card4-btn":"Play",
+
+        "editor-title":"Kod yozish Redaktori",
+        "editor-text":"Bu yer yosh dasturchilar uchun!",
+        "editor-btn":"Redaktor: kod yozish",
+
+        "word-title":"Mini Word",
+        "word-text":"Bu yerda siz matn yozasiz.",
+        "word-btn":"Word: matn yozish",
+
+        "excel-title":"Excel",
+        "excel-text":"Bu yerda siz jadval qilasiz matnlar yozasiz.",
+        "excel-btn":"Excel: jadval qilish",
+
+        "weather-title":"Ob-havo",
+        "weather-text":"Bu yerda siz ob-havo malumotini topasiz",
+        "weather-btn":"Ob-havoni bilish",
+        "m-calendar":"Calendar", 
+        "m-sett":"Sozlamalar",
+        "m-language":"Dasturlashni o'rganish",
+        "h-desc": "Yozish tugmasi xuddi Monkeytype sayti kabi yozadigan joyga boradi, O'ynash esa mahorat oshirish uchun.",
+        "btn-write": "Yozish",
+        "btn-play": "O'ynash",
+  
+  
+    },
+    ru: { 
+        "s-title":"Настройки", 
+        "btn-light":"Дневной режим", 
+        "btn-dark":"Ночной режим",
+        "s-lang":"Выберите язык",
+
+        "draw-title":"Рисование",
+        "draw-text":"Здесь вы можете рисовать сколько угодно",
+        "draw-btn":"Рисовать",
+
+        "ppt-title":"Power-paint",
+        "ppt-text":"Здесь вы создаёте различные слайды",
+        "ppt-btn":"Создать слайд",
+
+        "calc-title":"Калькулятор",
+        "calc-text":"Решайте примеры с помощью калькулятора",
+        "calc-btn":"Калькулятор",
+
+        "card4-title":"Игры",
+        "card4-text":"Здесь только мои игры.",
+        "card4-btn":"Играть",
+
+        "editor-title":"Редактор кода",
+        "editor-text":"Это для молодых программистов",
+        "editor-btn":"Редактор: код",
+
+        "word-title":"Мини Word",
+        "word-text":"Здесь вы пишете текст.",
+        "word-btn":"Написать текст",
+
+        "excel-title":"Excel",
+        "excel-text":"Здесь вы создаёте таблицы и пишете текст.",
+        "excel-btn":"Создать таблицу",
+
+        "weather-title":"Погода",
+        "weather-text":"Здесь вы можете узнать погоду",
+        "weather-btn":"Узнать погоду",
+        "m-calendar":"Календарь",
+        "m-sett":"Настройки",
+        "m-language":"Научиться программировать",
+        "h-desc": "Кнопка 'Печатать' ведет к тренажеру как на Monkeytype, а 'Играть' — для улучшения навыков.",
+        "btn-write": "Печатать",
+        "btn-play": "Играть",
+  
+  
+    },
+    en: { 
+        "s-title":"Settings", 
+        "btn-light":"Light mode", 
+        "btn-dark":"Dark mode",
+        "s-lang":"Select Language",
+
+        "draw-title":"Drawing",
+        "draw-text":"Here you can draw anything you want",
+        "draw-btn":"Draw",
+
+        "ppt-title":"Power-paint",
+        "ppt-text":"Here you can create different slides",
+        "ppt-btn":"Create slides",
+
+        "calc-title":"Calculator",
+        "calc-text":"Solve problems using the calculator",
+        "calc-btn":"Calculator",
+
+        "card4-title":"Play Games",
+        "card4-text":"Only my games are here.",
+        "card4-btn":"Play",
+
+        "editor-title":"Code Editor",
+        "editor-text":"This is for beginner programmers",
+        "editor-btn":"Code Editor",
+
+        "word-title":"Mini Word",
+        "word-text":"Here you can write text.",
+        "word-btn":"Write text",
+
+        "excel-title":"Excel",
+        "excel-text":"Here you can create tables and write text.",
+        "excel-btn":"Create table",
+
+        "weather-title":"Weather",
+        "weather-text":"Here you can check the weather",
+        "weather-btn":"Check weather",
+        "m-calendar":"Calendar",
+        "m-sett":"Settings", 
+        "m-language":"Learn to program",
+        "h-desc": "The 'Type' button leads to a Monkeytype-style area, while 'Play' is for skill improvement.",
+        "btn-write": "Type",
+        "btn-play": "Play",
+  
+  
+    }
+};
+
+// 8ta card va sozlamalar paneli tarjimasi
+function setLang(lang){
+    // Sozlamalar paneli va matnlar
+    document.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.getAttribute('data-key');
+        if(langDict[lang][key]) el.innerText = langDict[lang][key];
+    });
+
+    // Cardlar uchun maxsus text atributi
+    document.querySelectorAll('[data-key-text]').forEach(el => {
+        const key = el.getAttribute('data-key-text');
+        if(langDict[lang][key]) el.innerText = langDict[lang][key];
+    });
+}
+
+function showSettings(){ document.getElementById('settings').style.display='block'; }
+function hideSettings(){ document.getElementById('settings').style.display='none'; }
+
+  
+const header = document.querySelector('.main-header');
+
+const emojis = ["👋", "😎", "😀", "💻", "🙂", "🧑‍💻", "🎮","😍"];
+
+let i = 0;
+
+header.addEventListener("click", function () {
+  i++;
+  if (i >= emojis.length) i = 0;
+
+  header.style.setProperty("--emoji", `"${emojis[i]}"`);
+});
+</script>
+    
+</body>
+</html>

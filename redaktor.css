@@ -1,0 +1,125 @@
+/* GLOBAL STYLES */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Consolas, monospace;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* TOP BAR */
+.top-bar {
+  background: #eee;
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* MAIN CONTAINER */
+.container {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+textarea {
+  width: 50%;
+  padding: 10px;
+  font-size: 14px;
+  border: none;
+  outline: none;
+  resize: none;
+  border-right: 2px solid #999;
+  height: 100%;
+  overflow: auto;
+}
+
+iframe {
+  width: 50%;
+  border: none;
+  background: white;
+  height: 100%;
+}
+
+/* DARK MODE (FAKAT EDITOR + PREVIEW) */
+textarea.dark {
+  background: #1e1e1e;
+  color: #00ff9c;
+  border-right: 2px solid #555;
+}
+
+iframe.dark {
+  background: #2d2d2d;
+}
+
+/* FILE BAR (HORIZONTAL) */
+.file-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ddd;
+  padding: 5px 10px;
+  overflow-x: auto;
+}
+
+.file-bar .folder-name {
+  font-weight: bold;
+  margin-right: 20px;
+}
+
+.file-bar .files {
+  display: flex;
+  gap: 5px;
+  flex: 1;
+  overflow-x: auto;
+}
+
+.file-bar .file-btn {
+  padding: 5px 10px;
+  cursor: pointer;
+  border: 1px solid #999;
+  background: #fff;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.file-bar .file-btn.active {
+  background: #00ff9c;
+  color: #000;
+  border-color: #00ff9c;
+}
+
+.file-bar .file-btn .delete-btn {
+  color: red;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#saveBtn, #addFileBtn {
+  padding: 5px 10px;
+  cursor: pointer;
+  border: 1px solid #555;
+  border-radius: 4px;
+  background: #eee;
+}
+
+/* RESPONSIVE */
+@media(max-width:768px) {
+  .container {
+    flex-direction: column;
+  }
+  textarea, iframe {
+    width: 100%;
+    height: 50%;
+    border-right: none;
+    border-bottom: 2px solid #999;
+  }
+}

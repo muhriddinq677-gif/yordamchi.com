@@ -1,0 +1,299 @@
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BlueType Pro Elite</title>
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0e14;
+            --main-color: #3b82f6; 
+            --sub-color: #4b5563;  
+            --text-color: #ffffff; 
+            --error-color: #ef4444; 
+        }
+
+        body {
+            background-color: var(--bg-color); color: var(--text-color);
+            font-family: 'Roboto Mono', monospace;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 100vh; margin: 0; padding: 15px; box-sizing: border-box;
+        }
+
+        #settings-bar {
+            display: flex; gap: 15px; background: rgba(255,255,255,0.03);
+            padding: 15px; border-radius: 12px; margin-bottom: 20px;
+            border: 1px solid rgba(59, 130, 246, 0.2); flex-wrap: wrap; width: 100%; max-width: 850px;
+        }
+
+        .group { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 140px; }
+        label { font-size: 10px; color: var(--main-color); font-weight: bold; }
+
+        select, input {
+            background: #161b22; border: 1px solid var(--sub-color);
+            color: var(--text-color); padding: 10px; border-radius: 5px; outline: none; font-size: 14px;
+        }
+
+        #game-container { width: 100%; max-width: 850px; position: relative; }
+        #timer-display { color: var(--main-color); font-size: 2.2rem; font-weight: 700; margin-bottom: 10px; }
+
+        #words-wrapper {
+    font-size: 1.8rem;
+    line-height: 3rem;
+    /* height: 9rem;  <-- Mana shu qatorni o'chirdim */
+    min-height: 200px; /* Kamida shuncha joy egallaydi */
+    max-height: 70vh;  /* Ekran balandligining 70% gacha kattalashadi */
+    overflow-y: auto;  /* Agar so'zlar juda ko'p bo'lsa, o'ng tomonda skroll chiqadi */
+    position: relative;
+    color: var(--sub-color);
+    user-select: none;
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.02);
+}
+
+
+        .word { position: relative; display: inline-block; margin-right: 0.6rem; border-bottom: 2px solid transparent; }
+        .word.active { border-bottom: 2px solid var(--main-color); }
+
+        .letter.correct { color: var(--text-color); }
+        .letter.incorrect { color: var(--error-color); }
+
+        #caret {
+            width: 2px; height: 1.8rem; background-color: var(--main-color);
+            position: absolute; transition: all 0.05s; box-shadow: 0 0 8px var(--main-color);
+        }
+
+        #hidden-input { position: absolute; opacity: 0; pointer-events: none; }
+
+        .btn {
+            background: var(--main-color); color: white; border: none;
+            padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold;
+        }
+        
+        #result-popup {
+            display: none; text-align: center; position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); background: #161b22; border: 2px solid var(--main-color);
+            padding: 30px; border-radius: 20px; z-index: 10; width: 90%; max-width: 400px;
+        }
+
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .stat-item { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; }
+        .stat-label { font-size: 0.7rem; color: var(--sub-color); text-transform: uppercase; }
+        .stat-value { font-size: 1.5rem; color: var(--main-color); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div id="settings-bar">
+        <div class="group">
+            <label>TIL:</label>
+            <select id="lang-select" onchange="initGame()">
+                <option value="uz">Uzbek</option>
+                <option value="en">English</option>
+                <option value="ru">Russian</option>
+                <option value="tr">Turkish</option>
+                <option value="de">German</option>
+                <option value="fr">French</option>
+                <option value="es">Spanish</option>
+                <option value="it">Italian</option>
+                <option value="pt">Portuguese</option>
+                <option value="py">Python</option>
+            </select>
+        </div>
+        <div class="group">
+            <label>VAQT (SEKUND):</label>
+            <input type="number" id="time-input" value="30" min="1" onchange="initGame()">
+        </div>
+        <button class="btn" onclick="initGame()">🔄 Qayta boshlash</button>
+    </div>
+
+    <div id="game-container">
+        <div id="timer-display">00:00</div>
+        <input type="text" id="hidden-input" autocomplete="off" inputmode="text">
+        <div id="words-wrapper" onclick="document.getElementById('hidden-input').focus()">
+            <div id="caret"></div>
+            <div id="words"></div>
+        </div>
+        <div id="result-popup">
+            <h2 style="margin-top:0">Natija</h2>
+            <div class="stat-grid">
+                <div class="stat-item">
+                    <div class="stat-label">WPM</div>
+                    <div id="res-wpm" class="stat-value">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Aniqlik</div>
+                    <div id="res-acc" class="stat-value">0%</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">So'zlar</div>
+                    <div id="res-words" class="stat-value">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Xatolar</div>
+                    <div id="res-errors" class="stat-value">0</div>
+                </div>
+            </div>
+            <button class="btn" onclick="initGame()">YANA SINASH</button>
+        </div>
+    </div>
+
+    <script>
+ const dicts = {
+    uz: "ona vatan maktab bilim kitob quyosh daryo mantiq iroda tinchlik mehnat jasorat o'quvchi kompyuter dastur mantiq sharaf iroda g'alaba maqsad orzu harakat natija muvaffaqiyat tajriba saboq ustoz shogird hayot dunyo osmon yulduz oy tunda kunduz quyoshli havo shamol yomg'ir qor bahor yoz kuz qish daraxt gul maysa bog' dala qishloq shahar ko'cha uy xona oila ota ona farzand aka uka opa singil do'st hamroh yo'l safar ulov mashina poezd samolyot kema dengiz okean suv olov tuproq temir oltin kumush boylik baxt sog'liq tinchlik omonlik omonat diyonat vijdon iymon insof adolat haqiqat yolg'on to'g'ri egri past baland yaqin uzoq katta kichik yangi eski yaxshi yomon go'zal xunuk aqlli nodon kuchli kuchsiz tez sekin oson qiyin foyda zarar foydali zararli shirin achchiq nordon sho'r issiq sovuq quruq nam toza iflos yorug' qorong'u ochiq yopiq keng tor usta shogird qalam daftar o'chirg'ich chizg'ich bo'yoq rasm surat musiqa qo'shiq raqs teatr kino san'at sport futbol tennis basketbol suzish yugurish kurash g'alaba mag'lubiyat hakam o'yin",
+    en: "the quick brown fox jumps over the lazy dog coding speed logic world focus power system cloud energy dream space technology future science history music art movie book story game play work study learn teach write read speak listen look feel think know understand create build develop design fix improve change move run walk jump fly swim drive ride travel stay leave start finish open close high low big small new old good bad beautiful ugly smart stupid strong weak fast slow easy hard useful useless sweet sour bitter salty hot cold dry wet clean dirty light dark open closed wide narrow long short heavy light rich poor happy sad angry calm brave afraid young old first last next back front side top bottom left right up down in out on off with without through across between among under over before after during since until while",
+    ru: "привет мир работа время экран солнце город знание проект алгоритм книга жизнь цифра код учеба компьютер человек место дело рука сторона глаз лицо слово голова друг дом утро вечер ночь день год конец начало вопрос ответ форма свет сила вещь имя час область земля страна часть вера сила закон вид путь мать отец война народ конец голова голос рука город глаз лицо час слово дело сила закон вид путь мать отец война народ книга день год конец начало вопрос ответ форма свет сила вещь имя час область земля страна часть вера сила закон вид путь мать отец война народ",
+    tr: "merhaba dunya gelecek hayat huzur sevgi ruzgar gunes yagmur sistem yazilim okul kitap bilgisayar insan zaman is el taraf goz yuz kelime kafa arkadas ev sabah aksam gece gun yil son bas soru cevap form isik guc sey isim saat bolge dunya ulke parca inan guc yasa gorunus yol anne baba savas halk son kafa ses el sehir goz yuz saat kelime is guc yasa gorunus yol anne baba savas halk",
+    de: "zeit wissen welt leben computer schule buch sonne wind regen freiheit arbeit licht abend herz gluck mensch arbeit hand seite auge gesicht wort kopf freund haus morgen abend nacht tag jahr ende anfang frage antwort form licht kraft sache name stunde bereich erde land teil glauben kraft gesetz art weg mutter vater krieg volk ende kopf stimme hand stadt auge gesicht stunde wort sache kraft gesetz art weg mutter vater krieg volk",
+    fr: "monde temps vie vitesse livre ecole soleil vent pluie liberte travail coeur amour soir journee homme travail main cote oeil visage mot tete ami maison matin soir nuit jour annee fin debut question reponse forme lumiere force chose nom heure zone terre pays partie foi force loi genre chemin mere pere guerre peuple fin tete voix main ville oeil visage heure mot affaire force loi genre chemin mere pere guerre peuple",
+    es: "mundo tiempo vida velocidad libro escuela sol viento lluvia libertad trabajo corazon luz amor noche hombre trabajo mano lado ojo cara palabra cabeza amigo casa mañana tarde noche día año fin principio pregunta respuesta forma luz fuerza cosa nombre hora zona tierra país parte fe fuerza ley género camino madre padre guerra pueblo fin cabeza voz mano ciudad ojo cara hora palabra asunto fuerza ley género camino madre padre guerra pueblo",
+    it: "mondo tempo vita velocita libro scuola sole vento pioggia liberta lavoro cuore luce amore notte uomo lavoro mano lato occhio viso parola testa amico casa mattina sera notte giorno anno fine inizio domanda risposta forma luce forza cosa nome ora zona terra paese parte fede forza legge genere cammino madre padre guerra popolo fine testa voce mano citta occhio viso ora parola affare forza legge genere cammino madre padre guerra popolo",
+    pt: "mundo tempo vida velocidade libro escola sol vento chuva liberdade trabalho coracao luz amor noite homem trabalho mao lado olho rosto palabra cabeca amigo casa manha tarde noite dia ano fim inicio pergunta resposta forma luz força coisa nome hora zona terra pais parte fe força lei genero caminho mae pai guerra povo fim cabeca voz mao cidade olho rosto hora palavra assunto força lei genero caminho mae pai guerra povo",
+    py: "def main(): print('hello') import math for i in range(10): if True: return None try: except: class User: pass while True: break list = dict = {'a':1} set = {1,2} tuple = (1,2) with open('file.txt') as f: data = f.read() lambda x: x*2 async def fetch(): await response yield from range(10) @decorator global x nonlocal y assert True raise Error del obj is None in not and or continue finally input('name') len(items) type(obj) range(5) sorted(list) sum(numbers) min(x) max(y) abs(z) round(n)"
+};
+
+let timeLeft, maxTime, interval, isPlaying = false;
+let wordIdx = 0, charIdx = 0, correctChars = 0, errorCount = 0, totalTyped = 0;
+
+function formatTime(s) {
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    return `${h > 0 ? h + ':' : ''}${m < 10 && h > 0 ? '0' + m : m}:${sec < 10 ? '0' + sec : sec}`;
+}
+
+function initGame() {
+    clearInterval(interval);
+    isPlaying = false;
+    maxTime = parseInt(document.getElementById('time-input').value) || 30;
+    timeLeft = maxTime;
+    wordIdx = 0; charIdx = 0; correctChars = 0; errorCount = 0; totalTyped = 0;
+
+    document.getElementById('timer-display').innerText = formatTime(timeLeft);
+    document.getElementById('result-popup').style.display = 'none';
+    document.getElementById('words-wrapper').style.opacity = '1';
+    
+    const wordsDiv = document.getElementById('words');
+    wordsDiv.innerHTML = '';
+    
+    const lang = document.getElementById('lang-select').value;
+    const pool = (dicts[lang] || dicts['uz']).split(' ');
+    
+    pool.forEach((w, i) => {
+        const span = document.createElement('span');
+        span.className = 'word' + (i === 0 ? ' active' : '');
+        [...w, ' '].forEach(c => {
+            const l = document.createElement('span');
+            l.className = 'letter';
+            l.innerText = c === ' ' ? '\u00A0' : c;
+            span.appendChild(l);
+        });
+        wordsDiv.appendChild(span);
+    });
+    
+    updateCaret();
+    const input = document.getElementById('hidden-input');
+    input.value = '';
+    input.disabled = false;
+    input.focus();
+}
+
+function updateCaret() {
+    const wordsDiv = document.getElementById('words');
+    if (!wordsDiv.children[wordIdx]) return;
+    const word = wordsDiv.children[wordIdx];
+    const target = word.children[charIdx];
+    const rect = target.getBoundingClientRect();
+    const parent = document.getElementById('words-wrapper').getBoundingClientRect();
+    const caret = document.getElementById('caret');
+    
+    caret.style.left = (rect.left - parent.left) + 'px';
+    caret.style.top = (rect.top - parent.top) + 'px';
+
+    Array.from(wordsDiv.children).forEach(w => w.classList.remove('active'));
+    word.classList.add('active');
+    
+    // Avtomatik skroll qilish
+    if (rect.top - parent.top > 100) {
+        document.getElementById('words-wrapper').scrollTop += 40;
+    }
+}
+
+document.getElementById('hidden-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Backspace') {
+        const wordsDiv = document.getElementById('words');
+        if (charIdx > 0) {
+            charIdx--;
+        } else if (wordIdx > 0) {
+            wordIdx--;
+            charIdx = wordsDiv.children[wordIdx].children.length - 1;
+        }
+        wordsDiv.children[wordIdx].children[charIdx].classList.remove('correct', 'incorrect');
+        updateCaret();
+    }
+});
+
+document.getElementById('hidden-input').addEventListener('input', (e) => {
+    if (!isPlaying) {
+        isPlaying = true;
+        interval = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timer-display').innerText = formatTime(timeLeft);
+            if (timeLeft <= 0) finish();
+        }, 1000);
+    }
+
+    const typed = e.data;
+    if (!typed) return; 
+
+    totalTyped++;
+    const word = document.getElementById('words').children[wordIdx];
+    const target = word.children[charIdx];
+
+    if (typed === target.innerText.replace('\u00A0', ' ')) {
+        target.classList.add('correct');
+        correctChars++;
+    } else {
+        target.classList.add('incorrect');
+        errorCount++;
+    }
+
+    charIdx++;
+    if (charIdx >= word.children.length) {
+        charIdx = 0; wordIdx++;
+    }
+    e.target.value = '';
+    updateCaret();
+});
+
+function finish() {
+    clearInterval(interval);
+    document.getElementById('hidden-input').disabled = true;
+    document.getElementById('words-wrapper').style.opacity = '0.1';
+    
+    const wpm = Math.round((correctChars / 5) / (maxTime / 60)) || 0;
+    const acc = totalTyped > 0 ? Math.round((correctChars / totalTyped) * 100) : 0;
+
+    document.getElementById('res-wpm').innerText = wpm;
+    document.getElementById('res-acc').innerText = acc + "%";
+    document.getElementById('res-words').innerText = wordIdx;
+    document.getElementById('res-errors').innerText = errorCount;
+    document.getElementById('result-popup').style.display = 'block';
+}
+
+document.getElementById('lang-select').onchange = initGame;
+document.getElementById('time-input').onchange = initGame;
+document.getElementById('restart-btn').onclick = initGame;
+document.body.onclick = () => document.getElementById('hidden-input').focus();
+window.onkeydown = (e) => { if (e.key === 'Tab') { e.preventDefault(); initGame(); } };
+
+window.onload = initGame;
+
+
+    </script>
+</body>
+  </html>
+  

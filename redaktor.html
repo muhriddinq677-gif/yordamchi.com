@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<title>Code Editor</title>
+<link rel="stylesheet" href="redaktor.css">
+</head>
+<body class="light">
+
+<div class="top-bar">
+<h3>Redaktor kod yozish uchun!</h3>
+<button id="themeBtn">🌙</button>
+</div>
+
+<div class="file-bar">
+<span class="folder-name">MyProject</span>
+<div class="files" id="fileList"></div>
+<button id="addFileBtn">➕ Fayl qo‘shish</button>
+<button id="saveBtn">💾 Saqlash</button>
+</div>
+
+<div class="container">
+<textarea id="editor"></textarea>
+<iframe id="preview"></iframe>
+</div>
+
+<script src="redaktor.js"></script>
+</body>
+</html>

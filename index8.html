@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mantiqiy savollar</title>
+<style>
+*{box-sizing:border-box;}
+body{margin:0;font-family:Arial;background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);color:white;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:10px;}
+.container{width:100%;max-width:600px;background:rgba(0,0,0,0.9);padding:20px;border-radius:20px;text-align:center;}
+button{width:100%;padding:10px;margin:5px 0;border:none;border-radius:10px;cursor:pointer;font-size:15px;transition:0.3s;}
+button:hover{background:gold;color:black;}
+.hidden{display:none;}
+.topbar{display:flex;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px;font-size:14px;}
+@media(max-width:500px){.topbar{flex-direction:column;align-items:center;gap:5px;} button{font-size:14px;}}
+select{margin-bottom:10px;padding:5px;border-radius:5px;border:none;}
+.controls{display:flex;justify-content:space-around;margin-top:15px;}
+.control-btn{width:30%;padding:10px;border-radius:10px;}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h2 id="title">Mantiqiy savollar va matematik savollar </h2>
+
+<!-- Bosh sahifa -->
+<div id="home">
+<label id="langLabel">Tilni tanlang:</label>
+<select id="language">
+<option value="uz">🇺🇿 Uzbek</option>
+<option value="ru">🇷🇺 Russian</option>
+<option value="en">🇬🇧 English</option>
+</select>
+<br>
+<button id="startBtn">🎮 Boshlash</button>
+<button id="shopBtnHome">💎 Do'kon</button>
+</div>
+
+<!-- O'yin qismi -->
+<div id="game" class="hidden">
+<div class="topbar">
+<span id="levelLabel">Level: <span id="levelNum"></span></span>
+<span id="pointLabel">⭐ <span id="point"></span></span>
+<span id="coinLabel">🪙 <span id="coin"></span></span>
+<span id="hintLabel">💡 <span id="hintCount"></span></span>
+<span id="timerLabel">⏱ <span id="timer"></span></span>
+</div>
+
+<h3 id="emoji"></h3>
+<h3 id="question"></h3>
+<div id="answers"></div>
+
+<div class="controls">
+<button id="hintBtn" class="control-btn">💡 Hint</button>
+<button id="checkBtn" class="control-btn">✅ Tekshirish</button>
+<button id="nextBtn" class="control-btn hidden">➡ Keyingi</button>
+<button id="backToHome" class="control-btn">⬅ Orqaga</button>
+</div>
+<h3 id="result"></h3>
+</div>
+
+<!-- Do'kon -->
+<div id="shop" class="hidden">
+<h3 id="shopTitle">💎 Do'kon</h3>
+<button class="buyBtn" data-amount="10">10 Coin (100 point)</button>
+<button class="buyBtn" data-amount="50">50 Coin (500 point)</button>
+<button class="buyBtn" data-amount="100">100 Coin (1000 point)</button>
+<button id="backBtn">⬅ Orqaga</button>
+</div>
+
+</div>
+
+<script>
+// ===== SAVOLLAR =====
+const questions=[
+{question:{uz:"5+5*5-5/5=? misolni yeching",ru:"5+5*5-5/5=? Решите пример.",en:"5+5*5-5/5=?  solve the example"},
+answers:[
+{uz:"29",ru:"29",en:"29"},
+{uz:"1",ru:"1",en:"1"},
+{uz:"55555",ru:"55555",en:"55555"},
+{uz:"30",ru:"30",en:"30"}],correct:0},
+{question:{uz:"Daraxtda 5ta qush bor ularning bittasi otib o'ldirildi nechta qush qoldi darxtda?",ru:"На дереве сидят 5 птиц. Одну из них выстрелили. Сколько птиц осталось на дереве?",en:"There are 5 birds on a tree. One of them was shot. How many birds are left on the tree?"},
+answers:[
+{uz:"5 ",ru:" 5",en:"5"},
+{uz:"4",ru:"4",en:"4"},
+{uz:"0",ru:"0",en:"0"},
+{uz:"1",ru:"1",en:"1"}],correct:2},
+{question:{uz:"Senda 3ta olma bor 1tasini yeding 1tasini do'stingga berding senda nechta olma qoldi?",ru:"У тебя есть 3 яблока. Ты съел одно, а одно дал другу. Сколько яблок у тебя осталось?", en:"You have 3 apples. You ate one and gave one to your friend. How many apples do you have left?"},
+answers:[
+{uz:"5",ru:"5",en:"5"},
+{uz:"3",ru:"3",en:"3"},
+{uz:"2", ru:"2", en:"2"},
+{uz:"0",ru:"0",en:"0"},
+{uz:"1",ru:"1",en:"1"}],correct:4},
+{
+    question:{uz:"|x*150+40000=30000| x ni toping?", ru:"|x*155+45=4000| Найти x?", en:"|x*155+45=4000| Find x?"},
+    answers:[{uz:"x=5",ru:"x=5",en:"x=5"},
+        {uz:"x=20",ru:"x=20",en:"x=20"},
+        {uz:"x=200",ru:"x=200",en:"x=200"},
+        {uz:"x=300",ru:"x=300",en:"x=300"},],correct:2},
+{ question:{uz:"|30+30+[]+[]+[]=90| bo'sh kataklarni to'ldiring", ru:"|30+30+[]+[]+[]=90| Заполните пропуски", en:"|30+30+[]+[]+[]=90 fill in the blanks|"},
+answers:[
+{uz:"[5], [5], [15]",ru:"[5], [5], [15]", en:"[5], [5], [15]"},
+{uz:"[5], [10], [15]",ru:"[5], [10], [15]", en:"[5], [10], [15]"},
+{uz:"[5], [4], [15]",ru:"[5], [4], [15]", en:"[5], [4], [15]"},
+{uz:"[29], [5], [15]",ru:"[29], [5], [15]", en:"[29], [5], [15]"},],correct:1},
+{ question:{uz:"Archada 5ta olma bor undan 2tasini olding archada nechta olma qoldi?", ru:"На дереве 5 яблок, вы взяли 2 из них. Сколько яблок осталось на дереве?", en:"There are 5 apples on the tree, you took 2 of them, how many apples are left on the tree?"},
+answers:[
+{uz:"Archada olma bo'lmaydi",ru:"На можжевеловом дереве не будет яблок.", en:"There will be no apples on the juniper tree."},
+{uz:"3ta olma qoldi",ru:"Осталось 3 яблока", en:"3 apples left"},
+{uz:"5ta olma qoldi",ru:"Осталось 5 яблока", en:"5 apples left"},
+{uz:"1ta olma qoldi",ru:"Осталось 1 яблока", en:"1 apples left"},],correct:0},
+{ question:{uz:"Dunyodagi eng zo'r yegulik?", ru:"Лучшая еда в мире?", en:"The best food in the world?"},
+answers:[
+{uz:"non",ru:"хлеб", en:"bread"},
+{uz:"shirinlik",ru:" десерт", en:"chocolate"},
+{uz:"qovun",ru:"дыня", en:"melon"},
+{uz:"tort",ru:"торт", en:"cake"},],correct:0},
+{question:{uz:"Qaysi oyda 28 kun bor?",ru:"В каком месяце 28 дней?",en:"Which month has 28 days?"},
+answers:[
+{uz:"Fevral",ru:"Февраль",en:"February"},
+{uz:"Yanvar",ru:"Январь",en:"January"},
+{uz:"Mart",ru:"Март",en:"March"},
+{uz:"Barchasida",ru:"Во всех",en:"In all months"}],correct:3},
+{question:{uz:"Qaysi savolga hech qachon 'HA' deb javob berib bo'lmaydi?",ru:"На какой вопрос нельзя ответить 'ДА'?",en:"To which question can you never answer 'YES'?"},
+answers:[
+{uz:"Uxlayapsizmi?",ru:"Вы спите?",en:"Are you asleep?"},
+{uz:"Tiriksizmi?",ru:"Вы живы?",en:"Are you alive?"},
+{uz:"O'zbekmisiz?",ru:"Вы узбек?",en:"Are you Uzbek?"},
+{uz:"Qorningiz ochmi?",ru:"Вы голодны?",en:"Are you hungry?"}],correct:0},
+{question:{uz:"Poygada 2-o'rindagini quvib o'tdingiz. Siz nechanchi o'rindasiz?",ru:"Вы обогнали человека на 2-м месте. На каком вы месте?",en:"You overtook the person in 2nd place. What place are you in?"},
+answers:[
+{uz:"1-o'rin",ru:"1-е место",en:"1st place"},
+{uz:"2-o'rin",ru:"2-е место",en:"2nd place"},
+{uz:"3-o'rin",ru:"3-е место",en:"3rd place"},
+{uz:"4-o'rin",ru:"4-е место",en:"4th place"}],correct:1},
+{question:{uz:"Yomg'irda qaysi hayvon ho'l bo'lmaydi?",ru:"Какое животное под дождем не намокнет?",en:"Which animal won't get wet under the rain?"},
+answers:[
+{uz:"Fil",ru:"Слон",en:"Elephant"},
+{uz:"Baliq",ru:"Рыба",en:"Fish"},
+{uz:"Qush",ru:"Птица",en:"Bird"},
+{uz:"It",ru:"Собака",en:"Dog"}],correct:1},
+{question:{uz:"Yerda sinmaydi, suvda sinadi. Bu nima?",ru:"На земле не разобьется, в воде разобьется. Что это?",en:"Won't break on ground, will break in water. What is it?"},
+answers:[
+{uz:"Shisha",ru:"Стекло",en:"Glass"},
+{uz:"Tosh",ru:"Камень",en:"Stone"},
+{uz:"Qog'oz",ru:"Бумага",en:"Paper"},
+{uz:"Muz",ru:"Лед",en:"Ice"}],correct:2},
+{question:{uz:"Qaysi so'z doimo xato yoziladi?",ru:"Какое слово всегда пишется неправильно?",en:"Which word is always spelled incorrectly?"},
+answers:[
+{uz:"Xato",ru:"Неправильно",en:"Incorrectly"},
+{uz:"Kitob",ru:"Книга",en:"Book"},
+{uz:"Bilim",ru:"Знание",en:"Knowledge"},
+{uz:"Daftar",ru:"Тетрадь",en:"Notebook"}],correct:0},
+{question:{uz:"Filni 3 bosqichda qanday muzlatgichga qo'yish mumkin?",ru:"Как положить слона в холодильник за 3 шага?",en:"How do you put an elephant in a fridge in 3 steps?"},
+answers:[
+{uz:"Sotib olish,so'yish",ru:"Купить,разрезать",en:"Buy,cut"},
+{uz:"Ochish,qo'yish,yopish",ru:"Открыть,положить,закрыть",en:"Open,put,close"},
+{uz:"Kattalashtirish",ru:"Увеличить",en:"Enlarge"},
+{uz:"Iloji yo'q",ru:"Неможно",en:"Impossible"}],correct:1},
+{question:{uz:"Qanchalik ko'p olsangiz, shunchalik kattalashadi. Bu nima?",ru:"Чем больше берешь, тем больше она становится. Что это?",en:"The more you take, the bigger it gets. What is it?"},
+answers:[
+{uz:"Chuqur",ru:"Яма",en:"A hole"},
+{uz:"Pul",ru:"Деньги",en:"Money"},
+{uz:"Bilim",ru:"Знание",en:"Knowledge"},
+{uz:"Vaqt",ru:"Время",en:"Time"}],correct:0},
+{question:{uz:"Qaysi daryoda suv bo'lmaydi?",ru:"В какой реке нет воды?",en:"Which river has no water?"},
+answers:[
+{uz:"Nil",ru:"Нил",en:"Nile"},
+{uz:"Xaritadagi daryo",ru:"Река на карте",en:"River on a map"},
+{uz:"Amudaryo",ru:"Амударья",en:"Amudarya"},
+{uz:"Sirdaryo",ru:"Сырдарья",en:"Syrdarya"}],correct:1},
+{question:{uz:"Hamma narsani ko'radi-yu, o'zini ko'rmaydi. U nima?",ru:"Все видит, а себя нет. Что это?",en:"Sees everything but not itself. What is it?"},
+answers:[
+{uz:"Oyna",ru:"Зеркало",en:"Mirror"},
+{uz:"Ko'z",ru:"Глаз",en:"Eye"},
+{uz:"Kamera",ru:"Камера",en:"Camera"},
+{uz:"Quyosh",ru:"Солнце",en:"Sun"}],correct:1},
+{question:{uz:"Qaysi kiyimni kiyib bo'lmaydi?",ru:"Какую одежду нельзя носить?",en:"What clothing can't be worn?"},
+answers:[
+{uz:"Eski kiyim",ru:"Старая одежда",en:"Old clothes"},
+{uz:"Bulut",ru:"Облако",en:"Cloud"},
+{uz:"Yamoq kiyim",ru:"Одежда с заплатками",en:"Patched clothes"},
+{uz:"Yirtiq kiyim",ru:"Рваная одежда",en:"Torn clothes"}],correct:1},
+{question:{uz:"Uni ushlash mumkin, lekin otib bo'lmaydi. Bu nima?",ru:"Его можно поймать, но нельзя бросить. Что это?",en:"You can catch it, but cannot throw it. What is it?"},
+answers:[
+{uz:"Shamol",ru:"Ветер",en:"Wind"},
+{uz:"Shamollash",ru:"Простуда",en:"A cold"},
+{uz:"Soya",ru:"Тень",en:"Shadow"},
+{uz:"Suv",ru:"Вода",en:"Water"}],correct:1},
+{question:{uz:"Qaysi idishdan ovqat yeb bo'lmaydi?",ru:"Из какой посуды нельзя поесть?",en:"From which dish can you not eat?"},
+answers:[
+{uz:"Bo'sh idish",ru:"Пустая посуда",en:"Empty dish"},
+{uz:"Yopiq idish",ru:"Закрытая посуда",en:"Closed dish"},
+{uz:"Siniq idish",ru:"Разбитая посуда",en:"Broken dish"},
+{uz:"Katta idish",ru:"Большая посуда",en:"Big dish"}],correct:0},
+{question:{uz:"Qaysi qo'l bilan choyni aralashtirish yaxshiroq?",ru:"Какой рукой лучше мешать чай?",en:"Which hand is better to stir tea with?"},
+answers:[
+{uz:"O'ng qo'l",ru:"Правой",en:"Right hand"},
+{uz:"Chap qo'l",ru:"Левой",en:"Left hand"},
+{uz:"Qoshiq bilan",ru:"Ложкой",en:"With a spoon"},
+{uz:"Farqi yo'q",ru:"Без разницы",en:"No difference"}],correct:2},
+{question:{uz:"Qaysi tugunni yechib bo'lmaydi?",ru:"Какой узел нельзя развязать?",en:"Which knot cannot be untied?"},
+answers:[
+{uz:"Temir tugun",ru:"Железный узел",en:"Iron knot"},
+{uz:"Poyabzal tuguni",ru:"Шнурки",en:"Shoelace knot"},
+{uz:"Televizion bog'lama",ru:"Телеузел",en:"TV junction"},
+{uz:"Poyezd yo'li",ru:"Ж/д узел",en:"Railway junction"}],correct:3},
+{question:{uz:"Qaysi taroq bilan sochni tarab bo'lmaydi?",ru:"Какой расческой нельзя причесаться?",en:"Which comb cannot be used to comb hair?"},
+answers:[
+{uz:"Siniq taroq",ru:"Сломанная",en:"Broken comb"},
+{uz:"Asalari uyasi",ru:"Пчелиные соты",en:"Honeycomb"},
+{uz:"Yangi taroq",ru:"Новая",en:"New comb"},
+{uz:"Katta taroq",ru:"Большая",en:"Big comb"}],correct:1},
+{question:{uz:"Yurganda iz qoldirmaydigan narsa nima?",ru:"Что не оставляет следов при ходьбе?",en:"What leaves no tracks while walking?"},
+answers:[
+{uz:"Qush",ru:"Птица",en:"Bird"},
+{uz:"Baliq",ru:"Рыба",en:"Fish"},
+{uz:"Qayiq",ru:"Лодка",en:"Boat"},
+{uz:"Soya",ru:"Тень",en:"Shadow"}],correct:3},
+{question:{uz:"Qaysi soat sutkada faqat ikki marta to'g'ri vaqtni ko'rsatadi?",ru:"Какие часы показывают верное время дважды в сутки?",en:"Which clock shows the correct time twice a day?"},
+answers:[
+{uz:"Buzilgan soat",ru:"Сломанные",en:"Broken clock"},
+{uz:"Qum soat",ru:"Песочные",en:"Hourglass"},
+{uz:"Quyosh soati",ru:"Солнечные",en:"Sundial"},
+{uz:"Qo'l soati",ru:"Наручные",en:"Wristwatch"}],correct:0},
+{question:{uz:"Uni hamma ko'radi, lekin hech kim ushlay olmaydi. U nima?",ru:"Все его видят, но никто не может поймать. Что это?",en:"Everyone sees it, but no one can catch it. What is it?"},
+answers:[
+{uz:"Bulut",ru:"Облако",en:"Cloud"},
+{uz:"Ufq",ru:"Горизонт",en:"Horizon"},
+{uz:"Samolyot",ru:"Самолет",en:"Plane"},
+{uz:"Yulduz",ru:"Звезда",en:"Star"}],correct:1},
+{question:{uz:"Qancha ko'p bo'lsa, vazni shuncha kam bo'ladi. Bu nima?",ru:"Чем их больше, тем меньше вес. Что это?",en:"The more there are, the less it weighs. What is it?"},
+answers:[
+{uz:"Teshiklar",ru:"Дырки",en:"Holes"},
+{uz:"Paxta",ru:"Вата",en:"Cotton"},
+{uz:"Pufakchalar",ru:"Пузырьки",en:"Bubbles"},
+{uz:"Tuklar",ru:"Перья",en:"Feathers"}],correct:0},
+{question:{uz:"Qaysi g'ildirak burilayotganda aylanmaydi?",ru:"Какое колесо не крутится при повороте?",en:"Which wheel does not turn when turning?"},
+answers:[
+{uz:"Orqa g'ildirak",ru:"Заднее",en:"Back wheel"},
+{uz:"Oldi g'ildirak",ru:"Переднее",en:"Front wheel"},
+{uz:"Zapas g'ildirak",ru:"Запасное",en:"Spare wheel"},
+{uz:"Rul",ru:"Руль",en:"Steering wheel"}],correct:2},
+{question:{uz:"Nima uchun itlar suyakni ko'mib qo'yadi?",ru:"Почему собаки закапывают кости?",en:"Why do dogs bury bones?"},
+answers:[
+{uz:"Ertaga yeyishga",ru:"На завтра",en:"For tomorrow"},
+{uz:"Chunki cho'ntagi yo'q",ru:"Нет карманов",en:"No pockets"},
+{uz:"Yashirish uchun",ru:"Спрятать",en:"To hide"},
+{uz:"O'yin uchun",ru:"Для игры",en:"For fun"}],correct:1},
+{question:{uz:"Dunyodagi eng baland tog' qaysi edi (Everest topilmasidan oldin)?",ru:"Какая гора была самой высокой до открытия Эвереста?",en:"What was the highest mountain before Everest was discovered?"},
+answers:[
+{uz:"K2",ru:"К2",en:"K2"},
+{uz:"Everest",ru:"Эверест",en:"Everest"},
+{uz:"Kilimanjaro",ru:"Килиманджаро",en:"Kilimanjaro"},
+{uz:"Monblan",ru:"Монблан",en:"Mont Blanc"}],correct:1},
+{question:{uz:"Qaysi kalla fikrlay olmaydi?",ru:"Какая голова не умеет думать?",en:"Which head cannot think?"},
+answers:[
+{uz:"Karam kallasi",ru:"Кочан капусты",en:"Cabbage head"},
+{uz:"Hayvon kallasi",ru:"Голова зверя",en:"Animal head"},
+{uz:"Baliq kallasi",ru:"Рыбья голова",en:"Fish head"},
+{uz:"Baqa kallasi",ru:"Лягушачья",en:"Frog head"}],correct:0}
+
+];
+// ===== O‘YIN =====
+let currentLevel=1,point=0,coin=parseInt(localStorage.getItem("coin"))||50,hintCount=0,currentQuestion=0,selectedAnswer=null,timer,timeLeft=60,lang="uz";
+
+// DOM
+const home=document.getElementById("home"),game=document.getElementById("game"),shop=document.getElementById("shop");
+const startBtn=document.getElementById("startBtn"),languageSelect=document.getElementById("language");
+const checkBtn=document.getElementById("checkBtn"),hintBtn=document.getElementById("hintBtn"),nextBtn=document.getElementById("nextBtn");
+const shopBtnHome=document.getElementById("shopBtnHome"),backBtn=document.getElementById("backBtn"),backToHome=document.getElementById("backToHome");
+const emojiEl=document.getElementById("emoji"),questionEl=document.getElementById("question"),answersEl=document.getElementById("answers");
+const pointEl=document.getElementById("point"),coinEl=document.getElementById("coin"),hintEl=document.getElementById("hintCount"),levelEl=document.getElementById("levelNum"),timerEl=document.getElementById("timer"),resultEl=document.getElementById("result");
+const titleEl=document.getElementById("title"),langLabel=document.getElementById("langLabel"),startBtnEl=document.getElementById("startBtn"),shopBtnEl=document.getElementById("shopBtnHome"),shopTitle=document.getElementById("shopTitle");
+
+// ===== TRANSLATE =====
+function translateUI(){
+if(lang==="uz"){
+titleEl.innerText="⚽ Football Quiz PRO";
+langLabel.innerText="Tilni tanlang:";
+startBtnEl.innerText="🎮 Boshlash";
+shopBtnEl.innerText="💎 Do'kon";
+shopTitle.innerText="💎 Do'kon";
+checkBtn.innerText="✅ Tekshirish";
+hintBtn.innerText="💡 Hint";
+nextBtn.innerText="➡ Keyingi";
+backToHome.innerText="⬅ Orqaga";
+backBtn.innerText="⬅ Orqaga";
+}else if(lang==="ru"){
+titleEl.innerText="⚽ Футбольная Викторина PRO";
+langLabel.innerText="Выберите язык:";
+startBtnEl.innerText="🎮 Начать";
+shopBtnEl.innerText="💎 Магазин";
+shopTitle.innerText="💎 Магазин";
+checkBtn.innerText="✅ Проверить";
+hintBtn.innerText="💡 Подсказка";
+nextBtn.innerText="➡ Далее";
+backToHome.innerText="⬅ Назад";
+backBtn.innerText="⬅ Назад";
+}else{
+titleEl.innerText="⚽ Football Quiz PRO";
+langLabel.innerText="Select Language:";
+startBtnEl.innerText="🎮 Start";
+shopBtnEl.innerText="💎 Shop";
+shopTitle.innerText="💎 Shop";
+checkBtn.innerText="✅ Check";
+hintBtn.innerText="💡 Hint";
+nextBtn.innerText="➡ Next";
+backToHome.innerText="⬅ Back";
+backBtn.innerText="⬅ Back";
+}
+}
+
+// ===== UI UPDATE =====
+function updateUI(){
+pointEl.innerText=point;
+coinEl.innerText=coin;
+hintEl.innerText=hintCount;
+translateUI();
+}
+
+// ===== START GAME =====
+startBtn.onclick=function(){
+lang=languageSelect.value;
+updateUI();
+home.classList.add("hidden");
+game.classList.remove("hidden");
+currentLevel=1;
+currentQuestion=0;
+loadQuestion();
+};
+
+// ===== LOAD QUESTION =====
+function loadQuestion(){
+let q=questions[currentQuestion];
+emojiEl.innerText=q.emoji;
+questionEl.innerText=q.question[lang];
+answersEl.innerHTML="";
+selectedAnswer=null;
+nextBtn.classList.add("hidden");
+q.answers.forEach((a,i)=>{
+let btn=document.createElement("button");
+btn.innerText=a[lang];
+btn.onclick=()=>{selectedAnswer=i;highlightSelection(i)};
+answersEl.appendChild(btn);
+});
+resultEl.innerText="";
+hintBtn.disabled=false;
+startTimer();
+levelEl.innerText=currentLevel;
+updateUI();
+}
+
+function highlightSelection(index){
+let buttons=answersEl.children;
+for(let i=0;i<buttons.length;i++){
+buttons[i].style.background=(i===index)?"orange":"";
+}
+}
+
+// ===== TIMER =====
+function startTimer(){
+clearInterval(timer);
+timeLeft=60;
+updateTimer();
+timer=setInterval(()=>{
+timeLeft--;
+updateTimer();
+if(timeLeft<=0){
+clearInterval(timer);
+autoCheck();
+}
+},1000);
+}
+function updateTimer(){timerEl.innerText=timeLeft+"s";}
+
+// ===== CHECK =====
+checkBtn.onclick=function(){
+clearInterval(timer);
+if(selectedAnswer===null){
+alert(lang==="uz"?"Avval javobni tanlang!":lang==="ru"?"Сначала выберите ответ!":"Select an answer first!");
+return;
+}
+checkAnswer();
+};
+function autoCheck(){if(selectedAnswer===null) selectedAnswer=-1;hintBtn.disabled=true;checkAnswer();}
+
+function checkAnswer(){
+let q=questions[currentQuestion];
+hintBtn.disabled=true;
+if(selectedAnswer===q.correct){
+point+=1;
+resultEl.innerText="✅ "+(lang==="uz"?"To'g'ri!":"ru"?"Верно!":"Correct!")+" +1 Point";
+}else{
+resultEl.innerText="❌ "+(lang==="uz"?"Noto'g'ri!":"ru"?"Неверно!":"Wrong!");
+}
+
+// ===== POINT -> COIN -> HINT =====
+if(point>=10){
+let newCoin=Math.floor(point/10);
+if(newCoin>0){coin+=newCoin;point%=10;}
+}
+if(coin>=10){
+let newHint=Math.floor(coin/10);
+if(newHint>0){hintCount+=newHint;coin%=10;}
+}
+
+updateUI();
+localStorage.setItem("coin",coin);
+nextBtn.classList.remove("hidden"); // Keyingi savol tugmasi ko‘rsin
+}
+
+// ===== NEXT LEVEL BUTTON =====
+nextBtn.onclick=function(){
+currentLevel++;
+if(currentLevel>questions.length){
+alert((lang==="uz"?"🎉 O'yin tugadi! Umumiy ball: ":"ru"?"🎉 Игра окончена! Общий балл: ":"🎉 Game over! Total point: ")+point);
+location.reload();
+return;
+}
+currentQuestion=currentLevel-1;
+loadQuestion();
+}
+
+// ===== HINT =====
+hintBtn.onclick=function(){
+if(hintCount>0){
+hintCount--;
+let q=questions[currentQuestion];
+alert((lang==="uz"?"To'g'ri javob: ":"ru"?"Правильный ответ: ":"Correct answer: ")+q.answers[q.correct][lang]);
+updateUI();
+}else{
+alert(lang==="uz"?"Hint yetarli emas!":"ru"?"Нет подсказок!":"No hint available!");
+}
+}
+
+// ===== SHOP =====
+shopBtnHome.onclick=function(){
+game.classList.add("hidden");
+home.classList.add("hidden");
+shop.classList.remove("hidden");
+};
+document.querySelectorAll(".buyBtn").forEach(btn=>{
+btn.onclick=function(){
+let amt=parseInt(btn.dataset.amount);
+let neededPoint=amt*10;
+if(point>=neededPoint){
+point-=neededPoint;
+coin+=amt;
+updateUI();
+localStorage.setItem("coin",coin);
+alert(amt+" "+(lang==="uz"?"coin qo'shildi!":"ru"?"монет добавлено!":"coin added!"));
+}else{
+alert(lang==="uz"?"Yetarli point yo'q!":"ru"?"Недостаточно очков!":"Not enough point!");
+}
+};
+});
+backBtn.onclick=function(){
+shop.classList.add("hidden");
+home.classList.remove("hidden");
+};
+backToHome.onclick=function(){
+game.classList.add("hidden");
+home.classList.remove("hidden");
+updateUI();
+};
+</script>
+</body>
+</html>

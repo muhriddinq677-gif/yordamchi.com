@@ -1,0 +1,172 @@
+
+<!DOCTYPE html><html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects</title><style>
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background:#f1f5f9;
+}
+
+/* NAV */
+.nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 20px;
+    background:blue;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+.lang button{
+    margin-left:5px;
+    padding:5px 10px;
+    border:none;
+    background:#e2e8f0;
+    cursor:pointer;
+    border-radius:5px;
+}
+
+/* CONTAINER */
+.container{
+    padding:20px;
+}
+
+/* GRID */
+.projects{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:20px;
+}
+
+/* CARD */
+.card{
+    background:white;
+    padding:20px;
+    border-radius:14px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* TITLE */
+.card h3{
+    margin:0 0 10px;
+}
+
+/* BUTTON */
+.btn{
+    display:inline-block;
+    margin-top:10px;
+    padding:8px 14px;
+    background:#3b82f6;
+    color:white;
+    border-radius:8px;
+    text-decoration:none;
+    transition:0.3s;
+}
+
+.btn:hover{
+    background:#2563eb;
+}
+</style></head><body><!-- NAV --><div class="nav">
+    <h2 id="title">Loyihalar</h2>
+    <div class="lang">
+        <button onclick="setLang('uz')">UZ</button>
+        <button onclick="setLang('ru')">RU</button>
+        <button onclick="setLang('en')">EN</button>
+    </div>
+</div><div class="container"><div class="projects"><!-- CARD 1 --><div class="card">
+    <h3 data-key="p1_title">Yurak animatsiya</h3>
+    <p data-key="p1_desc">Canvas yordamida chizilgan animatsiya</p>
+    <a href="heart.html" class="btn" data-key="view">Ko‘rish</a>
+</div><!-- CARD 2 --><div class="card">
+    <h3 data-key="p2_title">Input turlari</h3>
+    <p data-key="p2_desc">Input turlarini oʻrganing</p>
+    <a href="input.html" class="btn" data-key="view">Ko‘rish</a>
+</div>
+    <div class="card">
+    <h3 data-key="p3_title">Hover Divlar</h3>
+
+    <p data-key="p3_desc">
+        10 ta turli hover effectli divlarni ko‘ring.
+    </p>
+
+    <a href="hover.html"
+       class="btn"
+       data-key="view">
+       Ko‘rish
+    </a>
+    </div>
+    <div class="card">
+    <h3 data-key="p4_title">Navbar</h3>
+    <p data-key="p4_desc">Navbar sayt ichida sahifalar o‘rtasida tez o‘tish uchun ishlatiladigan menyu.</p>
+    <a href="Navbar.html" class="btn" data-key="view">Ko‘rish</a>
+    </div>
+    <div class="card">
+    <h3 data-key="p5_title">Lampa</h3>
+    <p data-key="p5_desc">Lampa effektlari va animatsiyalarini o‘rganing.</p>
+    <a href="Lampa.html" class="btn" data-key="view">Ko‘rish</a>
+    </div>
+</div></div><script>
+const translations = {
+    uz:{
+        title:"Loyihalar",
+        view:"Ko‘rish",
+        p1_title:"Yurak animatsiya",
+        p1_desc:"Canvas yordamida chizilgan animatsiya",
+        p2_title:"Inputlar",
+        p2_desc:"Inputlarning kodini bilib oling.",
+        p3_title:"Hover Divlar",
+        p3_desc:"10 ta turli hover effectli divlarni ko‘ring.",
+        p4_title: "Navbar",
+        p4_desc: "Navbar sayt ichida sahifalar o‘rtasida tez o‘tish uchun ishlatiladigan menyu.",
+        p5_title: "Lampa",
+        p5_desc: "Lampa effektlari va animatsiyalarini o‘rganing."
+    },
+    ru:{
+        title:"Проекты",
+        view:"Открыть",
+        p1_title:"Анимация сердца",
+        p1_desc:"Анимация с помощью Canvas",
+        p2_title: "Поля ввода",
+        p2_desc: "Ознакомьтесь с кодом полей ввода.",
+        p3_title:"Hover Дивы",
+        p3_desc:"Посмотрите 10 разных div с hover эффектами.",
+        p4_title: "Navbar",
+        p4_desc: "Navbar — это меню для быстрого перехода между страницами сайта.",
+        p5_title: "Лампа",
+        p5_desc: "Изучайте эффекты и анимации лампы."
+    },
+    en:{
+        title:"Projects",
+        view:"View",
+        p1_title:"Heart animation",
+        p1_desc:"Animation using Canvas",
+        p2_title: "Inputs",
+        p2_desc: "Learn the code of the input fields.",
+        p3_title:"Hover Divs",
+        p3_desc:"See 10 different div hover effects.",
+        p4_title: "Navbar",
+        p4_desc: "A navbar is a menu used to quickly navigate between website pages.",
+        p5_title: "Lamp",
+        p5_desc: "Learn lamp effects and animations."
+    }
+};
+
+function setLang(lang){
+    document.getElementById("title").innerText = translations[lang].title;
+
+    document.querySelectorAll("[data-key]").forEach(el=>{
+        let key = el.getAttribute("data-key");
+        el.innerText = translations[lang][key];
+    });
+}
+</script></body>
+</html>

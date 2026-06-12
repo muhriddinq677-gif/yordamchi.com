@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalkulyator</title>
+<style>
+:root { --bg:#f4f7f6; --card:#fff; --text:#333; --primary:#007bff; }
+* { box-sizing:border-box; margin:0; padding:0; font-family:sans-serif; }
+body { background:var(--bg); color:var(--text); padding:20px; }
+
+.card { background: var(--card); padding:20px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); margin-bottom:20px; }
+input { width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ddd; }
+.calc-grid { display:grid; grid-template-columns: repeat(4,1fr); gap:10px; }
+.c-btn { padding:20px; background:#e9ecef; border-radius:10px; text-align:center; cursor:pointer; font-weight:bold; color:#000; }
+button { padding:12px; border-radius:8px; border:none; background: var(--primary); color:white; cursor:pointer; font-weight:bold; width:100%; margin-top:10px; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Kalkulyator</h2>
+  <input type="text" id="cDisp" readonly style="text-align:right; font-size:2rem;">
+
+  <div class="calc-grid">
+    <div class="c-btn" onclick="cIn('7')">7</div>
+    <div class="c-btn" onclick="cIn('8')">8</div>
+    <div class="c-btn" onclick="cIn('9')">9</div>
+    <div class="c-btn" style="background:#ffc107" onclick="cIn('/')">/</div>
+
+    <div class="c-btn" onclick="cIn('4')">4</div>
+    <div class="c-btn" onclick="cIn('5')">5</div>
+    <div class="c-btn" onclick="cIn('6')">6</div>
+    <div class="c-btn" style="background:#ffc107" onclick="cIn('*')">*</div>
+
+    <div class="c-btn" onclick="cIn('1')">1</div>
+    <div class="c-btn" onclick="cIn('2')">2</div>
+    <div class="c-btn" onclick="cIn('3')">3</div>
+    <div class="c-btn" style="background:#ffc107" onclick="cIn('-')">-</div>
+
+    <div class="c-btn" style="background:#dc3545;color:white" onclick="cClr()">C</div>
+    <div class="c-btn" onclick="cIn('0')">0</div>
+    <div class="c-btn" style="background:#28a745;color:white" onclick="cRes()">=</div>
+    <div class="c-btn" style="background:#ffc107" onclick="cIn('+')">+</div>
+  </div>
+
+  <button onclick="toggleHist()">Tarix</button>
+  <div id="hist-box" style="display:none; margin-top:10px;">
+    <div id="hist-list" style="max-height:150px; overflow:auto;"></div>
+    <button onclick="clearHist()" style="background:#dc3545; margin-top:5px;">Tozalash</button>
+  </div>
+</div>
+<div style="width:300px; height:40px; background-color: #3700ff; border-radius: 10px; color:white; list-style: none; display: flex;
+justify-content: center; align-items: center;"  onclick="window.location.href='index.html';">Exit </div>
+<script>
+let cVal = "";
+let hist = JSON.parse(localStorage.getItem('myH')) || [];
+
+function cIn(v){ cVal += v; document.getElementById('cDisp').value=cVal; }
+function cClr(){ cVal=""; document.getElementById('cDisp').value=""; }
+function cRes(){
+    try{
+        let r = eval(cVal);
+        hist.push(`${cVal} = ${r}`);
+        localStorage.setItem('myH', JSON.stringify(hist));
+        cVal = r.toString();
+        document.getElementById('cDisp').value = cVal;
+        updateHistUI();
+    } catch { cClr(); alert("Xato!"); }
+}
+function toggleHist(){
+    const b = document.getElementById('hist-box');
+    b.style.display = b.style.display==='none' ? 'block' : 'none';
+    updateHistUI();
+}
+function updateHistUI(){
+    document.getElementById('hist-list').innerHTML = hist.map(i => `<div style="padding:5px;border-bottom:1px solid #eee;">${i}</div>`).reverse().join('');
+}
+function clearHist(){ hist=[]; localStorage.removeItem('myH'); updateHistUI(); }
+</script>
+</body>
+</html>

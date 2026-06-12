@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dasturlashni o‘rganish</title>
+
+<style>
+:root { --bg:#f4f7f6; --card:#fff; --text:#333; --primary:#007bff; }
+.dark-mode { --bg:#1a1a1a; --card:#2d2d2d; --text:#fff; --primary:#3498db; }
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;transition:0.2s;}
+body{background:var(--bg);color:var(--text);}
+
+/* NAVBAR */
+.navbar{
+display:flex;justify-content:space-between;align-items:center;
+background:var(--primary);padding:10px;position:fixed;width:100%;top:0;
+}
+.nav-left{display:flex;gap:10px;flex-wrap:wrap;}
+.nav-left a{
+background:#1900ff;color:#fff;padding:6px 12px;border-radius:6px;
+text-decoration:none;font-weight:bold;
+}
+.nav-left a:hover{background:yellow;color:black;}
+
+/* MAIN */
+.main{padding:100px 15px;}
+
+/* CONTENT */
+.content{
+background:var(--card);
+padding:30px;
+border-radius:12px;
+max-width:900px;
+margin:auto;
+text-align:center;
+box-shadow:10px 10px 10px rgb(0,217,255);
+}
+.content:hover{
+transform:translateY(-5px);
+box-shadow:10px 10px 10px red;
+}
+
+h1{margin-bottom:10px;}
+h3{margin-bottom:20px;color:gray;}
+
+code{
+display:block;
+background:#eee;
+padding:10px;
+margin:10px 0;
+text-align:left;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<div class="navbar">
+  <div class="nav-left">
+    <a onclick="showContent('html')" data-key="nav-html">HTML</a>
+    <a onclick="showContent('css')" data-key="nav-css">CSS</a>
+    <a onclick="window.open('redaktor.html')" data-key="nav-redaktor">Amaliy bajarish</a>
+    <a onclick="showSettings()" data-key="nav-sett">Sozlamalar</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="content" id="content">
+
+```
+<h1 data-key="main-title">
+  Til o‘rganish uchun tepadagi HTML CSS tillaridan birini tanlang
+</h1>
+
+<h3 data-key="main-sub">
+  Maslahatim: 1-HTML, 2-CSS ketma-ket o‘rganing
+</h3>
+```
+
+  </div>
+</div>
+
+<!-- SETTINGS -->
+
+<div id="settings" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+background:white;padding:20px;border-radius:10px;box-shadow:0 5px 20px rgba(0,0,0,0.3);">
+
+<h3 data-key="s-title">Sozlamalar</h3>
+<button onclick="document.body.classList.toggle('dark-mode')">Dark / Light</button>
+
+<p data-key="s-lang">Tilni tanlang</p>
+<button onclick="setLang('uz')">UZ</button>
+<button onclick="setLang('ru')">RU</button>
+<button onclick="setLang('en')">EN</button>
+
+<button onclick="hideSettings()">Close</button>
+
+</div>
+
+<script>
+let currentLang="uz";
+const lang={
+uz:{
+"nav-html":"HTML",
+"nav-css":"CSS",
+"nav-redaktor":"Amaliy bajarish",
+"nav-sett":"Sozlamalar",
+"s-title":"Sozlamalar",
+"s-lang":"Tilni tanlang",
+
+"main-title":"Til o‘rganish uchun tepadagi HTML CSS tillaridan birini tanlang",
+"main-sub":"Maslahatim: 1-HTML, 2-CSS, ketma-ket o‘rganing",
+
+"html":`
+<div class="course-container">
+    <h2>HTML Professional Kursi (30 Dars)</h2>
+    
+    <div class="lesson">
+        <h3>1-dars: Kirish va Dokument Strukturasi</h3>
+        <p>Har bir loyiha <code>&lt;!DOCTYPE html&gt;</code> bilan boshlanadi. Bu brauzerga hujjat turini bildiradi. <code>html</code>, <code>head</code> va <code>body</code> asosiy qismlardir.</p>
+        <pre><code>&lt;!DOCTYPE html&gt;\n&lt;html lang="uz"&gt;\n&lt;head&gt;\n  &lt;meta charset="UTF-8"&gt;\n  &lt;title&gt;Sarlavha&lt;/title&gt;\n&lt;/head&gt;\n&lt;body&gt;\n  &lt;h1&gt;Salom Dunyo!&lt;/h1&gt;\n&lt;/body&gt;\n&lt;/html&gt;</code></pre>
+    </div>
+
+    <div class="lesson">
+        <h3>2-dars: Sarlavhalar va Paragraflar (h1-h6, p)</h3>
+        <p>Sarlavhalar muhimlik darajasiga ko'ra ishlatiladi. h1 eng muhimi, h6 eng kichigi. Paragraflar esa matn bloklari uchun.</p>
+        <code>&lt;h1&gt;Mavzu&lt;/h1&gt; \n&lt;p&gt;Bu asosiy matn.&lt;/p&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>3-dars: Matnni Formatlash (Formatting)</h3>
+        <p>Matnni qalin qilish uchun <code>&lt;b&gt;</code> yoki <code>&lt;strong&gt;</code>, kursiv uchun <code>&lt;i&gt;</code> yoki <code>&lt;em&gt;</code> ishlatiladi.</p>
+        <code>&lt;strong&gt;Muhim!&lt;/strong&gt; \n&lt;em&gt;Kursiv matn&lt;/em&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>4-dars: Ro'yxatlar (ul, ol, li)</h3>
+        <p>Tartibsiz (nuqtali) va tartibli (raqamlangan) ro'yxatlar yaratish.</p>
+        <pre><code>&lt;ul&gt;\n  &lt;li&gt;Olma&lt;/li&gt;\n  &lt;li&gt;Banan&lt;/li&gt;\n&lt;/ul&gt;</code></pre>
+    </div>
+
+    <div class="lesson">
+        <h3>5-dars: Havolalar (a) va Navigatsiya</h3>
+        <p>Boshqa sahifaga o'tish uchun <code>href</code> atributi ishlatiladi.</p>
+        <code>&lt;a href="https://google.com" target="_blank"&gt;Googlega o'tish&lt;/a&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>6-dars: Rasmlar (img) va Multimedia</h3>
+        <p>Rasm qo'yishda <code>src</code> (manba) va <code>alt</code> (tavsif) atributlari majburiydir.</p>
+        <code>&lt;img src="foto.jpg" alt="Tabiat" width="300"&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>7-dars: Multimedia: Audio va Video</h3>
+        <p>Saytda media pleyerlarni o'rnatish.</p>
+        <code>&lt;video controls&gt; &lt;source src="film.mp4"&gt; &lt;/video&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>8-dars: Jadvallar (Table)</h3>
+        <p>Jadvallar <code>tr</code> (qator) va <code>td</code> (katak) lardan tashkil topadi.</p>
+        <code>&lt;table border="1"&gt;\n  &lt;tr&gt;&lt;td&gt;Ism&lt;/td&gt;&lt;td&gt;Yosh&lt;/td&gt;&lt;/tr&gt;\n&lt;/table&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>9-dars: Formalar va Inputlar (Text, Password)</h3>
+        <p>Ma'lumot kiritish maydonlari. <code>type</code> orqali turi belgilanadi.</p>
+        <code>&lt;input type="text" placeholder="Login"&gt;\n&lt;input type="password"&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>10-dars: Tanlov elementlari (Checkbox, Radio)</h3>
+        <p>Bir nechta variantdan birini yoki bir nechtasini tanlash.</p>
+        <code>&lt;input type="checkbox"&gt; Roziman \n&lt;input type="radio" name="jins"&gt; Erkak</code>
+    </div>
+
+    <div class="lesson">
+        <h3>11-dars: Select, Option va Textarea</h3>
+        <p>Pastga tushuvchi ro'yxat va ko'p qatorli matn maydoni.</p>
+        <code>&lt;select&gt; &lt;option&gt;Uzb&lt;/option&gt; &lt;/select&gt;\n&lt;textarea&gt;&lt;/textarea&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>12-dars: Tugmalar va Formani yuborish</h3>
+        <p><code>button</code> tegi orqali amalni bajarish.</p>
+        <code>&lt;button type="submit"&gt;Yuborish&lt;/button&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>13-dars: Div va Span (Konteynerlar)</h3>
+        <p>Blok (div) va qator (span) elementlari orqali guruhlash.</p>
+        <code>&lt;div class="box"&gt;Kontent&lt;/div&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>14-dars: Atributlar: Class va ID</h3>
+        <p>Elementlarga nom berish. ID bitta, Class bir nechta bo'lishi mumkin.</p>
+        <code>&lt;p id="birinchi" class="matn"&gt;Salom&lt;/p&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>15-dars: Semantik HTML: Header, Nav, Footer</h3>
+        <p>Sayt qismlarini mantiqiy nomlash.</p>
+        <code>&lt;header&gt;Logo&lt;/header&gt;\n&lt;footer&gt;2024&lt;/footer&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>16-dars: Section va Article</h3>
+        <p>Maqolalar va bo'limlarni ajratib ko'rsatish.</p>
+        <code>&lt;section&gt;&lt;article&gt;Yangilik&lt;/article&gt;&lt;/section&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>17-dars: Iframe (Boshqa saytlarni ulash)</h3>
+        <p>Sayt ichida xarita yoki videoni ko'rsatish.</p>
+        <code>&lt;iframe src="https://google.com"&gt;&lt;/iframe&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>18-dars: Meta teglar va SEO</h3>
+        <p>Qidiruv tizimlari uchun tavsif yozish.</p>
+        <code>&lt;meta name="description" content="O'quv kursi"&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>19-dars: Maxsus belgilar (Entities)</h3>
+        <p>HTMLda yozib bo'lmaydigan belgilarni kod orqali yozish.</p>
+        <code>&amp;copy; - mualliflik huquqi, &amp;lt; - kichik belgisi</code>
+    </div>
+
+    <div class="lesson">
+        <h3>20-dars: Favicon qo'shish</h3>
+        <p>Brauzer tepasiga logotip o'rnatish.</p>
+        <code>&lt;link rel="icon" href="logo.png"&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>21-dars: HTML Izohlar (Comments)</h3>
+        <p>Kod orasiga tushuntirish yozish.</p>
+        <code>&lt;!-- Bu kod brauzerda ko'rinmaydi --&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>22-dars: Details va Summary</h3>
+        <p>Yopilib-ochiladigan matn yaratish.</p>
+        <code>&lt;details&gt; &lt;summary&gt;Batafsil&lt;/summary&gt; Matn... &lt;/details&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>23-dars: Progress va Meter</h3>
+        <p>Yuklanish darajasini ko'rsatish.</p>
+        <code>&lt;progress value="50" max="100"&gt;&lt;/progress&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>24-dars: HTML Form Validation</h3>
+        <p>Inputlarni to'ldirishni majburiy qilish.</p>
+        <code>&lt;input type="text" required&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>25-dars: Marquee (Harakatlanuvchi matn)</h3>
+        <p>Matnni harakatga keltirish (eskirgan lekin qiziq).</p>
+        <code>&lt;marquee&gt;Xush kelibsiz!&lt;/marquee&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>26-dars: Script va Link ulanishi</h3>
+        <p>JS va CSS fayllarini HTMLga ulash.</p>
+        <code>&lt;script src="script.js"&gt;&lt;/script&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>27-dars: SVG bilan ishlash</h3>
+        <p>Vektorli grafikalarni kod orqali chizish.</p>
+        <code>&lt;svg&gt;&lt;circle r="50" fill="red" /&gt;&lt;/svg&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>28-dars: HTML5 yangi input turlari</h3>
+        <p>Color, Date, Range kabi zamonaviy turlar.</p>
+        <code>&lt;input type="date"&gt; \n&lt;input type="range"&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>29-dars: Global atributlar</h3>
+        <p>title, style, hidden kabi hamma tegda ishlaydigan atributlar.</p>
+        <code>&lt;div hidden&gt;Ko'rinmas blok&lt;/div&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>30-dars: Yakuniy loyiha strukturasi</h3>
+        <p>Barcha bilimlarni jamlab, bitta portfolio sahifasini yaratamiz.</p>
+    </div>
+</div>
+`,
+
+"css":`
+<div class="course-container">
+    <h2>CSS Professional Kursi (30 Dars)</h2>
+
+    <div class="lesson">
+        <h3>1-dars: Ranglar va Fon (Colors & Background)</h3>
+        <p>Ranglar HEX, RGB va HSL formatida beriladi. Orqa fonga rang va rasm qo'shish.</p>
+        <code>color: red; \nbackground-color: #f1f1f1; \nbackground-image: url('bg.jpg');</code>
+    </div>
+
+    <div class="lesson">
+        <h3>2-dars: Shriftlar (Typography)</h3>
+        <p>Matn hajmi, shrift turi va qalinligini boshqarish.</p>
+        <code>font-size: 20px; \nfont-family: Arial; \nfont-weight: bold;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>3-dars: Box Model: Padding (Ichki masofa)</h3>
+        <p>Element chegarasi va kontent orasidagi masofa.</p>
+        <code>padding: 10px 20px;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>4-dars: Box Model: Margin (Tashqi masofa)</h3>
+        <p>Elementlar orasidagi bo'shliqni yaratish.</p>
+        <code>margin: 0 auto; (Markazga tekislash)</code>
+    </div>
+
+    <div class="lesson">
+        <h3>5-dars: Border va Border-radius</h3>
+        <p>Element atrofiga chiziq va burchaklarni yumaloq qilish.</p>
+        <code>border: 1px solid black; \nborder-radius: 10px;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>6-dars: Width, Height va Max/Min</h3>
+        <p>O'lchamlarni piksellarda va foizlarda berish.</p>
+        <code>width: 100%; \nmax-width: 1200px;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>7-dars: Text Align va Decoration</h3>
+        <p>Matnni tekislash va ostidagi chiziqni olib tashlash.</p>
+        <code>text-align: center; \ntext-decoration: none;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>8-dars: Display: Block va Inline</h3>
+        <p>Elementlarni blok yoki qator ko'rinishiga keltirish.</p>
+        <code>display: block; \ndisplay: inline-block;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>9-dars: Position: Relative va Absolute</h3>
+        <p>Elementlarni erkin joylashtirish (Koordinatalar orqali).</p>
+        <code>position: absolute; \ntop: 20px; \nleft: 50px;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>10-dars: Position: Fixed va Sticky</h3>
+        <p>Ekranda qotib turuvchi menyu va sarlavhalar.</p>
+        <code>position: fixed; \ntop: 0;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>11-dars: Z-index (Qavatlar)</h3>
+        <p>Elementlarning bir-birining ustida chiqish tartibi.</p>
+        <code>z-index: 10;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>12-dars: Overflow (Suyuqlik)</h3>
+        <p>Element ichiga sig'magan matnni boshqarish.</p>
+        <code>overflow: hidden; \noverflow-y: scroll;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>13-dars: Box Shadow va Text Shadow</h3>
+        <p>Elementlarga va matnlarga soya berish.</p>
+        <code>box-shadow: 2px 2px 10px gray;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>14-dars: Opacity va Visibility</h3>
+        <p>Elementlarni shaffof qilish yoki yashirish.</p>
+        <code>opacity: 0.5; \nvisibility: hidden;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>15-dars: Float va Clear</h3>
+        <p>Elementlarni o'ng/chapga surish (eski usul).</p>
+        <code>float: left; \nclear: both;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>16-dars: Flexbox: Kirish</h3>
+        <p>Zamonaviy joylashtirish tizimi.</p>
+        <code>display: flex; \njustify-content: space-between;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>17-dars: Flexbox: Align Items</h3>
+        <p>Elementlarni vertikal markazlash.</p>
+        <code>align-items: center;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>18-dars: Flexbox: Wrap va Direction</h3>
+        <p>Elementlarni qatorga sig'masa pastga tushirish.</p>
+        <code>flex-wrap: wrap; \nflex-direction: column;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>19-dars: CSS Grid: Kirish</h3>
+        <p>To'liq setka (grid) tizimini yaratish.</p>
+        <code>display: grid; \ngrid-template-columns: 1fr 1fr;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>20-dars: Grid Gap va Areas</h3>
+        <p>Setkalar orasidagi masofa.</p>
+        <code>gap: 20px;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>21-dars: CSS Media Queries (Adaptivlik)</h3>
+        <p>Saytni mobil qurilmalarga moslash.</p>
+        <code>@media (max-width: 768px) { ... }</code>
+    </div>
+
+    <div class="lesson">
+        <h3>22-dars: CSS Transitions</h3>
+        <p>Stillar o'zgarishini silliq qilish.</p>
+        <code>transition: all 0.3s ease;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>23-dars: CSS Transforms</h3>
+        <p>Elementni aylantirish, kattalashtirish va surish.</p>
+        <code>transform: rotate(45deg) scale(1.2);</code>
+    </div>
+
+    <div class="lesson">
+        <h3>24-dars: CSS Keyframes Animatsiya</h3>
+        <p>O'zimiz mustaqil animatsiya yaratamiz.</p>
+        <code>@keyframes yurish { from {left:0;} to {left:100px;} }</code>
+    </div>
+
+    <div class="lesson">
+        <h3>25-dars: Pseudo-classes (:hover, :active)</h3>
+        <p>Sichqoncha bilan bog'liq holatlar.</p>
+        <code>a:hover { color: orange; }</code>
+    </div>
+
+    <div class="lesson">
+        <h3>26-dars: Pseudo-elements (:before, :after)</h3>
+        <p>Elementga qo'shimcha qismlar qo'shish.</p>
+        <code>.box::before { content: '★'; }</code>
+    </div>
+
+    <div class="lesson">
+        <h3>27-dars: CSS Variables (O'zgaruvchilar)</h3>
+        <p>Bir xil ranglarni bitta joyda saqlash.</p>
+        <code>:root { --asosiy-rang: blue; } \ncolor: var(--asosiy-rang);</code>
+    </div>
+
+    <div class="lesson">
+        <h3>28-dars: Object-fit (Rasmlar stili)</h3>
+        <p>Rasmlarni konteynerga buzilmasdan sig'dirish.</p>
+        <code>object-fit: cover;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>29-dars: CSS Filters</h3>
+        <p>Rasmlarga effektlar berish (Xiralashtirish, Oq-qora).</p>
+        <code>filter: blur(5px) grayscale(100%);</code>
+    </div>
+
+    <div class="lesson">
+        <h3>30-dars: Yakuniy Loyiha: Full Page Design</h3>
+        <p>O'rganilgan Flex, Grid va Animatsiyalardan foydalanib to'liq sayt yasaymiz.</p>
+    </div>
+</div>
+`,
+},
+"ru": {
+"nav-html": "HTML",
+"nav-css": "CSS",
+"nav-redaktor": "Практика",
+"nav-sett": "Настройки",
+"s-title": "Настройки",
+"s-lang": "Выберите язык",
+
+"main-title": "Выберите HTML или CSS выше, чтобы начать обучение",
+"main-sub": "Совет: изучайте последовательно: сначала HTML, затем CSS",
+
+"html": `
+<div class="course-container">
+    <h2>Профессиональный курс HTML (30 уроков)</h2>
+    
+    <div class="lesson">
+        <h3>Урок 1: Введение и структура документа</h3>
+        <p>Каждый проект начинается с <code>&lt;!DOCTYPE html&gt;</code>. Основные части: <code>html</code>, <code>head</code> и <code>body</code>.</p>
+        <pre><code>&lt;!DOCTYPE html&gt;\n&lt;html lang="ru"&gt;\n&lt;head&gt;\n  &lt;meta charset="UTF-8"&gt;\n  &lt;title&gt;Заголовок&lt;/title&gt;\n&lt;/head&gt;\n&lt;body&gt;\n  &lt;h1&gt;Привет, мир!&lt;/h1&gt;\n&lt;/body&gt;\n&lt;/html&gt;</code></pre>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 2: Заголовки и параграфы (h1-h6, p)</h3>
+        <p>Заголовки используются по степени важности. h1 — самый важный, p — для текстовых блоков.</p>
+        <code>&lt;h1&gt;Тема&lt;/h1&gt; \n&lt;p&gt;Это основной текст.&lt;/p&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 3: Форматирование текста</h3>
+        <p>Для жирного текста — <code>&lt;strong&gt;</code>, для курсива — <code>&lt;em&gt;</code>.</p>
+        <code>&lt;strong&gt;Важно!&lt;/strong&gt; \n&lt;em&gt;Курсивный текст&lt;/em&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 4: Списки (ul, ol, li)</h3>
+        <p>Маркированные (ul) и нумерованные (ol) списки.</p>
+        <pre><code>&lt;ul&gt;\n  &lt;li&gt;Яблоко&lt;/li&gt;\n  &lt;li&gt;Банан&lt;/li&gt;\n&lt;/ul&gt;</code></pre>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 5: Ссылки (a) и навигация</h3>
+        <p>Используйте атрибут <code>href</code> для перехода. <code>target="_blank"</code> открывает в новом окне.</p>
+        <code>&lt;a href="https://google.com" target="_blank"&gt;Перейти в Google&lt;/a&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 6: Изображения (img)</h3>
+        <p>Атрибуты <code>src</code> (источник) и <code>alt</code> (описание) обязательны.</p>
+        <code>&lt;img src="photo.jpg" alt="Природа" width="300"&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 7: Мультимедиа: Аудио и Видео</h3>
+        <p>Установка медиаплееров на сайт.</p>
+        <code>&lt;video controls&gt; &lt;source src="film.mp4"&gt; &lt;/video&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 8: Таблицы (Table)</h3>
+        <p>Таблицы состоят из <code>tr</code> (строка) и <code>td</code> (ячейка).</p>
+        <code>&lt;table border="1"&gt;\n  &lt;tr&gt;&lt;td&gt;Имя&lt;/td&gt;&lt;td&gt;Возраст&lt;/td&gt;&lt;/tr&gt;\n&lt;/table&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 9: Формы и инпуты (Text, Password)</h3>
+        <p>Поля ввода данных. Тип определяется через <code>type</code>.</p>
+        <code>&lt;input type="text" placeholder="Логин"&gt;\n&lt;input type="password"&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 10: Элементы выбора (Checkbox, Radio)</h3>
+        <p>Выбор одного или нескольких вариантов.</p>
+        <code>&lt;input type="checkbox"&gt; Согласен \n&lt;input type="radio" name="gender"&gt; Мужчина</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 11: Select, Option и Textarea</h3>
+        <p>Выпадающие списки и многострочные поля ввода.</p>
+        <code>&lt;select&gt; &lt;option&gt;РФ&lt;/option&gt; &lt;/select&gt;\n&lt;textarea&gt;&lt;/textarea&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 12: Кнопки и отправка формы</h3>
+        <p>Тег <code>button</code> для выполнения действий.</p>
+        <code>&lt;button type="submit"&gt;Отправить&lt;/button&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 13: Div и Span (Контейнеры)</h3>
+        <p>Блочные (div) и строчные (span) элементы для группировки.</p>
+        <code>&lt;div class="box"&gt;Контент&lt;/div&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 14: Атрибуты: Class и ID</h3>
+        <p>Имена для элементов. ID — уникален, Class — для группы.</p>
+        <code>&lt;p id="first" class="text"&gt;Привет&lt;/p&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 15: Семантический HTML: Header, Nav, Footer</h3>
+        <p>Логическое именование частей сайта.</p>
+        <code>&lt;header&gt;Логотип&lt;/header&gt;\n&lt;footer&gt;2024&lt;/footer&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 16: Section и Article</h3>
+        <p>Разделение статей и разделов контента.</p>
+        <code>&lt;section&gt;&lt;article&gt;Новость&lt;/article&gt;&lt;/section&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 17: Iframe (Внешние сайты)</h3>
+        <p>Отображение карт или видео с других ресурсов.</p>
+        <code>&lt;iframe src="https://google.com"&gt;&lt;/iframe&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 18: Мета-теги и SEO</h3>
+        <p>Описание для поисковых систем.</p>
+        <code>&lt;meta name="description" content="Учебный курс"&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 19: Спецсимволы (Entities)</h3>
+        <p>Коды для символов, которые нельзя просто напечатать.</p>
+        <code>&amp;copy; - авторское право, &amp;lt; - знак меньше</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 20: Добавление Favicon</h3>
+        <p>Установка иконки сайта во вкладке браузера.</p>
+        <code>&lt;link rel="icon" href="logo.png"&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 21: Комментарии в HTML</h3>
+        <p>Пояснения внутри кода.</p>
+        <code>&lt;!-- Этот код не виден в браузере --&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 22: Details и Summary</h3>
+        <p>Создание раскрывающихся блоков текста.</p>
+        <code>&lt;details&gt; &lt;summary&gt;Подробнее&lt;/summary&gt; Текст... &lt;/details&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 23: Progress и Meter</h3>
+        <p>Индикаторы прогресса и загрузки.</p>
+        <code>&lt;progress value="50" max="100"&gt;&lt;/progress&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 24: Валидация форм</h3>
+        <p>Сделать поле обязательным для заполнения.</p>
+        <code>&lt;input type="text" required&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 25: Тег Marquee</h3>
+        <p>Бегущая строка (устарело, но полезно знать).</p>
+        <code>&lt;marquee&gt;Добро пожаловать!&lt;/marquee&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 26: Подключение Script и Link</h3>
+        <p>Как подключать файлы JS и CSS к HTML.</p>
+        <code>&lt;script src="script.js"&gt;&lt;/script&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 27: Работа с SVG</h3>
+        <p>Рисование векторной графики кодом.</p>
+        <code>&lt;svg&gt;&lt;circle r="50" fill="red" /&gt;&lt;/svg&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 28: Новые типы инпутов HTML5</h3>
+        <p>Color, Date, Range — современные поля ввода.</p>
+        <code>&lt;input type="date"&gt; \n&lt;input type="range"&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 29: Глобальные атрибуты</h3>
+        <p>Атрибуты title, style, hidden для всех тегов.</p>
+        <code>&lt;div hidden&gt;Скрытый блок&lt;/div&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 30: Итоговая структура проекта</h3>
+        <p>Собираем все знания и создаем страницу портфолио.</p>
+    </div>
+</div>
+`,
+
+"css": `
+<div class="course-container">
+    <h2>Профессиональный курс CSS (30 уроков)</h2>
+
+    <div class="lesson">
+        <h3>Урок 1: Цвета и фон (Colors & Background)</h3>
+        <p>Цвета в форматах HEX, RGB и HSL. Установка фона и картинок.</p>
+        <code>color: red; \nbackground-color: #f1f1f1; \nbackground-image: url('bg.jpg');</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 2: Шрифты (Typography)</h3>
+        <p>Управление размером, стилем и жирностью текста.</p>
+        <code>font-size: 20px; \nfont-family: Arial; \nfont-weight: bold;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 3: Box Model: Padding (Внутренний отступ)</h3>
+        <p>Расстояние между рамкой элемента и его контентом.</p>
+        <code>padding: 10px 20px;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 4: Box Model: Margin (Внешний отступ)</h3>
+        <p>Создание пространства между соседними элементами.</p>
+        <code>margin: 0 auto; (Выравнивание по центру)</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 5: Border и Border-radius</h3>
+        <p>Рамка элемента и скругление углов.</p>
+        <code>border: 1px solid black; \nborder-radius: 10px;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 6: Width, Height и Max/Min размеры</h3>
+        <p>Задание размеров в пикселях и процентах.</p>
+        <code>width: 100%; \nmax-width: 1200px;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 7: Text Align и Decoration</h3>
+        <p>Выравнивание текста и удаление подчеркивания ссылок.</p>
+        <code>text-align: center; \ntext-decoration: none;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 8: Display: Block и Inline</h3>
+        <p>Изменение типа отображения элементов (блочный или строчный).</p>
+        <code>display: block; \ndisplay: inline-block;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 9: Position: Relative и Absolute</h3>
+        <p>Свободное позиционирование элементов по координатам.</p>
+        <code>position: absolute; \ntop: 20px; \nleft: 50px;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 10: Position: Fixed и Sticky</h3>
+        <p>Фиксированные меню и заголовки, липнущие при скролле.</p>
+        <code>position: fixed; \ntop: 0;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 11: Z-index (Слои)</h3>
+        <p>Порядок наложения элементов друг на друга.</p>
+        <code>z-index: 10;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 12: Overflow (Переполнение)</h3>
+        <p>Управление контентом, который не помещается в элемент.</p>
+        <code>overflow: hidden; \noverflow-y: scroll;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 13: Box Shadow и Text Shadow</h3>
+        <p>Добавление теней элементам и тексту.</p>
+        <code>box-shadow: 2px 2px 10px gray;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 14: Opacity и Visibility</h3>
+        <p>Прозрачность и скрытие элементов.</p>
+        <code>opacity: 0.5; \nvisibility: hidden;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 15: Float и Clear</h3>
+        <p>Обтекание элементов текстом (старый метод верстки).</p>
+        <code>float: left; \nclear: both;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 16: Flexbox: Введение</h3>
+        <p>Современная система гибкой верстки.</p>
+        <code>display: flex; \njustify-content: space-between;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 17: Flexbox: Align Items</h3>
+        <p>Вертикальное выравнивание элементов внутри флекс-контейнера.</p>
+        <code>align-items: center;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 18: Flexbox: Wrap и Direction</h3>
+        <p>Перенос элементов на новую строку и направление осей.</p>
+        <code>flex-wrap: wrap; \nflex-direction: column;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 19: CSS Grid: Введение</h3>
+        <p>Создание полноценных сеток (гридов).</p>
+        <code>display: grid; \ngrid-template-columns: 1fr 1fr;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 20: Grid Gap и Areas</h3>
+        <p>Расстояние между ячейками сетки.</p>
+        <code>gap: 20px;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 21: CSS Media Queries (Адаптивность)</h3>
+        <p>Настройка сайта под мобильные устройства.</p>
+        <code>@media (max-width: 768px) { ... }</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 22: CSS Transitions</h3>
+        <p>Плавное изменение стилей при наведении или клике.</p>
+        <code>transition: all 0.3s ease;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 23: CSS Transforms</h3>
+        <p>Поворот, масштабирование и наклон элементов.</p>
+        <code>transform: rotate(45deg) scale(1.2);</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 24: CSS Keyframes Анимация</h3>
+        <p>Создание собственных сложных анимаций.</p>
+        <code>@keyframes move { from {left:0;} to {left:100px;} }</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 25: Псевдоклассы (:hover, :active)</h3>
+        <p>Стили для состояний элементов при взаимодействии.</p>
+        <code>a:hover { color: orange; }</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 26: Псевдоэлементы (:before, :after)</h3>
+        <p>Добавление контента до или после элемента через CSS.</p>
+        <code>.box::before { content: '★'; }</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 27: CSS Переменные (Variables)</h3>
+        <p>Хранение значений цветов и размеров в одном месте.</p>
+        <code>:root { --main-color: blue; } \ncolor: var(--main-color);</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 28: Object-fit (Стилизация картинок)</h3>
+        <p>Как картинки вписываются в свои контейнеры.</p>
+        <code>object-fit: cover;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 29: CSS Filters</h3>
+        <p>Эффекты фильтров (размытие, черно-белое) для картинок.</p>
+        <code>filter: blur(5px) grayscale(100%);</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Урок 30: Итоговый проект: Полный дизайн страницы</h3>
+        <p>Используем Flex, Grid и анимации для создания целого сайта.</p>
+    </div>
+</div>
+`
+},
+"en": {
+"nav-html": "HTML",
+"nav-css": "CSS",
+"nav-redaktor": "Practice",
+"nav-sett": "Settings",
+"s-title": "Settings",
+"s-lang": "Select Language",
+
+"main-title": "Choose HTML or CSS above to start learning",
+"main-sub": "Tip: Learn step-by-step: 1st HTML, 2nd CSS",
+
+"html": `
+<div class="course-container">
+    <h2>Professional HTML Course (30 Lessons)</h2>
+    
+    <div class="lesson">
+        <h3>Lesson 1: Introduction and Document Structure</h3>
+        <p>Every project starts with <code>&lt;!DOCTYPE html&gt;</code>. Key parts: <code>html</code>, <code>head</code>, and <code>body</code>.</p>
+        <pre><code>&lt;!DOCTYPE html&gt;\n&lt;html lang="en"&gt;\n&lt;head&gt;\n  &lt;meta charset="UTF-8"&gt;\n  &lt;title&gt;Page Title&lt;/title&gt;\n&lt;/head&gt;\n&lt;body&gt;\n  &lt;h1&gt;Hello World!&lt;/h1&gt;\n&lt;/body&gt;\n&lt;/html&gt;</code></pre>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 2: Headings and Paragraphs (h1-h6, p)</h3>
+        <p>Headings define the hierarchy of importance. h1 is the most important, p is for text blocks.</p>
+        <code>&lt;h1&gt;Subject&lt;/h1&gt; \n&lt;p&gt;This is the main text.&lt;/p&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 3: Text Formatting</h3>
+        <p>For bold text use <code>&lt;strong&gt;</code>, for italics use <code>&lt;em&gt;</code>.</p>
+        <code>&lt;strong&gt;Important!&lt;/strong&gt; \n&lt;em&gt;Italicized text&lt;/em&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 4: Lists (ul, ol, li)</h3>
+        <p>Unordered (bulleted) and ordered (numbered) lists.</p>
+        <pre><code>&lt;ul&gt;\n  &lt;li&gt;Apple&lt;/li&gt;\n  &lt;li&gt;Banana&lt;/li&gt;\n&lt;/ul&gt;</code></pre>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 5: Links (a) and Navigation</h3>
+        <p>Use the <code>href</code> attribute for navigation. <code>target="_blank"</code> opens in a new window.</p>
+        <code>&lt;a href="https://google.com" target="_blank"&gt;Go to Google&lt;/a&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 6: Images (img)</h3>
+        <p>The <code>src</code> (source) and <code>alt</code> (description) attributes are required.</p>
+        <code>&lt;img src="photo.jpg" alt="Nature" width="300"&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 7: Multimedia: Audio and Video</h3>
+        <p>Embedding media players on your website.</p>
+        <code>&lt;video controls&gt; &lt;source src="movie.mp4"&gt; &lt;/video&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 8: Tables (Table)</h3>
+        <p>Tables consist of <code>tr</code> (row) and <code>td</code> (cell).</p>
+        <code>&lt;table border="1"&gt;\n  &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;Age&lt;/td&gt;&lt;/tr&gt;\n&lt;/table&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 9: Forms and Inputs (Text, Password)</h3>
+        <p>Input fields for data. Type is defined via <code>type</code>.</p>
+        <code>&lt;input type="text" placeholder="Login"&gt;\n&lt;input type="password"&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 10: Selection Elements (Checkbox, Radio)</h3>
+        <p>Choosing one or multiple options.</p>
+        <code>&lt;input type="checkbox"&gt; I agree \n&lt;input type="radio" name="gender"&gt; Male</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 11: Select, Option, and Textarea</h3>
+        <p>Dropdown lists and multi-line text input fields.</p>
+        <code>&lt;select&gt; &lt;option&gt;USA&lt;/option&gt; &lt;/select&gt;\n&lt;textarea&gt;&lt;/textarea&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 12: Buttons and Form Submission</h3>
+        <p>The <code>button</code> tag is used for performing actions.</p>
+        <code>&lt;button type="submit"&gt;Submit&lt;/button&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 13: Div and Span (Containers)</h3>
+        <p>Block (div) and inline (span) elements for grouping content.</p>
+        <code>&lt;div class="box"&gt;Content&lt;/div&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 14: Attributes: Class and ID</h3>
+        <p>Names for elements. ID is unique, Class is for a group.</p>
+        <code>&lt;p id="first" class="text"&gt;Hello&lt;/p&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 15: Semantic HTML: Header, Nav, Footer</h3>
+        <p>Logical naming of website sections.</p>
+        <code>&lt;header&gt;Logo&lt;/header&gt;\n&lt;footer&gt;2024&lt;/footer&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 16: Section and Article</h3>
+        <p>Separating content sections and articles.</p>
+        <code>&lt;section&gt;&lt;article&gt;News&lt;/article&gt;&lt;/section&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 17: Iframe (External Websites)</h3>
+        <p>Displaying maps or videos from other resources.</p>
+        <code>&lt;iframe src="https://google.com"&gt;&lt;/iframe&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 18: Meta Tags and SEO</h3>
+        <p>Description for search engines.</p>
+        <code>&lt;meta name="description" content="Learning Course"&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 19: Special Characters (Entities)</h3>
+        <p>Codes for symbols that cannot be typed directly.</p>
+        <code>&amp;copy; - Copyright, &amp;lt; - Less than sign</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 20: Adding a Favicon</h3>
+        <p>Setting a website icon in the browser tab.</p>
+        <code>&lt;link rel="icon" href="logo.png"&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 21: HTML Comments</h3>
+        <p>Explanations inside the code.</p>
+        <code>&lt;!-- This code is not visible in the browser --&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 22: Details and Summary</h3>
+        <p>Creating collapsible blocks of text.</p>
+        <code>&lt;details&gt; &lt;summary&gt;More details&lt;/summary&gt; Text... &lt;/details&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 23: Progress and Meter</h3>
+        <p>Progress and loading indicators.</p>
+        <code>&lt;progress value="50" max="100"&gt;&lt;/progress&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 24: Form Validation</h3>
+        <p>Making an input field required for completion.</p>
+        <code>&lt;input type="text" required&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 25: Marquee Tag</h3>
+        <p>Scrolling text (deprecated, but useful to know).</p>
+        <code>&lt;marquee&gt;Welcome!&lt;/marquee&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 26: Linking Script and Link</h3>
+        <p>How to connect JS and CSS files to HTML.</p>
+        <code>&lt;script src="script.js"&gt;&lt;/script&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 27: Working with SVG</h3>
+        <p>Drawing vector graphics using code.</p>
+        <code>&lt;svg&gt;&lt;circle r="50" fill="red" /&gt;&lt;/svg&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 28: New HTML5 Input Types</h3>
+        <p>Color, Date, Range — modern input fields.</p>
+        <code>&lt;input type="date"&gt; \n&lt;input type="range"&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 29: Global Attributes</h3>
+        <p>Title, style, and hidden attributes for all tags.</p>
+        <code>&lt;div hidden&gt;Hidden block&lt;/div&gt;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 30: Final Project Structure</h3>
+        <p>Combining all knowledge to create a portfolio page.</p>
+    </div>
+</div>
+`,
+
+"css": `
+<div class="course-container">
+    <h2>Professional CSS Course (30 Lessons)</h2>
+
+    <div class="lesson">
+        <h3>Lesson 1: Colors and Background</h3>
+        <p>Colors in HEX, RGB, and HSL formats. Setting backgrounds and images.</p>
+        <code>color: red; \nbackground-color: #f1f1f1; \nbackground-image: url('bg.jpg');</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 2: Typography (Fonts)</h3>
+        <p>Managing size, style, and weight of text.</p>
+        <code>font-size: 20px; \nfont-family: Arial; \nfont-weight: bold;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 3: Box Model: Padding (Internal Spacing)</h3>
+        <p>Space between the element border and its content.</p>
+        <code>padding: 10px 20px;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 4: Box Model: Margin (External Spacing)</h3>
+        <p>Creating space between adjacent elements.</p>
+        <code>margin: 0 auto; (Center alignment)</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 5: Border and Border-radius</h3>
+        <p>Element borders and rounding corners.</p>
+        <code>border: 1px solid black; \nborder-radius: 10px;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 6: Width, Height, and Max/Min sizes</h3>
+        <p>Setting dimensions in pixels and percentages.</p>
+        <code>width: 100%; \nmax-width: 1200px;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 7: Text Align and Decoration</h3>
+        <p>Text alignment and removing link underlines.</p>
+        <code>text-align: center; \ntext-decoration: none;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 8: Display: Block and Inline</h3>
+        <p>Changing the display type of elements (block or inline).</p>
+        <code>display: block; \ndisplay: inline-block;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 9: Position: Relative and Absolute</h3>
+        <p>Free positioning of elements via coordinates.</p>
+        <code>position: absolute; \ntop: 20px; \nleft: 50px;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 10: Position: Fixed and Sticky</h3>
+        <p>Fixed menus and headers that stick during scroll.</p>
+        <code>position: fixed; \ntop: 0;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 11: Z-index (Layers)</h3>
+        <p>Order of elements stacking on top of each other.</p>
+        <code>z-index: 10;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 12: Overflow</h3>
+        <p>Managing content that doesn't fit inside an element.</p>
+        <code>overflow: hidden; \noverflow-y: scroll;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 13: Box Shadow and Text Shadow</h3>
+        <p>Adding shadows to elements and text.</p>
+        <code>box-shadow: 2px 2px 10px gray;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 14: Opacity and Visibility</h3>
+        <p>Transparency and hiding elements.</p>
+        <code>opacity: 0.5; \nvisibility: hidden;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 15: Float and Clear</h3>
+        <p>Wrapping text around elements (legacy layout method).</p>
+        <code>float: left; \nclear: both;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 16: Flexbox: Introduction</h3>
+        <p>Modern flexible layout system.</p>
+        <code>display: flex; \njustify-content: space-between;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 17: Flexbox: Align Items</h3>
+        <p>Vertical alignment of elements inside a flex container.</p>
+        <code>align-items: center;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 18: Flexbox: Wrap and Direction</h3>
+        <p>Wrapping elements to a new line and axis direction.</p>
+        <code>flex-wrap: wrap; \nflex-direction: column;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 19: CSS Grid: Introduction</h3>
+        <p>Creating full-featured grids.</p>
+        <code>display: grid; \ngrid-template-columns: 1fr 1fr;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 20: Grid Gap and Areas</h3>
+        <p>Distance between grid cells.</p>
+        <code>gap: 20px;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 21: CSS Media Queries (Responsiveness)</h3>
+        <p>Customizing the site for mobile devices.</p>
+        <code>@media (max-width: 768px) { ... }</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 22: CSS Transitions</h3>
+        <p>Smooth style changes on hover or click.</p>
+        <code>transition: all 0.3s ease;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 23: CSS Transforms</h3>
+        <p>Rotating, scaling, and skewing elements.</p>
+        <code>transform: rotate(45deg) scale(1.2);</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 24: CSS Keyframes Animation</h3>
+        <p>Creating your own complex animations.</p>
+        <code>@keyframes move { from {left:0;} to {left:100px;} }</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 25: Pseudo-classes (:hover, :active)</h3>
+        <p>Styles for element states during interaction.</p>
+        <code>a:hover { color: orange; }</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 26: Pseudo-elements (:before, :after)</h3>
+        <p>Adding content before or after an element via CSS.</p>
+        <code>.box::before { content: '★'; }</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 27: CSS Variables</h3>
+        <p>Storing color and size values in one place.</p>
+        <code>:root { --main-color: blue; } \ncolor: var(--main-color);</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 28: Object-fit (Image Styling)</h3>
+        <p>How images fit into their containers.</p>
+        <code>object-fit: cover;</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 29: CSS Filters</h3>
+        <p>Filter effects (blur, grayscale) for images.</p>
+        <code>filter: blur(5px) grayscale(100%);</code>
+    </div>
+
+    <div class="lesson">
+        <h3>Lesson 30: Final Project: Full Page Design</h3>
+        <p>Using Flex, Grid, and animations to create a complete website.</p>
+    </div>
+</div>
+`
+}
+
+};
+
+function setLang(l){
+currentLang=l;
+document.querySelectorAll("[data-key]").forEach(el=>{
+let key=el.getAttribute("data-key");
+el.innerText=lang[l][key];
+});
+showContent("home");
+}
+
+function showContent(type){
+let c=document.getElementById("content");
+
+if(type==="home"){
+c.innerHTML=`
+<h1>${lang[currentLang]["main-title"]}</h1>
+<h3>${lang[currentLang]["main-sub"]}</h3>
+`;
+return;
+}
+
+c.innerHTML=lang[currentLang][type];
+}
+
+function showSettings(){document.getElementById("settings").style.display="block";}
+function hideSettings(){document.getElementById("settings").style.display="none";}
+</script>
+
+</body>
+</html>

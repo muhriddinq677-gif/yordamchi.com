@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bo'ridan🐺 qoch quyon 🐰</title>
+
+<style>
+body {
+    margin: 0;
+    background: #111;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* MENU */
+#menu {
+    color: white;
+    text-align: center;
+}
+
+select, button {
+    padding: 10px 22px;
+    font-size: 16px;
+    border-radius: 20px;
+    border: none;
+    margin: 10px;
+    cursor: pointer;
+}
+
+/* GAME */
+#game {
+    display: none;
+    width: 90vw;
+    max-width: 750px;
+    height: 240px;
+    background: #f2f2f2;
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px;
+}
+
+#score, #record, #time, #level {
+    position: absolute;
+    top: 5px;
+    font-size: 15px;
+}
+
+#score { left: 10px; }
+#level { left: 120px; }
+#time { left: 50%; transform: translateX(-50%); }
+#record { right: 10px; }
+
+#message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 22px;
+    font-weight: bold;
+    display: none;
+}
+
+/* QUYON */
+#player {
+    font-size: 42px;
+    position: absolute;
+    bottom: 0;
+    left: 50px;
+}
+
+/* BO‘RI */
+#obstacle {
+    font-size: 42px;
+    position: absolute;
+    bottom: 0;
+    left: 100%;
+}
+
+.jump {
+    animation: jump 0.6s;
+}
+
+@keyframes jump {
+    0% { bottom: 0; }
+    50% { bottom: 120px; }
+    100% { bottom: 0; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- MENU -->
+<div id="menu">
+    <h1>🐰 Quyon Runner</h1>
+
+    <button onclick="startGame()">Play</button>
+</div>
+
+<!-- GAME -->
+<div id="game">
+    <div id="score">Ochko: 0</div>
+    <div id="level">Level: 1</div>
+    <div id="time">Vaqt: 0</div>
+    <div id="record">Rekord: 0</div>
+
+    <div id="message"></div>
+
+    <div id="player">🐰</div>
+    <div id="obstacle">🐺</div>
+</div>
+
+<script>
+const menu = document.getElementById("menu");
+const game = document.getElementById("game");
+const player = document.getElementById("player");
+const obstacle = document.getElementById("obstacle");
+
+const scoreEl = document.getElementById("score");
+const levelEl = document.getElementById("level");
+const timeEl = document.getElementById("time");
+const recordEl = document.getElementById("record");
+const message = document.getElementById("message");
+const timeSelect = document.getElementById("timeSelect");
+
+let isJumping = false;
+let score = 0;
+let level = 1;
+let speed = 5;
+let timeLeft;
+let gameInterval, timerInterval;
+
+let record = localStorage.getItem("quyonRecord") || 0;
+recordEl.innerText = "Rekord: " + record;
+
+function startGame() {
+    menu.style.display = "none";
+    game.style.display = "block";
+
+    score = 0;
+    level = 1;
+    speed = 5;
+
+    scoreEl.innerText = "Ochko: 0";
+    levelEl.innerText = "Level: 1";
+    timeEl.innerText = "Vaqt: " + timeLeft;
+    obstacle.style.left = game.clientWidth + "px";
+    message.style.display = "none";
+
+    gameInterval = setInterval(gameLoop, 20);
+    timerInterval = setInterval(timerLoop, 1000);
+}
+
+function timerLoop() {
+    timeLeft--;
+    timeEl.innerText = "Vaqt: " + timeLeft;
+
+    if (timeLeft <= 0) {
+        winGame();
+    }
+}
+
+function jump() {
+    if (isJumping) return;
+    isJumping = true;
+    player.classList.add("jump");
+
+    setTimeout(() => {
+        player.classList.remove("jump");
+        isJumping = false;
+    }, 600);
+}
+
+function gameLoop() {
+    let obsLeft = obstacle.offsetLeft;
+    obstacle.style.left = (obsLeft - speed) + "px";
+
+    // To‘siqdan o‘tildi
+    if (obsLeft < -40) {
+        obstacle.style.left = game.clientWidth + "px";
+        score++;
+        scoreEl.innerText = "Ochko: " + score;
+
+        // LEVEL TIZIMI
+        if (score % 5 === 0) {
+            level++;
+            speed++;
+            levelEl.innerText = "Level: " + level;
+
+            game.style.background =
+                `hsl(${Math.random()*360},80%,85%)`;
+        }
+    }
+
+    // Ogohlantirish
+    if (obsLeft < 170 && obsLeft > 90) {
+        message.innerText = "⚠️ Tezroq sakrang!";
+        message.style.color = "red";
+        message.style.display = "block";
+    } else {
+        message.style.display = "none";
+    }
+
+    // To‘qnashuv
+    let playerBottom = parseInt(
+        window.getComputedStyle(player).getPropertyValue("bottom")
+    );
+
+    if (obsLeft < 90 && obsLeft > 50 && playerBottom < 40) {
+        loseGame();
+    }
+}
+
+function winGame() {
+    clearInterval(gameInterval);
+    clearInterval(timerInterval);
+
+    if (score > record) {
+        record = score;
+        localStorage.setItem("quyonRecord", record);
+    }
+
+    message.innerText = "🎉 Siz bo‘rini yengdingiz!";
+    message.style.color = "green";
+    message.style.display = "block";
+
+    setTimeout(() => location.reload(), 3000);
+}
+
+function loseGame() {
+    clearInterval(gameInterval);
+    clearInterval(timerInterval);
+
+    message.innerText = "💥 Bo‘ri sizni yengdi!";
+    message.style.color = "black";
+    message.style.display = "block";
+
+    setTimeout(() => location.reload(), 3000);
+}
+
+/* Controls */
+document.addEventListener("keydown", e => {
+    if (e.code === "Space") jump();
+});
+game.addEventListener("click", jump);
+game.addEventListener("touchstart", jump);
+</script>
+</body>
+</html>

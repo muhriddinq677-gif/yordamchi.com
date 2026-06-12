@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magic Scroll Input Preview</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0f172a;
+    color:white;
+}
+
+.container{
+    padding:20px;
+}
+
+/* CARD */
+.card{
+    max-width:800px;
+    margin:auto;
+    background:#1e293b;
+    border-radius:14px;
+    padding:15px;
+}
+
+/* LIVE PREVIEW (SCROLLABLE) */
+.preview{
+    height:260px;
+    background:#000;
+    border-radius:12px;
+    padding:10px;
+    overflow-y:auto;   /* 👈 MUHIM QISM */
+    margin-bottom:12px;
+}
+
+/* INPUT STYLE */
+.preview input,
+.preview select{
+    width:100%;
+    margin:6px 0;
+    padding:8px;
+    border-radius:8px;
+    border:none;
+    outline:none;
+    background:#0b1220;
+    color:white;
+}
+
+/* OUTPUT */
+.output{
+    background:#0b1220;
+    padding:10px;
+    border-radius:10px;
+    font-size:12px;
+    white-space:pre-line;
+    margin-bottom:10px;
+}
+
+/* CODE */
+.code-box{
+    background:#020617;
+    border-radius:10px;
+    overflow:hidden;
+    margin-top:10px;
+}
+
+.header{
+    display:flex;
+    justify-content:space-between;
+    padding:8px;
+    font-size:12px;
+    background:#0b1220;
+    color:#38bdf8;
+}
+
+button{
+    border:none;
+    padding:4px 8px;
+    border-radius:6px;
+    background:#38bdf8;
+    cursor:pointer;
+}
+
+pre{
+    margin:0;
+    padding:10px;
+    font-size:12px;
+    overflow:auto;
+    color:#e2e8f0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<!-- SCROLL PREVIEW -->
+<div class="preview">
+
+<input placeholder="Text" oninput="update()">
+<input type="number" placeholder="Number" oninput="update()">
+<input type="email" placeholder="Email" oninput="update()">
+<input type="password" placeholder="Password" oninput="update()">
+<input type="color" oninput="update()">
+<input type="range" oninput="update()">
+<input type="date" oninput="update()">
+<input type="time" oninput="update()">
+<input placeholder="Username" oninput="update()">
+<select onchange="update()">
+<option>HTML</option>
+<option>CSS</option>
+<option>JS</option>
+</select>
+
+</div>
+
+<!-- OUTPUT -->
+<div class="output" id="out">
+Natija shu yerda chiqadi...
+</div>
+
+<!-- HTML CODE -->
+<div class="code-box">
+<div class="header">
+HTML
+<button onclick="copy(htmlCode)">Copy</button>
+</div>
+<pre id="htmlCode">
+&lt;input type="text"&gt;
+&lt;input type="number"&gt;
+&lt;input type="email"&gt;
+&lt;input type="password"&gt;
+&lt;input type="color"&gt;
+&lt;input type="range"&gt;
+&lt;input type="date"&gt;
+&lt;input type="time"&gt;
+&lt;select&gt;...&lt;/select&gt;
+</pre>
+</div>
+
+<!-- JS CODE -->
+<div class="code-box">
+<div class="header">
+JS
+<button onclick="copy(jsCode)">Copy</button>
+</div>
+<pre id="jsCode">
+function update(){
+  out.innerText = "Live preview updated";
+}
+</pre>
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+/* LIVE UPDATE */
+function update(){
+out.innerText = "Inputlar ishlayapti...";
+}
+
+/* COPY */
+function copy(el){
+navigator.clipboard.writeText(el.innerText);
+alert("Copied!");
+}
+
+</script>
+
+</body>
+  </html>

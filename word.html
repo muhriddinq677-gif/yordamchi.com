@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Word Pro</title>
+    <link rel="stylesheet" href="word.css">
+</head>
+<body>
+
+<div class="word-wrapper">
+    <!-- Asboblar paneli -->
+    <div class="toolbar">
+        <!-- 10 ta Shrift -->
+        <select id="fontName" class="tool-item">
+            <option value="Arial">Arial</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Courier New">Courier New</option>
+            <option value="Impact">Impact</option>
+            <option value="Tahoma">Tahoma</option>
+            <option value="Comic Sans MS">Comic Sans</option>
+            <option value="Trebuchet MS">Trebuchet</option>
+            <option value="Lucida Console">Lucida</option>
+        </select>
+
+        <!-- 10 ta Effekt -->
+        <div class="group">
+            <button class="tool-btn" data-command="bold" title="Qalin"><b>B</b></button>
+            <button class="tool-btn" data-command="italic" title="Egri"><i>I</i></button>
+            <button class="tool-btn" data-command="underline" title="Tagiga"><u>U</u></button>
+            <button class="tool-btn" data-command="strikeThrough" title="Ustiga"><s>S</s></button>
+            <button class="tool-btn" data-command="subscript">X₂</button>
+            <button class="tool-btn" data-command="superscript">X²</button>
+            <button class="tool-btn" data-command="justifyLeft">⬅️</button>
+            <button class="tool-btn" data-command="justifyCenter">↔️</button>
+            <button class="tool-btn" data-command="justifyRight">➡️</button>
+            <button class="tool-btn" id="clearFormat">🧹</button>
+        </div>
+
+        <!-- Ranglar -->
+        <div class="group color-group">
+            <div class="color-item">
+                <label>Text rangi</label>
+                <input type="color" id="foreColor" value="#000000">
+            </div>
+            <div class="color-item">
+                <label>Orqa fon rangi</label>
+                <input type="color" id="hiliteColor" value="#ffffff">
+            </div>
+        </div>
+
+        <!-- Jadval va Ro'yxat -->
+        <div class="group">
+            <button class="tool-btn" id="openTableModal">📅 Jadval</button>
+            <button class="tool-btn" data-command="insertUnorderedList">• Ro'yxat</button>
+            <button class="tool-btn" data-command="insertOrderedList">1. Ro'yxat</button>
+        </div>
+
+        <!-- Yangi list va Rejimlar -->
+        <div class="group">
+            <button class="tool-btn add-list-btn" id="addNewPage">➕ Yangi list</button>
+            <button class="tool-btn" id="themeBtn">🌙</button>
+            <button class="tool-btn save-btn" onclick="exportDoc()">💾 .DOC</button>
+        </div>
+    </div>
+
+    <!-- Sahifalar joylashadigan konteyner -->
+    <div id="pages-container">
+        <div class="page" contenteditable="true" placeholder="Matnni shu yerga yozing..."></div>
+    </div>
+</div>
+
+<!-- JADVAL MODALI -->
+<div id="tableModal" class="modal">
+    <div class="modal-content">
+        <h3>Jadval o'lchami</h3>
+        <div class="input-row"> <label>Qatorlar:</label> <input type="number" id="rowCount" value="3"> </div>
+        <div class="input-row"> <label>Ustunlar:</label> <input type="number" id="colCount" value="3"> </div>
+        <div class="modal-footer">
+            <button id="confirmTable" class="ok-btn">OK</button>
+            <button id="closeModal">Bekor qilish</button>
+        </div>
+    </div>
+</div>
+
+<script src="word.js"></script>
+</body>
+</html>

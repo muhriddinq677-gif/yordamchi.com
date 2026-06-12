@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snake 🐍</title>
+<style>
+body{
+  margin:0;
+  background:#222;
+  color:#fff;
+  font-family:Arial;
+  text-align:center;
+}
+canvas{
+  background:#000;
+  display:block;
+  margin:10px auto;
+  border:3px solid #0f0;
+}
+#info{
+  font-size:18px;
+  margin:5px;
+}
+.controls button{
+  width:60px;
+  height:60px;
+  font-size:26px;
+  margin:5px;
+}
+</style>
+</head>
+<body>
+
+<h2>🐍 Ilon o‘yini</h2>
+<div id="info">
+❤️ Jon: <span id="life">3</span> |
+🍎 Ochko: <span id="score">0</span> |
+🏆 Record: <span id="record">0</span>
+</div>
+
+<canvas id="game" width="400" height="400"></canvas>
+
+<!-- 📱 TELEFON STRELKALARI -->
+<div class="controls">
+  <div>
+    <button
+      onmousedown="setDir(0,-1)"
+      ontouchstart="setDir(0,-1)"
+      onmouseup="stop()"
+      ontouchend="stop()"
+    >⬆️</button>
+  </div>
+
+  <div>
+    <button
+      onmousedown="setDir(-1,0)"
+      ontouchstart="setDir(-1,0)"
+      onmouseup="stop()"
+      ontouchend="stop()"
+    >⬅️</button>
+
+    <button
+      onmousedown="setDir(0,1)"
+      ontouchstart="setDir(0,1)"
+      onmouseup="stop()"
+      ontouchend="stop()"
+    >⬇️</button>
+
+    <button
+      onmousedown="setDir(1,0)"
+      ontouchstart="setDir(1,0)"
+      onmouseup="stop()"
+      ontouchend="stop()"
+    >➡️</button>
+  </div>
+</div>
+
+<script>
+const c = document.getElementById("game");
+const ctx = c.getContext("2d");
+
+const SIZE = 20;
+let snake;
+let vx = 0, vy = 0;
+let food, danger;
+let score = 0;
+let life = 3;
+
+let record = localStorage.getItem("snakeRecord") || 0;
+document.getElementById("record").textContent = record;
+
+function rand(){
+  return Math.floor(Math.random()*20);
+}
+
+function start(full=true){
+  snake = [{x:10,y:10}];
+  vx = vy = 0;
+  food = {x:rand(), y:rand()};
+  danger = {x:rand(), y:rand()};
+  if(full){
+    score = 0;
+    life = 3;
+  }
+  updateInfo();
+}
+start(true);
+
+function updateInfo(){
+  document.getElementById("score").textContent = score;
+  document.getElementById("life").textContent = life;
+  document.getElementById("record").textContent = record;
+}
+
+function setDir(x,y){
+  vx = x;
+  vy = y;
+}
+function stop(){
+  vx = 0;
+  vy = 0;
+}
+
+document.addEventListener("keydown", e=>{
+  if(e.key==="ArrowUp") setDir(0,-1);
+  if(e.key==="ArrowDown") setDir(0,1);
+  if(e.key==="ArrowLeft") setDir(-1,0);
+  if(e.key==="ArrowRight") setDir(1,0);
+});
+function draw() {
+  ctx.clearRect(0, 0, 400, 400); // ekranni tozalash
+
+  // ILON (to‘rtburchak)
+  snake.forEach((p, i) => {
+    ctx.fillStyle = i === 0 ? "lime" : "green"; // Boshni yashil, tana yashil
+    ctx.fillRect(p.x * SIZE, p.y * SIZE, SIZE, SIZE); // Ilonni to'rtburchak qilib chizish
+
+    // Boshga ikkita nuqta (ko'z)
+    if (i === 0) {
+      ctx.fillStyle = "black"; // Nuqtalar uchun qora rang
+
+      // O'ng ko'z (nuqta)
+      ctx.beginPath();
+      ctx.arc(p.x * SIZE + SIZE / 3, p.y * SIZE + SIZE / 3, SIZE / 6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Chap ko‘z (nuqta)
+      ctx.beginPath();
+      ctx.arc(p.x * SIZE + SIZE * 2 / 3, p.y * SIZE + SIZE / 3, SIZE / 6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+
+  // OLMA (dumaloq)
+  ctx.fillStyle = "red";
+  ctx.beginPath();
+  ctx.arc(food.x * SIZE + SIZE / 2, food.y * SIZE + SIZE / 2, SIZE / 2 - 2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // APELSIN (dumaloq)
+  ctx.fillStyle = "orange";
+  ctx.beginPath();
+  ctx.arc(danger.x * SIZE + SIZE / 2, danger.y * SIZE + SIZE / 2, SIZE / 2 - 2, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function loseLife(){
+  life--; // Jonni kamaytirish
+  document.getElementById("life").textContent = life; // Jonni yangilash
+  if (life <= 0) {
+    if (score > record) {
+      record = score;
+      localStorage.setItem("snakeRecord", record);
+    }
+    alert("O‘yin tugadi!");
+    start(); // Yangi o‘yinni boshlash
+  }
+}
+
+
+function update(){
+  if(vx===0 && vy===0){
+    draw();
+    return;
+  }
+
+  const head = {
+    x: snake[0].x + vx,
+    y: snake[0].y + vy
+  };
+
+  // DEVOR
+  if(head.x<0||head.y<0||head.x>=20||head.y>=20){
+    loseLife();
+    draw();
+    return;
+  }
+
+  // APELSIN
+  if(head.x===danger.x && head.y===danger.y){
+    loseLife();
+    danger={x:rand(), y:rand()};
+    draw();
+    return;
+  }
+
+  // OLMA
+  if(head.x===food.x && head.y===food.y){
+    score++;
+    updateInfo();
+    food={x:rand(), y:rand()};
+  }else{
+    snake.pop();
+  }
+
+  snake.unshift(head);
+  draw();
+}
+
+setInterval(update,150);
+</script>
+</body>
+</html>

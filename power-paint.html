@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerPoint Designer Pro</title>
+    <style>
+        :root { --p-orange: #d04423; --bg-main: #e0e0e0; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { margin: 0; background: var(--bg-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+        /* Toolbar */
+        .ribbon { background: #fff; border-bottom: 2px solid #bbb; padding: 10px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 100; }
+        .group { display: flex; flex-direction: column; align-items: center; border-right: 1px solid #ddd; padding: 0 10px; }
+        .group label { font-size: 10px; font-weight: bold; color: #888; margin-top: 4px; }
+        button, select, input[type="color"] { cursor: pointer; padding: 8px; border-radius: 4px; border: 1px solid #ccc; font-size: 13px; background: white; }
+        .btn-add { background: var(--p-orange); color: white; border: none; font-weight: bold; }
+        .btn-play { background: #28a745; color: white; border: none; font-weight: bold; }
+
+        /* Workspace */
+        .main { display: flex; flex: 1; overflow: hidden; }
+        .sidebar { width: 190px; background: #fff; border-right: 1px solid #ccc; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+        .thumb { width: 100%; aspect-ratio: 16/9; border: 2px solid #ddd; cursor: pointer; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; background: #fafafa; }
+        .thumb.active { border-color: var(--p-orange); background: #fff4f1; }
+
+        .editor { flex: 1; display: flex; align-items: center; justify-content: center; padding: 30px; position: relative; }
+       /* Slayd endi o'zgarmas emas, matnga qarab o'sadi */
+.slide { 
+    width: 800px; 
+    min-height: 450px; /* Eng kamida 450px, matn ko'paysa o'saveradi */
+    height: auto;      /* Vertikal cho'zilishni ta'minlaydi */
+    background: white; 
+    position: relative; 
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2); 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: flex-start; /* Matn tepadan boshlanadi */
+    align-items: center; 
+    padding: 60px 70px; /* Ichki bo'shliq */
+    overflow: visible;  /* Matn kesilib qolmasligi uchun */
+}
+
+/* Matn maydonlari (Textarea) avtomatik balandlik olishi uchun */
+textarea { 
+    border: none; 
+    background: rgba(255,255,255,0.2); 
+    width: 100%; 
+    text-align: center; 
+    resize: none; 
+    outline: none; 
+    z-index: 20; 
+    font-weight: bold; 
+    overflow: hidden; /* Skroll barlarni yo'qotish */
+}
+
+.title { 
+    font-size: 45px; 
+    margin-bottom: 20px; 
+    min-height: 60px; 
+}
+
+.text { 
+    font-size: 22px; 
+    min-height: 100px; 
+    line-height: 1.5;
+}
+
+
+        /* --- 10 XIL VIZUAL RAMKA (DESIGN) --- */
+        
+        /* 1. Gullar (Burchaklarda chizilgan gullar) */
+        .r1 { 
+    border: 20px solid #fff0f3; 
+    background: radial-gradient(circle at 10% 10%, #ffe5ec, transparent 40%),
+                radial-gradient(circle at 90% 90%, #ffc2d1, transparent 40%) !important;
+}
+.r1::before { 
+    content: "🌸🌺🌷"; 
+    position: absolute; top: 10px; right: 10px; font-size: 50px; 
+    filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.2)); 
+}
+.r1::after { 
+    content: "🌺🌸🌹"; 
+    position: absolute; bottom: 10px; left: 10px; font-size: 50px; 
+    filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.2)); 
+}
+
+
+        /* 2. Maktab (Zanjirli chiziq va qalamlar) */
+     .r2 { 
+    border: 15px solid #fff9c4; 
+    outline: 4px dashed #5d4037; 
+    outline-offset: -20px; 
+    background-image: linear-gradient(#e1f5fe 1px, transparent 1px);
+    background-size: 100% 30px; /* Daftar katagi kabi chiziqlar */
+}
+.r2::before { 
+    content: ""; 
+    position: absolute; left: 60px; top: 0; height: 100%; width: 3px; 
+    background: #ff5252; opacity: 0.7; z-index: 5; 
+}
+.r2::after { 
+    content: "📐📏✏️📓"; 
+    position: absolute; bottom: 15px; right: 20px; font-size: 45px; 
+    z-index: 10; 
+}
+
+        /* 3. Koinot (Yulduzlar va Oy nuri) */
+        .r3 { background: radial-gradient(circle at top right, #1a2a6c, #b21f1f, #fdbb2d) !important; color: white !important; }
+        .r3::before { content: "🌙"; position: absolute; top: 20px; right: 30px; font-size: 40px; text-shadow: 0 0 20px #fff; }
+        .r3::after { content: ". . . . . ."; position: absolute; top: 0; left: 0; width: 100%; height: 100%; font-size: 40px; word-spacing: 50px; opacity: 0.3; }
+
+        /* 4. Tabiat (Maysa va Quyosh) */
+/* 4. Tabiat (🌿 - Maysa, Gul, Quyosh, Bulut) */
+        .r4 { background: linear-gradient(to bottom, #87ceeb 60%, #fff 100%) !important; border-bottom: 65px solid #2e7d32; }
+        .r4::before { content: "☁️ ☀️ ☁️"; position: absolute; top: 10px; width: 100%; text-align: center; font-size: 50px; z-index: 5; }
+        .r4::after { content: "🌳🌻🌷🌹🍀🌷🌻🌳"; position: absolute; bottom: -10px; width: 100%; text-align: center; font-size: 55px; z-index: 10; }
+
+        /* 5. Bayram (Gradient va Sharlar) */
+        .r5 { border: 10px solid transparent; background: linear-gradient(white, white) padding-box, linear-gradient(45deg, red, orange, yellow, green, blue) border-box; }
+        .r5::before { content: "🎈"; position: absolute; top: 10px; left: 10px; font-size: 30px; filter: drop-shadow(2px 2px 2px #333); }
+
+        /* 6. Neon (Chiroqlar) */
+        .r6 { background: #000 !important; color: #0ff !important; border: 4px solid #0ff; box-shadow: inset 0 0 15px #0ff, 0 0 15px #0ff; }
+
+        /* 7. Oltin (Professional Frame) */
+        .r7 { border: 20px solid; border-image: linear-gradient(to bottom right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c) 1; }
+
+        /* 8. Qish (Muz va Qor) */
+        .r8 { background: linear-gradient(135deg, #e0f7fa 0%, #ffffff 100%) !important; border: 15px solid #b3e5fc; }
+        .r8::before { content: "❄️"; position: absolute; top: 10px; width: 100%; text-align: center; font-size: 30px; opacity: 0.5; }
+
+        /* 9. Art (Akvarel chetlari) */
+        .r9 { border-radius: 50px; border: 15px solid #f8bbd0; background: #fffafb !important; box-shadow: inset 0 0 30px #f48fb1; }
+
+        /* 10. Biznes (To'q ko'k va jiddiy) */
+        .r10 { border-left: 50px solid #2c3e50; border-right: 10px solid #2c3e50; background: #fdfdfd !important; }
+
+        /* ANIMATSIYALAR */
+        @keyframes zoom { from { transform: scale(0.5); opacity: 0; } }
+        @keyframes bounce { 0% { transform: translateY(-300px); } 60% { transform: translateY(20px); } 100% { transform: translateY(0); } }
+        @keyframes flip { from { transform: rotateY(90deg); } }
+        @keyframes roll { from { transform: translateX(-100%) rotate(-120deg); } }
+        @keyframes fade { from { opacity: 0; } }
+        @keyframes slide { from { transform: translateX(100%); } }
+        @keyframes rotate { from { transform: rotate(-180deg) scale(0); } }
+        @keyframes drop { from { transform: translateY(-100%); } }
+        @keyframes swing { 20% { transform: rotate(15deg); } 40% { transform: rotate(-10deg); } 100% { transform: rotate(0); } }
+        @keyframes blurIn { from { filter: blur(20px); opacity: 0; } }
+
+        /* Presentation */
+        #presLayer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 1000; display: none; align-items: center; justify-content: center; }
+        /* ================= RESPONSIVE ================= */
+
+/* Planshet */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 140px;
+    }
+
+    .slide {
+        width: 95%;
+        padding: 40px 30px;
+    }
+
+    .title {
+        font-size: 32px;
+    }
+
+    .text {
+        font-size: 18px;
+    }
+}
+
+/* Telefon */
+@media (max-width: 768px) {
+
+    body {
+        overflow: auto;
+    }
+
+    .main {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 5px;
+    }
+
+    .thumb {
+        min-width: 120px;
+        font-size: 10px;
+    }
+
+    .editor {
+        padding: 10px;
+    }
+
+    .slide {
+        width: 100%;
+        padding: 25px 15px;
+    }
+
+    .title {
+        font-size: 24px;
+    }
+
+    .text {
+        font-size: 16px;
+    }
+
+    .ribbon {
+        gap: 8px;
+        padding: 5px;
+    }
+
+    .group {
+        padding: 0 5px;
+    }
+
+    button, select {
+        font-size: 11px;
+        padding: 5px;
+    }
+}
+
+/* Juda kichik ekran */
+@media (max-width: 480px) {
+
+    .title {
+        font-size: 20px;
+    }
+
+    .text {
+        font-size: 14px;
+    }
+
+    .thumb {
+        min-width: 100px;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <div class="ribbon">
+        <div class="group"><button class="btn-add" onclick="addSlide()">➕ Yangi Slayd</button><label>Asosiy</label></div>
+        <div class="group">
+            <select id="fSel" onchange="update()">
+                <option value="r1">🌸 Gullar (Pushti)</option>
+                <option value="r2">✏️ Maktab (Zanjirli)</option>
+                <option value="r3">🌌 Koinot (Gradent)</option>
+                <option value="r4">🌿 Tabiat (Maysa/Quyosh)</option>
+                <option value="r5">🎈 Bayram (Kamalak)</option>
+                <option value="r6">💡 Neon (Chiroqli)</option>
+                <option value="r7">👑 Oltin (Hashamatli)</option>
+                <option value="r8">❄️ Qish (Muzli)</option>
+                <option value="r9">🎨 Art (Akvarel)</option>
+                <option value="r10">🏢 Biznes (Jiddiy)</option>
+            </select><label>10x Ramkalar</label>
+        </div>
+        <div class="group">
+            <select id="aSel" onchange="update()">
+                <option value="zoom">Zoom</option>
+                <option value="bounce">Bounce</option>
+                <option value="flip">Flip</option>
+                <option value="roll">Roll</option>
+                <option value="fade">Fade</option>
+                <option value="slide">Slide</option>
+                <option value="rotate">Rotate</option>
+                <option value="drop">Drop</option>
+                <option value="swing">Swing</option>
+                <option value="blurIn">Blur</option>
+            </select><label>10x Effektlar</label>
+        </div>
+        <div class="group">
+            <div style="display:flex; gap:3px;">
+                <input type="color" id="bgC" oninput="update()" value="#ffffff">
+                <input type="color" id="txC" oninput="update()" value="#333333">
+            </div><label>Ranglar</label>
+        </div>
+        <div class="group" style="border:none">
+            <button class="btn-play" onclick="play()">▶️ Ko'rish (3s)</button>
+            <button onclick="save()" style="background:#007bff; color:white;">💾 Saqlash</button>
+            <button onclick="del()" style="color:red">🗑</button>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="sidebar" id="side"></div>
+        <div class="editor">
+            <div class="slide r1" id="slideArea">
+                <textarea class="title" id="tInp" placeholder="Sarlavha..." oninput="sync()"></textarea>
+                <textarea class="text" id="bInp" placeholder="Matnni shu yerga yozing..." oninput="sync()"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div id="presLayer"></div>
+
+    <script>
+        let slides = [{ t: "Mavzu", b: "Matn...", bg: "#ffffff", tx: "#333333", f: "r1", a: "zoom" }];
+        let cur = 0;
+
+        function render() {
+            const side = document.getElementById('side');
+            side.innerHTML = '';
+            slides.forEach((s, i) => {
+                const d = document.createElement('div');
+                d.className = `thumb ${i === cur ? 'active' : ''}`;
+                d.innerHTML = `Slayd ${i+1}<br>${s.t.substring(0,12)}`;
+                d.onclick = () => load(i);
+                side.appendChild(d);
+            });
+        }
+
+        function load(i) {
+            cur = i; const s = slides[i];
+            document.getElementById('tInp').value = s.t;
+            document.getElementById('bInp').value = s.b;
+            document.getElementById('bgC').value = s.bg;
+            document.getElementById('txC').value = s.tx;
+            document.getElementById('fSel').value = s.f;
+            document.getElementById('aSel').value = s.a;
+            apply(); render();
+        }
+
+        function apply() {
+            const s = slides[cur];
+            const area = document.getElementById('slideArea');
+            area.className = `slide ${s.f}`;
+            area.style.backgroundColor = s.bg;
+            document.getElementById('tInp').style.color = s.tx;
+            document.getElementById('bInp').style.color = s.tx;
+        }
+
+        function update() {
+            const s = slides[cur];
+            s.bg = document.getElementById('bgC').value;
+            s.tx = document.getElementById('txC').value;
+            s.f = document.getElementById('fSel').value;
+            s.a = document.getElementById('aSel').value;
+            apply();
+        }
+
+    // Matn yozilganda textarea bo'yini avtomatik sozlash
+function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+}
+
+// sync funksiyasini yangilang
+function sync() {
+    const tInp = document.getElementById('tInp');
+    const bInp = document.getElementById('bInp');
+    
+    autoResize(tInp);
+    autoResize(bInp);
+    
+    slides[cur].t = tInp.value;
+    slides[cur].b = bInp.value;
+    render();
+}
+
+
+        function play() {
+            const layer = document.getElementById('presLayer');
+            const s = slides[cur];
+            layer.style.display = 'flex';
+            layer.innerHTML = `
+                <div class="slide ${s.f}" style="background:${s.bg}; animation:${s.a} 0.8s ease-out forwards; width:85vw; height:80vh; padding:80px;">
+                    <div style="font-size:60px; font-weight:bold; color:${s.tx}; text-align:center; z-index:100; position:relative;">${s.t}</div>
+                    <div style="font-size:30px; color:${s.tx}; margin-top:40px; text-align:center; z-index:100; position:relative;">${s.b}</div>
+                </div>`;
+            setTimeout(() => { layer.style.display = 'none'; }, 3000);
+        }
+
+        function save() {
+            const blob = new Blob([JSON.stringify(slides)], {type: 'application/json'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'presentation.json'; a.click();
+        }
+
+        function addSlide() { slides.push({ t: "Yangi", b: "", bg: "#ffffff", tx: "#333333", f: "r1", a: "zoom" }); load(slides.length-1); }
+        function del() { if(slides.length > 1) { slides.splice(cur, 1); load(0); } }
+
+        load(0);
+    </script>
+</body>
+</html>

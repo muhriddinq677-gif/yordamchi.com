@@ -1,161 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="google-site-verification" content="6KDW8WatE_Nkdg4kQwuuc7iC4-Ka6697idZS3tRBAGk" />
+     <meta name="google-site-verification" content="6KDW8WatE_Nkdg4kQwuuc7iC4-Ka6697idZS3tRBAGk" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome - Magic Heart Animation</title>
+    <title>Profile & Auth</title>
     <style>
-        /* Google Font importi */
-        @import url('https://fonts.googleapis.com');
-        
-        body { 
-            margin: 0; 
-            background-color: black; 
-            overflow: hidden; 
-            font-family: 'Dancing Script', cursive; 
-        }
-
-        canvas { 
-            display: block; 
-        }
-
-        #welcome-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #fff;
-            font-size: 4rem; /* Matn uzunligi uchun biroz kichraytirildi */
-            text-align: center;
-            opacity: 0;
-            transition: opacity 2s ease-in-out;
-            text-shadow: 0 0 10px #f73487, 0 0 20px #f73487, 0 0 40px #f73487;
-            white-space: nowrap;
-            z-index: 10;
-            /* Bosish imkoniyatlari */
-            cursor: pointer;
-            pointer-events: auto;
-        }
-
-        @media (max-width: 600px) { 
-            #welcome-text { font-size: 2rem; } 
-        }
+        body { margin: 0; background: #0b0813; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #fff; }
+        .box { background: #13111c; padding: 30px; border-radius: 15px; width: 100%; max-width: 320px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        input, .btn { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #2d293d; background: #1c1926; color: #fff; box-sizing: border-box; outline: none; }
+        .btn { background: #008cff; border: none; font-weight: bold; cursor: pointer; }
+        .btn-sub { background: #333; }
+        .link { color: #008cff; cursor: pointer; font-size: 0.9rem; }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; background: #2d293d; margin: 0 auto 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; overflow: hidden; }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<!-- Yozuv o'zgartirildi va onclick qo'shildi -->
-<div id="welcome-text" onclick="window.location.href='asosiy.html'">
-    Welcome to our website
-</div>
+    <!-- RESTRATSIYA -->
+    <div id="reg" class="box">
+        <h3>Ro'yxatdan o'tish</h3>
+        <input type="text" id="rName" placeholder="Ism">
+        <input type="email" id="rEmail" placeholder="Email">
+        <input type="password" id="rPass" placeholder="Parol (kamida 6 ta)">
+        <button class="btn" onclick="auth('reg')">Yaratish</button>
+        <p class="link" onclick="view('log')">Kirish sahifasi</p>
+    </div>
 
-<canvas id="heartCanvas"></canvas>
+    <!-- LOGIN -->
+    <div id="log" class="box hidden">
+        <h3>Tizimga kirish</h3>
+        <input type="email" id="lEmail" placeholder="Email">
+        <input type="password" id="lPass" placeholder="Parol">
+        <button class="btn" onclick="auth('log')">Kirish</button>
+        <p class="link" onclick="view('reg')">Ro'yxatdan o'tish</p>
+    </div>
+
+    <!-- PROFIL -->
+    <div id="prof" class="box hidden">
+        <h3>Shaxsiy Profil</h3>
+        <div class="avatar" onclick="document.getElementById('file').click()">
+            <img id="pImg" class="hidden"> <span id="pText">Rasm yuklash</span>
+        </div>
+        <input type="file" id="file" accept="image/*" class="hidden" onchange="addImg(event)">
+        <p id="pName" style="font-weight: bold; margin: 5px 0;"></p>
+        <p id="pEmail" style="color: #888; font-size: 0.9rem; margin-bottom: 20px;"></p>
+        <button class="btn" onclick="location.href='asosiy.html'">Saytga o'tish</button>
+        <button class="btn btn-sub" onclick="logout()">Chiqish</button>
+    </div>
 
 <script>
-    const canvas = document.getElementById('heartCanvas');
-    const ctx = canvas.getContext('2d');
-    const textElement = document.getElementById('welcome-text');
-
-    let scale, centerX, centerY;
-    let t = 0;
-    const particles = [];
-    let drawingFinished = false;
-    let startTime = null;
-    const duration = 3000; 
-
-    function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        centerX = canvas.width / 2;
-        centerY = canvas.height / 2;
-        const minSide = Math.min(canvas.width, canvas.height);
-        scale = minSide / 45; 
+    const $ = id => document.getElementById(id);
+    
+    window.onload = () => {
+        let user = localStorage.getItem('cur');
+        if(user) show(JSON.parse(user));
     }
 
-    window.addEventListener('resize', resize);
-    resize();
+    function view(id) {
+        ['reg', 'log', 'prof'].forEach(x => $(x).classList.add('hidden'));
+        $(id).classList.remove('hidden');
+    }
 
-    function heartX(k) { return 15 * Math.pow(Math.sin(k), 3); }
-    function heartY(k) { return -(13 * Math.cos(k) - 5 * Math.cos(2 * k) - 2 * Math.cos(3 * k) - Math.cos(4 * k)); }
-
-    class Particle {
-        constructor() {
-            this.x = centerX;
-            this.y = centerY;
-            this.size = Math.random() * 4 + 1;
-            const angle = Math.random() * Math.PI * 2;
-            const speed = Math.random() * 5 + 2;
-            this.speedX = Math.cos(angle) * speed;
-            this.speedY = Math.sin(angle) * speed;
-            // Hsl xatosi tuzatildi
-            this.color = `hsl(${Math.random() * 40 + 330}, 100%, 70%)`;
-            this.alpha = 1;
-        }
-        update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
-            this.alpha -= 0.01;
-        }
-        draw() {
-            ctx.save();
-            ctx.globalAlpha = this.alpha;
-            ctx.fillStyle = this.color;
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = this.color;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
+    function auth(type) {
+        if (type === 'reg') {
+            let name = $('rName').value, email = $('rEmail').value, pass = $('rPass').value;
+            if(!name || !email || pass.length < 6) return alert("Ma'lumotlar xato!");
+            let u = { name, email, pass, img: "" };
+            localStorage.setItem(email, JSON.stringify(u));
+            localStorage.setItem('cur', JSON.stringify(u));
+            show(u);
+        } else {
+            let u = JSON.parse(localStorage.getItem($('lEmail').value));
+            if(!u || u.pass !== $('lPass').value) return alert("Email yoki parol xato!");
+            localStorage.setItem('cur', JSON.stringify(u));
+            show(u);
         }
     }
 
-    function animate(currentTime) {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // 1. Yurak chizish
-        if (t < Math.PI * 2) {
-            ctx.strokeStyle = "#f73487";
-            ctx.lineWidth = 4;
-            ctx.lineJoin = "round";
-            ctx.beginPath();
-            for (let j = 0; j <= t; j += 0.05) {
-                let x = centerX + heartX(j) * scale;
-                let y = centerY + heartY(j) * scale;
-                if (j === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-            t += 0.05;
-            if (t >= Math.PI * 2) {
-                drawingFinished = true;
-                startTime = currentTime;
-            }
-        }
-
-        // 2. Effektlar (yurakdan keyin zarrachalar va yozuv)
-        if (drawingFinished && startTime) {
-            if ((currentTime - startTime) < duration) {
-                for(let i=0; i<5; i++) particles.push(new Particle());
-            } else {
-                textElement.style.opacity = "1";
-            }
-        }
-
-        // Zarrachalarni yangilash
-        for (let i = particles.length - 1; i >= 0; i--) {
-            particles[i].update();
-            particles[i].draw();
-            if (particles[i].alpha <= 0) {
-                particles.splice(i, 1);
-            }
-        }
-
-        requestAnimationFrame(animate);
+    function show(u) {
+        view('prof');
+        $('pName').innerText = u.name;
+        $('pEmail').innerText = u.email;
+        if(u.img) { $('pImg').src = u.img; $('pImg').classList.remove('hidden'); $('pText').classList.add('hidden'); }
     }
 
-    requestAnimationFrame(animate);
+    function addImg(e) {
+        let fr = new FileReader();
+        fr.onload = () => {
+            let u = JSON.parse(localStorage.getItem('cur'));
+            u.img = fr.result;
+            localStorage.setItem('cur', JSON.stringify(u));
+            localStorage.setItem(u.email, JSON.stringify(u));
+            show(u);
+        }
+        if(e.target.files[0]) fr.readAsDataURL(e.target.files[0]);
+    }
+
+    function logout() {
+        localStorage.removeItem('cur');
+        location.reload();
+    }
 </script>
-
 </body>
 </html>

@@ -165,6 +165,22 @@ background: var(--primary); color:white; transform: translateY(-10px); box-shado
 </head>
 <body>
 <div class="navbar">
+<!-- Buni navbar kodingiz ichidagi eng oxirgi element qilib qo'shing -->
+<div id="userTopProfile" style="position: relative; cursor: pointer; display: inline-block; margin-left: 10px;" onclick="toggleProfileMenu(event)">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <img id="topNavImg" src="" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; display: none; border: 2px solid white;">
+        <div id="topNavBgCircle" style="width: 32px; height: 32px; border-radius: 50%; background: #2c3e50; display: none; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; border: 2px solid white;"></div>
+        <span id="topNavName" style="font-weight: bold; font-size: 14px; color: white; user-select: none;"></span>
+    </div>
+
+    <!-- Dropdown Menyu (Mutloq joylashgan, hech narsani surib yubormaydi) -->
+    <div id="profileDropdown" style="display: none; position: absolute; top: 40px; right: 0; background: var(--card); border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; width: 180px; padding: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 2005; text-align: left;">
+        <div style="font-size: 11px; color: #888; padding: 5px 8px; border-bottom: 1px solid rgba(0,0,0,0.05); margin-bottom: 5px; word-break: break-all;" id="dropEmail"></div>
+        <div style="padding: 8px; font-size: 13px; color: var(--text); border-radius: 5px; transition: 0.2s;" onmouseover="this.style.background='rgba(0,0,0,0.05)'" onmouseout="this.style.background='transparent'" onclick="document.getElementById('dropFile').click()">📷 Rasm almashtirish</div>
+        <input type="file" id="dropFile" accept="image/*" style="display: none;" onchange="changeAvatar(event)">
+        <div style="padding: 8px; font-size: 13px; color: #e74c3c; border-radius: 5px; transition: 0.2s; font-weight: bold;" onmouseover="this.style.background='rgba(231,76,60,0.1)'" onmouseout="this.style.background='transparent'" onclick="logoutFromMain()">🚪 Chiqish</div>
+    </div>
+</div>
   <div class="nav-left">
    <a href="calendar.html">
   <i class="fas fa-calendar-alt"></i> 
@@ -466,7 +482,66 @@ header.addEventListener("click", function () {
 
   header.style.setProperty("--emoji", `"${emojis[i]}"`);
 });
+
+    window.addEventListener('DOMContentLoaded', () => {
+        updateTopProfile();
+        window.addEventListener('click', () => {
+            const dropdown = document.getElementById('profileDropdown');
+            if(dropdown) dropdown.style.display = 'none';
+        });
+    });
+
+    function toggleProfileMenu(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('profileDropdown');
+        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function updateTopProfile() {
+        const currentUser = JSON.parse(localStorage.getItem('cur'));
+        if (currentUser) {
+            document.getElementById('topNavName').innerText = currentUser.name;
+            document.getElementById('dropEmail').innerText = currentUser.email;
+            const imgEl = document.getElementById('topNavImg');
+            const circleEl = document.getElementById('topNavBgCircle');
+            if (currentUser.img) {
+                imgEl.src = currentUser.img;
+                imgEl.style.display = 'block';
+                circleEl.style.display = 'none';
+            } else {
+                circleEl.innerText = currentUser.name.charAt(0).toUpperCase();
+                imgEl.style.display = 'none';
+                circleEl.style.display = 'flex';
+            }
+        } else {
+            document.getElementById('userTopProfile').style.display = 'none';
+        }
+    }
+
+    function changeAvatar(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const currentUser = JSON.parse(localStorage.getItem('cur'));
+            if(currentUser) {
+                currentUser.img = e.target.result;
+                localStorage.setItem('cur', JSON.stringify(currentUser));
+                localStorage.setItem(currentUser.email, JSON.stringify(currentUser));
+                updateTopProfile();
+            }
+        }
+        reader.readAsDataURL(file);
+    }
+
+    function logoutFromMain() {
+        localStorage.removeItem('cur');
+        window.location.href = 'index.html'; 
+    }
 </script>
+
+
+
     
 </body>
 </html>

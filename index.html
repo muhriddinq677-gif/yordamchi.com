@@ -1,12 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
-     <meta name="google-site-verification" content="6KDW8WatE_Nkdg4kQwuuc7iC4-Ka6697idZS3tRBAGk" />
+    <meta name="google-site-verification" content="6KDW8WatE_Nkdg4kQwuuc7iC4-Ka6697idZS3tRBAGk" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile & Auth</title>
+    <title>Yordamchi.com - Profile & Auth</title>
     <style>
-        body { margin: 0; background: #0b0813; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #fff; }
+        /* UMUMIY VA YANGI SAHIFA DIZAYNI */
+        body { margin: 0; background: #0b0813; font-family: sans-serif; color: #fff; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        /* 1. NAVBAR */
+        .navbar { background: #13111c; padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #008cff; }
+        .navbar .logo { font-size: 1.5rem; font-weight: bold; color: #008cff; text-decoration: none; }
+        .navbar .nav-links a { color: #fff; text-decoration: none; margin-left: 20px; font-weight: bold; transition: 0.3s; }
+        .navbar .nav-links a:hover { color: #008cff; }
+
+        /* 2. HEADER (Google AdSense talab qiladigan matnli bo'lim) */
+        .header-info { text-align: center; padding: 50px 20px; background: linear-gradient(180deg, #13111c, #0b0813); }
+        .header-info h1 { color: #008cff; font-size: 2.5rem; margin-bottom: 10px; }
+        .header-info p { color: #aaa; max-width: 700px; margin: 0 auto; line-height: 1.6; font-size: 1.1rem; }
+
+        /* 3. RO'YXATDAN O'TISH BLOKI CONTAINER */
+        .auth-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px 20px; }
         .box { background: #13111c; padding: 30px; border-radius: 15px; width: 100%; max-width: 320px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         input, .btn { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #2d293d; background: #1c1926; color: #fff; box-sizing: border-box; outline: none; }
         .btn { background: #008cff; border: none; font-weight: bold; cursor: pointer; }
@@ -15,42 +30,74 @@
         .avatar { width: 80px; height: 80px; border-radius: 50%; background: #2d293d; margin: 0 auto 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; overflow: hidden; }
         .avatar img { width: 100%; height: 100%; object-fit: cover; }
         .hidden { display: none; }
+
+        /* 4. FOOTER */
+        .footer { background: #13111c; text-align: center; padding: 25px; color: #666; font-size: 0.95rem; border-top: 1px solid #2d293d; }
+        .footer a { color: #008cff; text-decoration: none; margin-left: 15px; }
+        .footer a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
-    <!-- RESTRATSIYA -->
-    <div id="reg" class="box">
-        <h3>Ro'yxatdan o'tish</h3>
-        <input type="text" id="rName" placeholder="Ism">
-        <input type="email" id="rEmail" placeholder="Email">
-        <input type="password" id="rPass" placeholder="Parol (kamida 6 ta)">
-        <button class="btn" onclick="auth('reg')">Yaratish</button>
-        <p class="link" onclick="view('log')">Kirish sahifasi</p>
-    </div>
-
-    <!-- LOGIN -->
-    <div id="log" class="box hidden">
-        <h3>Tizimga kirish</h3>
-        <input type="email" id="lEmail" placeholder="Email">
-        <input type="password" id="lPass" placeholder="Parol">
-        <button class="btn" onclick="auth('log')">Kirish</button>
-        <p class="link" onclick="view('reg')">Ro'yxatdan o'tish</p>
-    </div>
-
-    <!-- PROFIL -->
-    <div id="prof" class="box hidden">
-        <h3>Shaxsiy Profil</h3>
-        <div class="avatar" onclick="document.getElementById('file').click()">
-            <img id="pImg" class="hidden"> <span id="pText">Rasm yuklash</span>
+    <!-- NAVBAR: FAQAT LOGO VA SIZNING LINKINGIZ -->
+    <nav class="navbar">
+        <a href="index.html" class="logo">Yordamchi.com</a>
+        <div class="nav-links">
+            <!-- PORTFOLIO LINKINGIZ (Siz aytgan About Me qismi) -->
+            <a href="https://muhriddinq677-gif.github.io/muhriddin.portfoilo/" target="_blank">About Me (Men haqimda)</a>
         </div>
-        <input type="file" id="file" accept="image/*" class="hidden" onchange="addImg(event)">
-        <p id="pName" style="font-weight: bold; margin: 5px 0;"></p>
-        <p id="pEmail" style="color: #888; font-size: 0.9rem; margin-bottom: 20px;"></p>
-        <button class="btn" onclick="location.href='asosiy.html'">Saytga o'tish</button>
-        <button class="btn btn-sub" onclick="logout()">Chiqish</button>
+    </nav>
+
+    <!-- HEADER: BILDIRISHNOMA VA TAVSIF -->
+    <header class="header-info">
+        <h1>Sizning Shaxsiy Onlayn Kabinetingiz</h1>
+        <p>Yordamchi.com portalida ro'yxatdan o'ting va o'z profilingizni xavfsiz boshqaring. Yaqin kunlarda ushbu platformada foydali dasturlar, kundalik rejalashtiruvchi asboblar va dasturchilar uchun maxsus yordamchi vositalar ishga tushiriladi!</p>
+    </header>
+
+    <!-- RO'YXATDAN O'TISH TIZIMI (O'chmagan, o'z joyida) -->
+    <div class="auth-container">
+        
+        <!-- RESTRATSIYA -->
+        <div id="reg" class="box">
+            <h3>Ro'yxatdan o'tish</h3>
+            <input type="text" id="rName" placeholder="Ism">
+            <input type="email" id="rEmail" placeholder="Email">
+            <input type="password" id="rPass" placeholder="Parol (kamida 6 ta)">
+            <button class="btn" onclick="auth('reg')">Yaratish</button>
+            <p class="link" onclick="view('log')">Kirish sahifasi</p>
+        </div>
+
+        <!-- LOGIN -->
+        <div id="log" class="box hidden">
+            <h3>Tizimga kirish</h3>
+            <input type="email" id="lEmail" placeholder="Email">
+            <input type="password" id="lPass" placeholder="Parol">
+            <button class="btn" onclick="auth('log')">Kirish</button>
+            <p class="link" onclick="view('reg')">Ro'yxatdan o'tish</p>
+        </div>
+
+        <!-- PROFIL -->
+        <div id="prof" class="box hidden">
+            <h3>Shaxsiy Profil</h3>
+            <div class="avatar" onclick="document.getElementById('file').click()">
+                <img id="pImg" class="hidden"> <span id="pText">Rasm yuklash</span>
+            </div>
+            <input type="file" id="file" accept="image/*" class="hidden" onchange="addImg(event)">
+            <p id="pName" style="font-weight: bold; margin: 5px 0;"></p>
+            <p id="pEmail" style="color: #888; font-size: 0.9rem; margin-bottom: 20px;"></p>
+            <button class="btn" onclick="location.href='asosiy.html'">Saytga o'tish</button>
+            <button class="btn btn-sub" onclick="logout()">Chiqish</button>
+        </div>
+
     </div>
 
+    <!-- FOOTER -->
+    <footer class="footer">
+        <span>&copy; 2026 Yordamchi.com - Barcha huquqlar himoyalangan.</span>
+        <a href="privacy-policy.html">Privacy Policy</a>
+    </footer>
+
+<!-- LOGIKA (Asl holatida turibdi) -->
 <script>
     const $ = id => document.getElementById(id);
     

@@ -80,7 +80,29 @@ saveBtn.addEventListener("click",()=>{
 });
 
 // --- MANA SHU QISIM TO'G'IRLANDI ---
-const tags = ["h1","h2","h3","p","div","span","a","ul","li","ol","section","header","footer","nav","article","button","form","label"];
+const tags = [
+  // Sarlavhalar va matnlar
+  "h1", "h2", "h3", "h4", "h5", "h6", "p", "span", "strong", "em", "b", "i", "small", 
+  
+  // Bloklar va konteynerlar
+  "div", "section", "header", "footer", "nav", "main", "aside", "article", "details", "summary",
+  
+  // Ro'yxatlar
+  "ul", "ol", "li", "dl", "dt", "dd",
+  
+  // Media va havolalar
+  "a", "img", "video", "audio", "source", "canvas", "svg",
+  
+  // Formalar va foydalanuvchi kiritish elementlari
+  "form", "input", "textarea", "button", "select", "option", "label", "fieldset", "legend",
+  
+  // Jadvallar
+  "table", "thead", "tbody", "tr", "th", "td",
+  
+  // Meta-ma'lumotlar va ichki uslublar
+  "style", "script", "link", "meta", "title", "iframe"
+];
+
 
 editor.addEventListener("keydown", function(e) {
   if (e.key === "Enter") {

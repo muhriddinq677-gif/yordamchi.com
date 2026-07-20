@@ -99,7 +99,7 @@
             border-radius: 8px; 
             width: 100%; 
             margin-top: 15px; 
-            display: none; /* Dastlab yashirin turadi */ 
+            display: block; /* DOIM CHIQIB TURISHI UCHUN TOG'RILANDI */ 
             transition: background-color 0.3s ease; 
         } 
         .download-btn:hover { 
@@ -108,7 +108,6 @@
     </style> 
 </head> 
 <body> 
-    <!-- Elementlar uzun bo'lib ketmasligi uchun ularni qutiga o'radik --> 
     <div class="qr-wrapper"> 
         <h1>Easy QR Code Generator</h1> 
         <label for="text-input">Enter Text</label> 
@@ -122,11 +121,9 @@
         function generateQRCode() { 
             var text = document.getElementById("text-input").value; 
             var qrBox = document.getElementById("qrcode"); 
-            var dlBtn = document.getElementById("download-btn"); 
 
-            // Har safar yangi kod yaratilganda eski holatni tozalash 
+            // Kod yaratilganda faqat eski rasmni tozalaydi, tugma joyida qoladi
             qrBox.innerHTML = ""; 
-            dlBtn.style.display = "none"; 
 
             if (text.trim() === "") { 
                 alert("Iltimos, matn kiriting!"); 
@@ -139,20 +136,15 @@
                 width: 150, 
                 height: 150 
             }); 
-
-            // QR kod rasmi generatsiya bo'lgach, yuklash tugmasini ko'rsatish 
-            setTimeout(function() { 
-                var qrImg = qrBox.querySelector("img"); 
-                if(qrImg) { 
-                    dlBtn.style.display = "block"; 
-                } 
-            }, 200); 
         } 
 
         // Yuklab olish funksiyasi 
         function downloadQR() { 
             var qrImg = document.querySelector("#qrcode img"); 
-            if (!qrImg) return; 
+            if (!qrImg) {
+                alert("Avval QR kod yarating, keyin yuklab oling!");
+                return;
+            }
             var link = document.createElement("a"); 
             link.href = qrImg.src; 
             link.download = "qr.png"; 

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple QR Code Generator</title>
+    <!-- Videodagi qrcode.min.js kutubxonasi -->
+       <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script> 
+    <style>
+        body {
+            background-color: #f0f4f8; /* Saytingiz foni kabi och havo rang */
+            color: #1e293b;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+        /* Saytingizdagi kartochkalar uslubida, o'rtada ixcham turuvchi blok */
+        .qr-wrapper {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 82, 212, 0.1);
+            width: 100%;
+            max-width: 360px; /* Yonlariga cho'zilib ketmaydi, ixcham turadi */
+            box-sizing: border-box;
+            text-align: center;
+        }
+        h1 {
+            color: #0052d4; /* Saytingiz yuqori qismidagi ko'k rang */
+            font-size: 22px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #475569;
+            font-size: 14px;
+        }
+        input {
+            background-color: #f8fafc;
+            border: 2px solid #cbd5e1;
+            color: #0f172a;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 15px;
+            border-radius: 8px;
+            width: 100%;
+            margin-bottom: 20px;
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        input:focus {
+            border-color: #4364f7;
+            background-color: #ffffff;
+        }
+        button {
+            background-color: #0052d4; /* Saytingiz tugmalari rangi */
+            color: #ffffff;
+            border: none;
+            padding: 12px 20px;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #4364f7; /* Bosilgandagi ochroq ko'k */
+        }
+        #qrcode {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+        }
+        #qrcode img {
+            border: 2px solid #e2e8f0;
+            padding: 8px;
+            background-color: #ffffff;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Elementlar uzun bo'lib ketmasligi uchun ularni qutiga o'radik -->
+    <div class="qr-wrapper">
+        <h1>Easy QR Code Generator</h1>
+        <label for="text-input">Enter Text</label>
+        <input type="text" id="text-input">
+        <button onclick="generateQRCode()">Generate QR Code</button>
+        <div id="qrcode"></div>
+    </div>
+
+    <script>
+        function generateQRCode() {
+            var text = document.getElementById("text-input").value;
+            // Avvalgi QR kodni tozalash qatori
+            document.getElementById("qrcode").innerHTML = ""; 
+            
+            var qrcode = new QRCode(document.getElementById("qrcode"), {
+                text: text,
+                width: 150,
+                height: 150
+            });
+        }
+    </script>
+
+</body>
+</html>

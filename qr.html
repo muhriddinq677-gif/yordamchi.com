@@ -1,156 +1,512 @@
-<!DOCTYPE html> 
-<html> 
-<head> 
-    <title>Simple QR Code Generator</title> 
-    <!-- Videodagi qrcode.min.js kutubxonasi --> 
-    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script> 
-    <style> 
-        body { 
-            background-color: #f0f4f8; /* Saytingiz foni kabi och havo rang */ 
-            color: #1e293b; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            margin: 0; 
-            flex-direction: column; 
-        } 
-        /* Saytingizdagi kartochkalar uslubida, o'rtada ixcham turuvchi blok */ 
-        .qr-wrapper { 
-            background-color: #ffffff; 
-            padding: 30px; 
-            border-radius: 12px; 
-            box-shadow: 0 10px 25px rgba(0, 82, 212, 0.1); 
-            width: 100%; 
-            max-width: 360px; /* Yonlariga cho'zilib ketmaydi, ixcham turadi */ 
-            box-sizing: border-box; 
-            text-align: center; 
-        } 
-        h1 { 
-            color: #0052d4; /* Saytingiz yuqori qismidagi ko'k rang */ 
-            font-size: 22px; 
-            margin-top: 0; 
-            margin-bottom: 20px; 
-            font-weight: 700; 
-        } 
-        label { 
-            display: block; 
-            text-align: left; 
-            margin-bottom: 8px; 
-            font-weight: 600; 
-            color: #475569; 
-            font-size: 14px; 
-        } 
-        input { 
-            background-color: #f8fafc; 
-            border: 2px solid #cbd5e1; 
-            color: #0f172a; 
-            padding: 12px; 
-            font-family: inherit; 
-            font-size: 15px; 
-            border-radius: 8px; 
-            width: 100%; 
-            margin-bottom: 20px; 
-            outline: none; 
-            box-sizing: border-box; 
-            transition: border-color 0.3s ease; 
-        } 
-        input:focus { 
-            border-color: #4364f7; 
-            background-color: #ffffff; 
-        } 
-        button { 
-            background-color: #0052d4; /* Saytingiz tugmalari rangi */ 
-            color: #ffffff; 
-            border: none; 
-            padding: 12px 20px; 
-            font-family: inherit; 
-            font-size: 16px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            border-radius: 8px; 
-            width: 100%; 
-            transition: background-color 0.3s ease; 
-        } 
-        button:hover { 
-            background-color: #4364f7; /* Bosilgandagi ochroq ko'k */ 
-        } 
-        #qrcode { 
-            margin-top: 25px; 
-            display: flex; 
-            justify-content: center; 
-        } 
-        #qrcode img { 
-            border: 2px solid #e2e8f0; 
-            padding: 8px; 
-            background-color: #ffffff; 
-            border-radius: 8px; 
-        } 
-        .download-btn { 
-            background-color: #10b981; /* Chiroyli yashil rang */ 
-            color: #ffffff; 
-            border: none; 
-            padding: 12px 20px; 
-            font-family: inherit; 
-            font-size: 16px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            border-radius: 8px; 
-            width: 100%; 
-            margin-top: 15px; 
-            display: block; /* DOIM CHIQIB TURISHI UCHUN TOG'RILANDI */ 
-            transition: background-color 0.3s ease; 
-        } 
-        .download-btn:hover { 
-            background-color: #059669; /* Sichqoncha kelganda to'q yashil */ 
-        } 
-    </style> 
-</head> 
-<body> 
-    <div class="qr-wrapper"> 
-        <h1>Easy QR Code Generator</h1> 
-        <label for="text-input">Enter Text</label> 
-        <input type="text" id="text-input"> 
-        <button onclick="generateQRCode()">Generate QR Code</button> 
-        <div id="qrcode"></div> 
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Kod Generator</title>
+   </head>
+<style>
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 40px;
+    font-size: 1.1em;
+}
+
+.content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+}
+
+@media (max-width: 768px) {
+    .content {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Chap Panel */
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.input-section label,
+.color-group label,
+.logo-section h3 {
+    display: block;
+    margin-bottom: 10px;
+    color: #333;
+    font-weight: 600;
+}
+
+#qrInput {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+#qrInput:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+/* Rang tanlash */
+.color-section h3 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.color-options {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.color-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.color-btn {
+    padding: 10px 20px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.color-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.color-btn.selected {
+    border-color: #667eea;
+    background: #667eea;
+    color: white;
+}
+
+.color-btn.blue {
+    border-color: #0066FF;
+    color: #0066FF;
+}
+
+.color-btn.blue.selected {
+    background: #0066FF;
+    color: white;
+}
+
+.color-btn.black {
+    border-color: #000;
+    color: #000;
+}
+
+.color-btn.black.selected {
+    background: #000;
+    color: white;
+}
+
+.color-btn.white {
+    border-color: #000;
+    color: #000;
+    background: #f5f5f5;
+}
+
+.color-btn.white.selected {
+    background: #000;
+    color: white;
+}
+
+#customFgColor,
+#customBgColor {
+    width: 60px;
+    height: 40px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Logo qo'yish */
+#logoInput {
+    padding: 10px;
+    border: 2px dashed #ddd;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.remove-btn {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.remove-btn:hover {
+    background: #cc0000;
+}
+
+/* Tugmalar */
+.button-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #4CAF50;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(76, 175, 80, 0.4);
+}
+
+/* O'ng Panel - QR Preview */
+.right-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-preview {
+    width: 100%;
+    background: #f9f9f9;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    border: 3px dashed #ddd;
+}
+
+.qr-preview h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+#qrcode {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 256px;
+    margin-bottom: 15px;
+}
+
+#qrcode canvas,
+#qrcode img {
+    border: 3px solid #333;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.hint {
+    color: #999;
+    font-style: italic;
+}
+
+/* QR kod yaratilganda hint ni yashirish */
+#qrcode:not(:empty) ~ .hint {
+    display: none;
+}
+</style>
+<body>
+    <div class="container">
+        <h1>QR Kod Generator</h1>
+        <p class="subtitle">Link va Rasm uchun QR kod yarating</p>
+
+        <div class="content">
+            <!-- Chap tomon - Sozlamalar -->
+            <div class="left-panel">
+                <!-- Link yoki Rasm tanlash -->
+                <div class="input-section">
+                    <label>Link yoki Rasm URL:</label>
+                    <input type="text" id="qrInput" placeholder="https://example.com yoki rasm URL">
+                </div>
+
+                <!-- Rang tanlash -->
+                <div class="color-section">
+                    <h3>Rang Tanlash</h3>
+                    <div class="color-options">
+                        <div class="color-group">
+                            <label>QR Kod Rangi:</label>
+                            <div class="color-buttons">
+                                <button class="color-btn blue" data-color="#0066FF" onclick="selectForegroundColor('#0066FF', this)">Ko'k</button>
+                                <button class="color-btn black selected" data-color="#000000" onclick="selectForegroundColor('#000000', this)">Qora</button>
+                                <button class="color-btn white" data-color="#FFFFFF" onclick="selectForegroundColor('#FFFFFF', this)">Oq</button>
+                            </div>
+                            <input type="color" id="customFgColor" value="#000000" onchange="selectForegroundColor(this.value)">
+                        </div>
+
+                        <div class="color-group">
+                            <label>Fon Rangi:</label>
+                            <div class="color-buttons">
+                                <button class="color-btn white selected" data-color="#FFFFFF" onclick="selectBackgroundColor('#FFFFFF', this)">Oq</button>
+                                <button class="color-btn blue" data-color="#0066FF" onclick="selectBackgroundColor('#0066FF', this)">Ko'k</button>
+                                <button class="color-btn black" data-color="#000000" onclick="selectBackgroundColor('#000000', this)">Qora</button>
+                            </div>
+                            <input type="color" id="customBgColor" value="#FFFFFF" onchange="selectBackgroundColor(this.value)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logo qo'yish -->
+                <div class="logo-section">
+                    <h3>Logo Qo'yish (Ixtiyoriy)</h3>
+                    <input type="file" id="logoInput" accept="image/*" onchange="handleLogoUpload()">
+                    <button id="removeLogo" class="remove-btn" onclick="removeLogo()" style="display: none;">Logo ni o'chirish</button>
+                </div>
+
+                <!-- Tugmalar -->
+                <div class="button-section">
+                    <button class="btn-primary" onclick="generateQR()">QR Kod Chiqarish</button>
+                    <button class="btn-secondary" onclick="downloadQR()">Yuklab Olish</button>
+                </div>
+            </div>
+
+            <!-- O'ng tomon - QR Kod Preview -->
+            <div class="right-panel">
+                <div class="qr-preview">
+                    <h3>Preview</h3>
+                    <div id="qrcode"></div>
+                    <p class="hint">QR kod bu yerda ko'rinadi</p>
+                </div>
+            </div>
+        </div>
     </div>
-        <button id="download-btn" class="download-btn" onclick="downloadQR()">Download "qr.png"</button> 
+
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        // Global o'zgaruvchilar
+let qrcode = null;
+let currentFgColor = '#000000';
+let currentBgColor = '#FFFFFF';
+let logoDataUrl = null;
+
+// QR kod yaratish
+function generateQR() {
+    const input = document.getElementById('qrInput').value.trim();
     
+    if (!input) {
+        alert('Iltimos, link yoki rasm URL kiriting!');
+        return;
+    }
+    
+    const qrcodeContainer = document.getElementById('qrcode');
+    qrcodeContainer.innerHTML = ''; // Eski QR ni o'chirish
+    
+    // QR kod yaratish
+    qrcode = new QRCode(qrcodeContainer, {
+        text: input,
+        width: 256,
+        height: 256,
+        colorDark: currentFgColor,
+        colorLight: currentBgColor,
+        correctLevel: QRCode.CorrectLevel.H
+    });
+    
+    // Agar logo bo'lsa, uni qo'shish
+    if (logoDataUrl) {
+        setTimeout(() => {
+            addLogoToQR();
+        }, 100);
+    }
+}
 
-    <script> 
-        function generateQRCode() { 
-            var text = document.getElementById("text-input").value; 
-            var qrBox = document.getElementById("qrcode"); 
+// Logo qo'shish
+function addLogoToQR() {
+    const canvas = document.querySelector('#qrcode canvas');
+    if (!canvas || !logoDataUrl) return;
+    
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    
+    img.onload = function() {
+        const logoSize = 50;
+        const x = (canvas.width - logoSize) / 2;
+        const y = (canvas.height - logoSize) / 2;
+        
+        // Oq fon qo'shish logo ostiga
+        ctx.fillStyle = 'white';
+        ctx.fillRect(x - 5, y - 5, logoSize + 10, logoSize + 10);
+        
+        // Logo chizish
+        ctx.drawImage(img, x, y, logoSize, logoSize);
+    };
+    
+    img.src = logoDataUrl;
+}
 
-            // Kod yaratilganda faqat eski rasmni tozalaydi, tugma joyida qoladi
-            qrBox.innerHTML = ""; 
+// Foreground rang tanlash
+function selectForegroundColor(color, button) {
+    currentFgColor = color;
+    
+    // Barcha tugmalardan selected ni o'chirish
+    document.querySelectorAll('.color-group:first-child .color-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    
+    // Tanlangan tugmaga selected qo'shish
+    if (button) {
+        button.classList.add('selected');
+    }
+    
+    // Custom color picker ni yangilash
+    document.getElementById('customFgColor').value = color;
+    
+    // Agar QR kod mavjud bo'lsa, qayta yaratish
+    if (qrcode) {
+        generateQR();
+    }
+}
 
-            if (text.trim() === "") { 
-                alert("Iltimos, matn kiriting!"); 
-                return; 
-            } 
+// Background rang tanlash
+function selectBackgroundColor(color, button) {
+    currentBgColor = color;
+    
+    // Barcha tugmalardan selected ni o'chirish
+    document.querySelectorAll('.color-group:last-child .color-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    
+    // Tanlangan tugmaga selected qo'shish
+    if (button) {
+        button.classList.add('selected');
+    }
+    
+    // Custom color picker ni yangilash
+    document.getElementById('customBgColor').value = color;
+    
+    // Agar QR kod mavjud bo'lsa, qayta yaratish
+    if (qrcode) {
+        generateQR();
+    }
+}
 
-            // Sizning daxlsiz drayveringiz 
-            var qrcode = new QRCode(qrBox, { 
-                text: text, 
-                width: 150, 
-                height: 150 
-            }); 
-        } 
-
-        // Yuklab olish funksiyasi 
-        function downloadQR() { 
-            var qrImg = document.querySelector("#qrcode img"); 
-            if (!qrImg) {
-                alert("Avval QR kod yarating, keyin yuklab oling!");
-                return;
+// Logo yuklash
+function handleLogoUpload() {
+    const fileInput = document.getElementById('logoInput');
+    const file = fileInput.files[0];
+    
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            logoDataUrl = e.target.result;
+            document.getElementById('removeLogo').style.display = 'block';
+            
+            // Agar QR kod mavjud bo'lsa, logoni qo'shish
+            if (qrcode) {
+                generateQR();
             }
-            var link = document.createElement("a"); 
-            link.href = qrImg.src; 
-            link.download = "qr.png"; 
-            link.click(); 
-        } 
-    </script> 
-</body> 
+        };
+        
+        reader.readAsDataURL(file);
+    } else {
+        alert('Iltimos, rasm fayl tanlang!');
+    }
+}
+
+// Logo ni o'chirish
+function removeLogo() {
+    logoDataUrl = null;
+    document.getElementById('logoInput').value = '';
+    document.getElementById('removeLogo').style.display = 'none';
+    
+    // QR ni qayta yaratish (logosiz)
+    if (qrcode) {
+        generateQR();
+    }
+}
+
+// QR ni yuklab olish
+function downloadQR() {
+    const canvas = document.querySelector('#qrcode canvas');
+    
+    if (!canvas) {
+        alert('Avval QR kod yarating!');
+        return;
+    }
+    
+    // Canvas ni PNG ga aylantirish
+    const url = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.download = 'qr-code.png';
+    link.href = url;
+    link.click();
+}
+
+// Enter tugmasi bosilganda QR yaratish
+document.getElementById('qrInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        generateQR();
+    }
+});
+    </script>
+</body>
 </html>

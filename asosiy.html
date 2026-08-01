@@ -241,6 +241,27 @@ background: var(--primary); color:white; transform: translateY(-10px); box-shado
 </div>  
   <div class="cards-container">
    <div class="cards-container">
+       <div class="card">
+    <h3><i class="fas fa-plan"></i> <span data-key-text="dr-title">Reja yozib ketish</span></h3>
+    <p><span data-key-text="reja-text">Bu yerda siz kunlik rejalaringizni tuzib ketishingiz mumkin.</span></p>
+    <button onclick="window.open('reja.html')">
+      <i class="fas fa-plan"></i> <span data-key-text="draw-btn">Reja tuzish</span>
+    </button>
+  </div>
+       <div class="card">
+    <h3><i class="fas fa-parol"></i> <span data-key-text="dra-title">Parol yaratish</span></h3>
+    <p><span data-key-text="parol-text">Siz bu qurilmada xavfsiz parol yaratish mumkin.</span></p>
+    <button onclick="window.open('parol.html')">
+      <i class="fas fa-parol"></i> <span data-key-text="draw-btn">Parol yaratish</span>
+    </button>
+  </div>
+       <div class="card">
+    <h3><i class="fas fa-editing"></i> <span data-key-text="daw-title">Rasm tahrirlagich</span></h3>
+    <p><span data-key-text="picture-text">Bu yerda siz  rasmni xajmini o'zgartirib hohlasangiz url ham qilishingiz mumkin.</span></p>
+    <button onclick="window.open('rasmt.html')">
+      <i class="fas fa-editing"></i> <span data-key-text="draw-btn">Boshlash</span>
+    </button>
+  </div>
   <div class="card">
     <h3><i class="fas fa-palette"></i> <span data-key-text="draw-title">Rasm chizish</span></h3>
     <p><span data-key-text="draw-text">Bu yerda siz hohlagancha rasm chizasiz</span></p>
@@ -324,35 +345,27 @@ const langDict = {
         "btn-light":"Kunduzgi rejim", 
         "btn-dark":"Tungi rejim",
         "s-lang":"Tilni tanlang",
-
         "draw-title":"Rasm chizish",
         "draw-text":"Bu yerda siz hohlagancha rasm chizasiz",
         "draw-btn":"Rasm chizish",
-
         "ppt-title":"Power-paint",
         "ppt-text":"Bu yerda siz turli xil slaydlar yasaysiz",
         "ppt-btn":"Slayd tayyorlash",
-
         "calc-title":"Calculyator",
         "calc-text":"Bu yerda misollarni kalkulyator yordamida yeching",
         "calc-btn":"Calculyator",
-
         "card4-title":"O‘yinlar o'ynash",
         "card4-text":"Bu yerda faqat men yaratgan o'yinlar bor.",
         "card4-btn":"Play",
-
         "editor-title":"Kod yozish Redaktori",
         "editor-text":"Bu yer yosh dasturchilar uchun!",
         "editor-btn":"Redaktor: kod yozish",
-
         "word-title":"Mini Word",
         "word-text":"Bu yerda siz matn yozasiz.",
         "word-btn":"Word: matn yozish",
-
         "excel-title":"Excel",
         "excel-text":"Bu yerda siz jadval qilasiz matnlar yozasiz.",
         "excel-btn":"Excel: jadval qilish",
-
         "weather-title":"Ob-havo",
         "weather-text":"Bu yerda siz ob-havo malumotini topasiz",
         "weather-btn":"Ob-havoni bilish",
@@ -362,43 +375,41 @@ const langDict = {
         "h-desc": "Yozish tugmasi xuddi Monkeytype sayti kabi yozadigan joyga boradi, O'ynash esa mahorat oshirish uchun.",
         "btn-write": "Yozish",
         "btn-play": "O'ynash",
-  
-  
+        "dr-title": "Reja yozib ketish",
+        "reja-text": "Bu yerda siz kunlik rejalaringizni tuzib ketishingiz mumkin.",
+        "draw-btn": "Reja tuzish",
+        "dra-title": "Parol yaratish",
+        "parol-text": "Siz bu qurilmada xavfsiz parol yaratish mumkin.",
+        "daw-title": "Rasm tahrirlagich",
+        "picture-text": "Bu yerda siz rasmni xajmini o'zgartirib hohlasangiz url ham qilishingiz mumkin."
+
     },
     ru: { 
         "s-title":"Настройки", 
         "btn-light":"Дневной режим", 
         "btn-dark":"Ночной режим",
         "s-lang":"Выберите язык",
-
         "draw-title":"Рисование",
         "draw-text":"Здесь вы можете рисовать сколько угодно",
         "draw-btn":"Рисовать",
-
         "ppt-title":"Power-paint",
         "ppt-text":"Здесь вы создаёте различные слайды",
         "ppt-btn":"Создать слайд",
-
         "calc-title":"Калькулятор",
         "calc-text":"Решайте примеры с помощью калькулятора",
         "calc-btn":"Калькулятор",
-
         "card4-title":"Игры",
         "card4-text":"Здесь только мои игры.",
         "card4-btn":"Играть",
-
         "editor-title":"Редактор кода",
         "editor-text":"Это для молодых программистов",
         "editor-btn":"Редактор: код",
-
         "word-title":"Мини Word",
         "word-text":"Здесь вы пишете текст.",
         "word-btn":"Написать текст",
-
         "excel-title":"Excel",
         "excel-text":"Здесь вы создаёте таблицы и пишете текст.",
         "excel-btn":"Создать таблицу",
-
         "weather-title":"Погода",
         "weather-text":"Здесь вы можете узнать погоду",
         "weather-btn":"Узнать погоду",
@@ -408,43 +419,41 @@ const langDict = {
         "h-desc": "Кнопка 'Печатать' ведет к тренажеру как на Monkeytype, а 'Играть' — для улучшения навыков.",
         "btn-write": "Печатать",
         "btn-play": "Играть",
-  
-  
-    },
+        "dr-title": "Записать план",
+        "reja-text": "Здесь вы можете составлять свои планы на день.",
+        "draw-btn": "Создать план",
+        "dra-title": "Генератор паролей",
+        "parol-text": "Вы можете создать надежный пароль на этом устройстве.",
+        "daw-title": "Редактор изображений",
+        "picture-text": "Здесь вы можете изменить размер изображения и, если хотите, сделать URL."
+
+  },
     en: { 
         "s-title":"Settings", 
         "btn-light":"Light mode", 
         "btn-dark":"Dark mode",
         "s-lang":"Select Language",
-
         "draw-title":"Drawing",
         "draw-text":"Here you can draw anything you want",
         "draw-btn":"Draw",
-
         "ppt-title":"Power-paint",
         "ppt-text":"Here you can create different slides",
         "ppt-btn":"Create slides",
-
         "calc-title":"Calculator",
         "calc-text":"Solve problems using the calculator",
         "calc-btn":"Calculator",
-
         "card4-title":"Play Games",
         "card4-text":"Only my games are here.",
         "card4-btn":"Play",
-
         "editor-title":"Code Editor",
         "editor-text":"This is for beginner programmers",
         "editor-btn":"Code Editor",
-
         "word-title":"Mini Word",
         "word-text":"Here you can write text.",
         "word-btn":"Write text",
-
         "excel-title":"Excel",
         "excel-text":"Here you can create tables and write text.",
         "excel-btn":"Create table",
-
         "weather-title":"Weather",
         "weather-text":"Here you can check the weather",
         "weather-btn":"Check weather",
@@ -454,9 +463,15 @@ const langDict = {
         "h-desc": "The 'Type' button leads to a Monkeytype-style area, while 'Play' is for skill improvement.",
         "btn-write": "Type",
         "btn-play": "Play",
-  
-  
-    }
+        "dr-title": "Write down a plan",
+        "reja-text": "Here you can create your daily plans.",
+        "draw-btn": "Create a plan",
+        "dra-title": "Password generator",
+        "parol-text": "You can generate a secure password on this device.",
+        "daw-title": "Image editor",
+        "picture-text": "Here you can resize the image and create a URL if you wish."
+
+}
 };
 
 // 8ta card va sozlamalar paneli tarjimasi

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yordamchi.com - Kreativ Vositalar</title>
+</head>
+
+<!-- STYLE TEGI HEAD YOPILISHIDAN KEYIN JOYLASHDI -->
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: #0f172a; color: #f8fafc; padding: 20px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 600px; background: #1e293b; padding: 25px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); margin-top: 20px; }
+    h2 { margin-bottom: 20px; text-align: center; color: #38bdf8; font-size: 22px; }
+    
+    /* Tab tugmalari tizimi */
+    .tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 2px solid #334155; padding-bottom: 10px; }
+    .tab-btn { background: none; border: none; color: #94a3b8; font-size: 15px; font-weight: 600; cursor: pointer; padding: 8px 12px; transition: 0.3s; }
+    .tab-btn.active { color: #38bdf8; border-bottom: 2px solid #38bdf8; margin-bottom: -12px; }
+    
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .hint-text { font-size: 13px; color: #94a3b8; text-align: center; margin-bottom: 15px; }
+
+    /* --- 1. Rang Tanlagich uslublari --- */
+    .input-wrapper { position: relative; display: flex; align-items: center; margin: 20px 0; }
+    .color-input-field { width: 100%; padding: 12px 50px 12px 15px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #38bdf8; font-family: monospace; font-size: 16px; font-weight: bold; outline: none; cursor: pointer; }
+    .color-input-field:focus { border-color: #38bdf8; }
+    .inline-color-picker { position: absolute; right: 12px; width: 26px; height: 26px; border-radius: 50%; border: 2px solid #ffffff; cursor: pointer; padding: 0; background: none; box-shadow: 0 0 5px rgba(0,0,0,0.5); }
+    .inline-color-picker::-webkit-color-swatch-wrapper { padding: 0; }
+    .inline-color-picker::-webkit-color-swatch { border: none; border-radius: 50%; }
+
+    /* --- 2 va 3. Rasm bilan ishlovchi umumiy uslublar --- */
+    .group { margin-bottom: 15px; }
+    .group label { display: block; margin-bottom: 6px; font-size: 14px; color: #94a3b8; }
+    input[type="number"], input[type="text"], input[type="file"] { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: white; outline: none; }
+    input:focus { border-color: #38bdf8; }
+    .row { display: flex; gap: 10px; }
+    .row .group { flex: 1; }
+    
+    .btn { width: 100%; padding: 12px; background: #38bdf8; border: none; color: #0f172a; font-weight: bold; border-radius: 6px; cursor: pointer; font-size: 15px; margin-top: 10px; transition: 0.2s; }
+    .btn:hover { background: #0ea5e9; }
+    
+    .preview-box { margin-top: 15px; text-align: center; max-height: 220px; overflow: hidden; display: none; border-radius: 6px; border: 1px solid #334155; background: #0f172a; padding: 10px; }
+    .preview-box img { max-width: 100%; max-height: 180px; object-fit: contain; }
+    
+    /* URL va HTML Kod natijalari qutisi */
+    .url-display-box { background: #0f172a; padding: 12px; border-radius: 6px; border: 1px solid #10b981; color: #34d399; font-family: monospace; font-size: 13px; word-break: break-all; cursor: pointer; transition: 0.2s; margin-top: 5px; }
+    .url-display-box:hover { background: #111e36; }
+    .result-code { margin-top: 15px; padding: 12px; background: #0f172a; border-radius: 6px; border: 1px solid #334155; font-family: monospace; font-size: 13px; color: #a7f3d0; word-break: break-all; white-space: pre-wrap; display: none; cursor: pointer; }
+
+    .toast { position: fixed; bottom: 20px; right: 20px; background: #10b981; color: white; padding: 12px 24px; border-radius: 6px; font-weight: bold; display: none; z-index: 9999; }
+</style>
+
+<body>
+
+<div class="container">
+    <h2>Kreativ Vositalar</h2>
+    
+    <!-- Tab boshqaruvi -->
+    <div class="tabs">
+        <button class="tab-btn active" id="tab-color-btn">Rang Tanlagich</button>
+        <button class="tab-btn" id="tab-resize-btn">Rasm O'lchami</button>
+        <button class="tab-btn" id="tab-link-btn">Rasmga Havola</button>
+    </div>
+
+    <!-- 1. RANG TANLAGICH PANELI -->
+    <div id="panel-color" class="panel active">
+        <p class="hint-text">Aylanadan rang tanlang, kod ustiga bossangiz nusxalanadi.</p>
+        <div class="input-wrapper">
+            <input type="text" id="color-code-text" class="color-input-field" value="#38BDF8" readonly>
+            <input type="color" id="inline-picker" class="inline-color-picker" value="#38bdf8">
+        </div>
+    </div>
+
+    <!-- 2. RASM O'LCHAMINI O'ZGARTIRGICH -->
+    <div id="panel-resize" class="panel">
+        <p class="hint-text">Rasm yuklang, yangi eni va bo'yini piksellarda kiriting.</p>
+        <div class="group">
+            <input type="file" id="resize-file" accept="image/*">
+        </div>
+        <div class="preview-box" id="resize-preview-box">
+            <img id="resize-img-preview" src="" alt="Preview">
+        </div>
+        <div class="row">
+            <div class="group">
+                <label>Eni (Width - px):</label>
+                <input type="number" id="resize-width" value="500">
+            </div>
+            <div class="group">
+                <label>Bo'yi (Height - px):</label>
+                <input type="number" id="resize-height" value="500">
+            </div>
+        </div>
+        <button class="btn" id="execute-resize-btn">O'zgartirish va Yuklash</button>
+    </div>
+
+    <!-- 3. RASMGA URL HAVOLA QO'YISH -->
+    <div id="panel-link" class="panel">
+        <p class="hint-text">Rasm yuklang, u brauzer ichida URL havola va tayyor HTML kodga aylanadi.</p>
+        <div class="group">
+            <input type="file" id="link-file" accept="image/*">
+        </div>
+        <div class="preview-box" id="link-preview-box">
+            <img id="link-img-preview" src="" alt="Preview">
+        </div>
+        
+        <!-- Avtomatik chiqadigan URL havola -->
+        <div class="group" id="url-box-container" style="display: none;">
+            <label style="color: #10b981; font-weight: bold;">Rasmning URL havolasi:</label>
+            <div class="url-display-box" id="generated-url-text"></div>
+        </div>
+
+        <div class="group" style="margin-top: 15px;">
+            <label>Yo'naltiriluvchi tashqi havola (ixtiyoriy):</label>
+            <input type="text" id="target-url-input" placeholder="https://google.com">
+        </div>
+        <button class="btn" id="generate-html-btn">HTML Kodni Yaratish</button>
+        <div class="result-code" id="html-code-box"></div>
+    </div>
+</div>
+
+<div class="toast" id="toast-notification">Nusxalandi!</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    // --- UMUMIY TOAST BILDIRISHNOMA ---
+    const toast = document.getElementById('toast-notification');
+    function showToast(message) {
+        if (toast) {
+            toast.innerText = message;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2000);
+        }
+    }
+
+    // --- TAB TIZIMINI BOSHQARISH ---
+    const tabMapping = {
+        'tab-color-btn': 'panel-color',
+        'tab-resize-btn': 'panel-resize',
+        'tab-link-btn': 'panel-link'
+    };
+
+    Object.keys(tabMapping).forEach(btnId => {
+        const btn = document.getElementById(btnId);
+        if (btn) {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                
+                btn.classList.add('active');
+                document.getElementById(tabMapping[btnId]).classList.add('active');
+            });
+        }
+    });
+
+    // --- 1. RANG TANLAGICH MANTIQLARI ---
+    const colorText = document.getElementById('color-code-text');
+    const colorPicker = document.getElementById('inline-picker');
+
+    if (colorPicker && colorText) {
+        colorPicker.addEventListener('input', (e) => {
+            colorText.value = e.target.value.toUpperCase();
+        });
+    }
+
+    if (colorText) {
+        colorText.addEventListener('click', () => {
+            navigator.clipboard.writeText(colorText.value);
+            showToast(`${colorText.value} nusxalandi!`);
+        });
+    }
+
+    // --- 2. RASM O'LCHAMINI O'ZGARTIRGICH (RESIZER) ---
+    const resizeFile = document.getElementById('resize-file');
+    const resizePreviewBox = document.getElementById('resize-preview-box');
+    const resizeImgPreview = document.getElementById('resize-img-preview');
+    const resizeWidth = document.getElementById('resize-width');
+    const resizeHeight = document.getElementById('resize-height');
+    const executeResizeBtn = document.getElementById('execute-resize-btn');
+
+    if (resizeFile) {
+        resizeFile.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    resizeImgPreview.src = e.target.result;
+                    resizePreviewBox.style.display = 'block';
+                    
+                    const tempImg = new Image();
+                    tempImg.src = e.target.result;
+                    tempImg.onload = function() {
+                        resizeWidth.value = this.width;
+                        resizeHeight.value = this.height;
+                    };
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+
+    if (executeResizeBtn) {
+        executeResizeBtn.addEventListener('click', () => {
+            if (!resizeFile.files || !resizeFile.files[0]) {
+                alert("Iltimos, avval rasm tanlang!");
+                return;
+            }
+            const w = parseInt(resizeWidth.value) || 500;
+            const h = parseInt(resizeHeight.value) || 500;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, w, h);
+                    
+                    const downloadLink = document.createElement('a');
+                    downloadLink.download = 'yordamchi_o_zgargan.png';
+                    downloadLink.href = canvas.toDataURL();
+                    downloadLink.click();
+                    showToast("Yangi o'lchamdagi rasm yuklandi!");
+                };
+            };
+            reader.readAsDataURL(resizeFile.files[0]);
+        });
+    }
+
+    // --- 3. RASMGA URL HAVOLA QO'YISH MANTIQLARI ---
+    const linkFile = document.getElementById('link-file');
+    const linkPreviewBox = document.getElementById('link-preview-box');
+    const linkImgPreview = document.getElementById('link-img-preview');
+    const urlBoxContainer = document.getElementById('url-box-container');
+    const generatedUrlText = document.getElementById('generated-url-text');
+    const targetUrlInput = document.getElementById('target-url-input');
+    const generateHtmlBtn = document.getElementById('generate-html-btn');
+    const htmlCodeBox = document.getElementById('html-code-box');
+
+    let blobUrlMemory = "";
+
+    if (linkFile) {
+        linkFile.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    linkImgPreview.src = e.target.result;
+                    linkPreviewBox.style.display = 'block';
+                    
+                    if (blobUrlMemory) URL.revokeObjectURL(blobUrlMemory);
+                    blobUrlMemory = URL.createObjectURL(linkFile.files[0]);
+                    
+                    generatedUrlText.innerText = blobUrlMemory;
+                    urlBoxContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+
+    if (generatedUrlText) {
+        generatedUrlText.addEventListener('click', () => {
+            navigator.clipboard.writeText(generatedUrlText.innerText);
+            showToast("Rasm havolasi nusxalandi!");
+        });
+    }
+
+    if (generateHtmlBtn) {
+        generateHtmlBtn.addEventListener('click', () => {
+            if (!linkFile.files || !linkFile.files[0]) {
+                alert("Iltimos, rasm yuklang!");
+                return;
+            }
+            const destination = targetUrlInput.value.trim() || 'https://yordamchi.com';
+            const imgSource = blobUrlMemory || 'images/fayl.png';
+            
+            const compiledHtml = `<a href="${destination}" target="_blank">\n  <img src="${imgSource}" alt="Yordamchi rasm" title="O'tish uchun bosing">\n</a>`;
+            
+            htmlCodeBox.innerText = compiledHtml;
+            htmlCodeBox.style.display = 'block';
+            showToast("HTML kod tayyorlandi!");
+        });
+    }
+
+    if (htmlCodeBox) {
+        htmlCodeBox.addEventListener('click', () => {
+            navigator.clipboard.writeText(htmlCodeBox.innerText);
+            showToast("HTML kod nusxalandi!");
+        });
+    }
+});
+
+</script>
+</body>
+</html>
